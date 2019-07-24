@@ -1,0 +1,321 @@
+Total transitions:80
+
+id:t0
+producer:(1,p2) 
+consumer:(1,p3) 
+
+id:t1
+producer:(1,p5) 
+consumer:(1,p6) 
+
+id:t2
+producer:(1,p9) 
+consumer:(1,p10) 
+
+id:t3
+producer:(1,p12) 
+consumer:(1,p13) 
+
+id:t4
+producer:(1,p16) 
+consumer:(1,p17) 
+
+id:t5
+producer:(1,p19) 
+consumer:(1,p20) 
+
+id:t6
+producer:(1,p0) 
+consumer:(1,p80) (1,p79) (1,p73) (1,p67) (1,p61) (1,p47) (1,p30) (1,p29) (1,p27) (1,p26) (1,p24) (1,p23) (1,p21) (1,p20) (1,p17) (1,p14) (1,p13) (1,p10) (1,p7) (1,p6) (1,p3) 
+
+id:t7
+producer:(1,p29) 
+consumer:(1,p28) 
+
+id:t8
+producer:(1,p29) 
+consumer:(1,p28) 
+
+id:t9
+producer:(1,p26) 
+consumer:(1,p25) 
+
+id:t10
+producer:(1,p26) 
+consumer:(1,p25) 
+
+id:t11
+producer:(1,p23) 
+consumer:(1,p22) 
+
+id:t12
+producer:(1,p23) 
+consumer:(1,p22) 
+
+id:t13
+producer:(1,p19) 
+consumer:(1,p20) 
+
+id:t14
+producer:(1,p20) 
+consumer:(1,p18) 
+
+id:t15
+producer:(1,p20) 
+consumer:(1,p18) 
+
+id:t16
+producer:(1,p16) 
+consumer:(1,p17) 
+
+id:t17
+producer:(1,p17) 
+consumer:(1,p15) 
+
+id:t18
+producer:(1,p17) 
+consumer:(1,p15) 
+
+id:t19
+producer:(1,p12) 
+consumer:(1,p13) 
+
+id:t20
+producer:(1,p13) 
+consumer:(1,p11) 
+
+id:t21
+producer:(1,p13) 
+consumer:(1,p11) 
+
+id:t22
+producer:(1,p9) 
+consumer:(1,p10) 
+
+id:t23
+producer:(1,p10) 
+consumer:(1,p8) 
+
+id:t24
+producer:(1,p10) 
+consumer:(1,p8) 
+
+id:t25
+producer:(1,p5) 
+consumer:(1,p6) 
+
+id:t26
+producer:(1,p6) 
+consumer:(1,p4) 
+
+id:t27
+producer:(1,p6) 
+consumer:(1,p4) 
+
+id:t28
+producer:(1,p2) 
+consumer:(1,p3) 
+
+id:t29
+producer:(1,p3) 
+consumer:(1,p1) 
+
+id:t30
+producer:(1,p3) 
+consumer:(1,p1) 
+
+id:t31
+producer:(1,p27) (1,p72) 
+consumer:(1,p71) (1,p27) 
+
+id:t32
+producer:(1,p25) (1,p71) 
+consumer:(1,p70) (1,p26) 
+
+id:t33
+producer:(1,p13) (1,p70) 
+consumer:(1,p12) (1,p69) 
+
+id:t34
+producer:(1,p10) (1,p69) 
+consumer:(1,p9) (1,p68) 
+
+id:t35
+producer:(1,p18) (1,p60) 
+consumer:(1,p59) (1,p20) 
+
+id:t36
+producer:(1,p11) (1,p59) 
+consumer:(1,p58) (1,p13) 
+
+id:t37
+producer:(1,p4) (1,p58) 
+consumer:(1,p57) (1,p6) 
+
+id:t38
+producer:(1,p21) (1,p57) 
+consumer:(1,p56) (1,p21) 
+
+id:t39
+producer:(1,p14) (1,p56) 
+consumer:(1,p55) (1,p14) 
+
+id:t40
+producer:(1,p7) (1,p55) 
+consumer:(1,p54) (1,p7) 
+
+id:t41
+producer:(1,p21) (1,p51) 
+consumer:(1,p50) (1,p21) 
+
+id:t42
+producer:(1,p14) (1,p50) 
+consumer:(1,p49) (1,p14) 
+
+id:t43
+producer:(1,p7) (1,p49) 
+consumer:(1,p48) (1,p7) 
+
+id:t44
+producer:(1,p15) (1,p46) 
+consumer:(1,p45) (1,p17) 
+
+id:t45
+producer:(1,p8) (1,p45) 
+consumer:(1,p44) (1,p10) 
+
+id:t46
+producer:(1,p1) (1,p44) 
+consumer:(1,p43) (1,p3) 
+
+id:t47
+producer:(1,p21) (1,p43) 
+consumer:(1,p42) (1,p21) 
+
+id:t48
+producer:(1,p14) (1,p42) 
+consumer:(1,p41) (1,p14) 
+
+id:t49
+producer:(1,p7) (1,p41) 
+consumer:(1,p40) (1,p7) 
+
+id:t50
+producer:(1,p21) (1,p34) 
+consumer:(1,p33) (1,p21) 
+
+id:t51
+producer:(1,p14) (1,p33) 
+consumer:(1,p32) (1,p14) 
+
+id:t52
+producer:(1,p7) (1,p32) 
+consumer:(1,p31) (1,p7) 
+
+id:t53
+producer:(1,p3) (1,p63) 
+consumer:(1,p2) (1,p62) 
+
+id:t54
+producer:(1,p6) (1,p64) 
+consumer:(1,p5) (1,p63) 
+
+id:t55
+producer:(1,p22) (1,p65) 
+consumer:(1,p64) (1,p23) 
+
+id:t56
+producer:(1,p24) (1,p66) 
+consumer:(1,p65) (1,p24) 
+
+id:t57
+producer:(1,p17) (1,p75) 
+consumer:(1,p16) (1,p74) 
+
+id:t58
+producer:(1,p20) (1,p76) 
+consumer:(1,p19) (1,p75) 
+
+id:t59
+producer:(1,p28) (1,p77) 
+consumer:(1,p76) (1,p29) 
+
+id:t60
+producer:(1,p30) (1,p78) 
+consumer:(1,p77) (1,p30) 
+
+id:t61
+producer:(1,p54) 
+consumer:(1,p53) 
+
+id:t62
+producer:(1,p53) 
+consumer:(1,p52) 
+
+id:t63
+producer:(1,p52) 
+consumer:(1,p51) 
+
+id:t64
+producer:(1,p40) 
+consumer:(1,p39) 
+
+id:t65
+producer:(1,p39) 
+consumer:(1,p38) 
+
+id:t66
+producer:(1,p38) 
+consumer:(1,p37) 
+
+id:t67
+producer:(1,p37) 
+consumer:(1,p36) 
+
+id:t68
+producer:(1,p36) 
+consumer:(1,p35) 
+
+id:t69
+producer:(1,p35) 
+consumer:(1,p34) 
+
+id:t70
+producer:(1,p74) (1,p81) 
+consumer:(1,p80) (1,p79) 
+
+id:t71
+producer:(1,p62) (1,p81) 
+consumer:(1,p80) (1,p67) 
+
+id:t72
+producer:(1,p31) (1,p81) 
+consumer:(1,p80) (1,p47) 
+
+id:t73
+producer:(1,p48) (1,p81) 
+consumer:(1,p80) (1,p61) 
+
+id:t74
+producer:(1,p68) (1,p81) 
+consumer:(1,p80) (1,p73) 
+
+id:t75
+producer:(1,p79) (1,p80) 
+consumer:(1,p78) (1,p81) 
+
+id:t76
+producer:(1,p67) (1,p80) 
+consumer:(1,p66) (1,p81) 
+
+id:t77
+producer:(1,p47) (1,p80) 
+consumer:(1,p46) (1,p81) 
+
+id:t78
+producer:(1,p61) (1,p80) 
+consumer:(1,p60) (1,p81) 
+
+id:t79
+producer:(1,p73) (1,p80) 
+consumer:(1,p72) (1,p81) 

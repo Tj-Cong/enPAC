@@ -1,0 +1,4 @@
+/home/hecong/下载/CLion-2019.1/clion-2019.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/hecong/文档/enPAC_2020_3.0
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/hecong/文档/enPAC_2020_3.0/cmake-build-debug

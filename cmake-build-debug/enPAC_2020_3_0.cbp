@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="enPAC_2020_3_0"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="enPAC_2020_3_0">
+				<Option output="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/enPAC_2020_3_0" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 enPAC_2020_3_0"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="enPAC_2020_3_0/fast">
+				<Option output="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/enPAC_2020_3_0" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/c++/7"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/7"/>
+					<Add directory="/usr/include/c++/7/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 enPAC_2020_3_0/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/home/hecong/文档/enPAC_2020_3.0/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Data_Structures.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Data_Structures.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Lexer.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Lexer.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Petri_Net.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Petri_Net.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/RG.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/RG.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/SBA.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/SBA.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Syntax_Tree.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Syntax_Tree.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/TBA.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/TBA.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/TGBA.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/TGBA.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/main.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/product.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/product.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/tinystr.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/tinystr.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/tinyxml.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/tinyxml.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/tinyxmlerror.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/tinyxmlparser.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/xml2ltl.cpp">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/xml2ltl.h">
+			<Option target="enPAC_2020_3_0"/>
+		</Unit>
+		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

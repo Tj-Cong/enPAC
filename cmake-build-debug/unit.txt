@@ -1,0 +1,112 @@
+单元总数：22
+
+id: u0
+size: 1
+Mark_Length: 1
+startpos: 0
+
+id: u1
+size: 3
+Mark_Length: 2
+startpos: 1
+
+id: u2
+size: 3
+Mark_Length: 2
+startpos: 4
+
+id: u3
+size: 1
+Mark_Length: 1
+startpos: 7
+
+id: u4
+size: 3
+Mark_Length: 2
+startpos: 8
+
+id: u5
+size: 3
+Mark_Length: 2
+startpos: 11
+
+id: u6
+size: 1
+Mark_Length: 1
+startpos: 14
+
+id: u7
+size: 3
+Mark_Length: 2
+startpos: 15
+
+id: u8
+size: 3
+Mark_Length: 2
+startpos: 18
+
+id: u9
+size: 1
+Mark_Length: 1
+startpos: 21
+
+id: u10
+size: 2
+Mark_Length: 2
+startpos: 22
+
+id: u11
+size: 1
+Mark_Length: 1
+startpos: 24
+
+id: u12
+size: 2
+Mark_Length: 2
+startpos: 25
+
+id: u13
+size: 1
+Mark_Length: 1
+startpos: 27
+
+id: u14
+size: 2
+Mark_Length: 2
+startpos: 28
+
+id: u15
+size: 1
+Mark_Length: 1
+startpos: 30
+
+id: u16
+size: 17
+Mark_Length: 5
+startpos: 31
+
+id: u17
+size: 14
+Mark_Length: 4
+startpos: 48
+
+id: u18
+size: 6
+Mark_Length: 3
+startpos: 62
+
+id: u19
+size: 6
+Mark_Length: 3
+startpos: 68
+
+id: u20
+size: 6
+Mark_Length: 3
+startpos: 74
+
+id: u21
+size: 2
+Mark_Length: 2
+startpos: 80
+
