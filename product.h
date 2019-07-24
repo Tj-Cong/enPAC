@@ -24,8 +24,22 @@ using namespace std;
 
 class Product_Automata;
 void  sig_handler(int num);
-NUM_t placecount;
+extern NUM_t placecount;
 
+/*******************************************/
+typedef class NUPN_Product  //交自动机的一个状态
+{
+public:
+    int id;               //交状态的大小标号
+    NUPN_RGNode *RGname_ptr;   //可达图状态所在位置，可以根据该指针索引到可达图状态
+    int BAname_id;   //buchi自动机在自动机邻接表中的位置
+    NUPN_Product *hashnext;
+public:
+    NUPN_Product();
+    NUPN_Product(NUPN_Product *n);
+} *P_NProduct;
+
+/*******************************************/
 typedef class Product  //交自动机的一个状态
 {
 public:
