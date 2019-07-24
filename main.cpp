@@ -64,16 +64,22 @@ int main() {
     double starttime, endtime;
     starttime = get_time();
     Petri *ptnet = new Petri;
+    NUPN_RG *nupn_graph = NULL;
+    RG *graph = NULL;
     char filename[]="model.pnml";
     ptnet->getSize(filename);
     if(ptnet->NUPN)
     {
         ptnet->readNUPN(filename);
+        nupn_graph = new NUPN_RG(ptnet);
     }
-    else
+    else{
         ptnet->readPNML(filename);
+        graph = new RG(ptnet);
+    }
 
-    RG *graph = new RG(ptnet);
+
+
 //    NUPN_RGNode *initnode=graph->RGinitialnode();
 //    graph->Generate(initnode);
 //    cout<<"STATESPACE:"<<graph->nodecount<<endl;
@@ -162,13 +168,29 @@ int main() {
         sba->Compress();
         delete tba;
         //cout << "begin:ON-THE-FLY" << endl;
-        Product_Automata *product = new Product_Automata(ptnet,graph,sba);
-        product->ModelChecker(propertyid,timeleft);
-        int ret = product->getresult();
+        if(ptnet->NUPN)
+        {
+            Product_Automata<NUPN_RGNode, NUPN_RG> * product;
+            product = new Product_Automata<NUPN_RGNode, NUPN_RG>(ptnet, nupn_graph, sba);
+            product->ModelChecker(propertyid,timeleft);
+            int ret = product->getresult();
 
-        outresult << (ret==-1?'?':(ret == 0?'F':'T'));
+            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
 
-        delete product;
+            delete product;
+        }
+        else{
+            Product_Automata<RGNode, RG> * product;
+            product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+            product->ModelChecker(propertyid,timeleft);
+            int ret = product->getresult();
+
+            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
+
+            delete product;
+        }
+
+
         formula_num--;
         totalruntime = totalruntime - (timetemp - timeleft);
     }
@@ -247,17 +269,27 @@ int main() {
         sba->Compress();
         delete tba;
         //cout << "begin:ON-THE-FLY" << endl;
-        Product_Automata *product = new Product_Automata(ptnet, graph, sba);
-        product->ModelChecker(propertyid, timeleft);
-        int ret = product->getresult();
-        outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
-//        endtime = get_time();
-//        outreport << propertyid <<","<< sba->svex_num <<","<< graph->nodecount <<","
-//                  << product->getNodecount()<<","<<(endtime - starttime)<<endl;
-//        cout<< sba->svex_num <<","<< graph->nodecount <<","
-//            << product->getNodecount()<<","<<(endtime - starttime)<<endl;
-//        cout<<"RUNTIME:"<<(endtime - starttime)<<"s"<<endl;
-        delete product;
+
+        if(ptnet->NUPN)
+        {
+            Product_Automata<NUPN_RGNode,NUPN_RG> *product = new Product_Automata<NUPN_RGNode,NUPN_RG>(ptnet,nupn_graph,sba);
+            product->ModelChecker(propertyid,timeleft);
+            int ret = product->getresult();
+
+            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
+
+            delete product;
+        }
+        else{
+            Product_Automata<RGNode,RG> *product = new Product_Automata<RGNode,RG>(ptnet,graph,sba);
+            product->ModelChecker(propertyid,timeleft);
+            int ret = product->getresult();
+
+            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
+
+            delete product;
+        }
+
         formula_num--;
         totalruntime = totalruntime - (timetemp - timeleft);
     }

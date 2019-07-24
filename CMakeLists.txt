@@ -3,29 +3,31 @@ project(enPAC_2020_3_0)
 
 set(CMAKE_CXX_STANDARD 14)
 
+include_directories(.)
+
 add_executable(enPAC_2020_3_0
-        main.cpp
-        Petri_Net.h
+        product.cpp product.h
+        Data_Structures.cpp
+        Data_Structures.h
+        Lexer.cpp
+        Lexer.h
         Petri_Net.cpp
-        tinystr.h
+        Petri_Net.h
+        RG.cpp
+        RG.h
+        SBA.cpp
+        SBA.h
+        Syntax_Tree.cpp
+        Syntax_Tree.h
+        TBA.cpp
+        TBA.h
+        TGBA.cpp
+        TGBA.h
         tinystr.cpp
-        tinyxml.h
+        tinystr.h
         tinyxml.cpp
+        tinyxml.h
         tinyxmlerror.cpp
         tinyxmlparser.cpp
-        xml2ltl.h
-        xml2ltl.cpp RG.h RG.cpp
-        Data_Structures.h
-        Data_Structures.cpp
-        Lexer.h
-        Lexer.cpp
-        TGBA.h
-        TGBA.cpp
-        TBA.h
-        TBA.cpp
-        SBA.h
-        SBA.cpp
-        Syntax_Tree.h
-        Syntax_Tree.cpp
-        product.h
-        product.cpp)
+        xml2ltl.cpp
+        xml2ltl.h   main.cpp)

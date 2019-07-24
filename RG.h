@@ -19,27 +19,24 @@ void BinaryToDec(index_t &DecNum, unsigned short *Binarystr, NUM_t marklen);
 class RG;
 class NUPN_RG;
 class RGNode;
-class Product_Automata;
 
 typedef unsigned short Mark;
 typedef unsigned long ID;
 
 class NUPN_RGNode
 {
-private:
+public:
     bitset<1> *marking;
     NUPN_RGNode *next;
 public:
     NUPN_RGNode(NUM_t marking_length);
     index_t Hash(NUM_t marking_length);
     ~NUPN_RGNode();
-    friend NUPN_RG;
-    friend Product_Automata;
 };
 
 class RGNode
 {
-private:
+public:
     Mark *marking;
     RGNode *next;
 public:
@@ -47,8 +44,6 @@ public:
     NUM_t tokensum(NUM_t placecount);
     index_t Hash(NUM_t placecount);
     ~RGNode();
-    friend RG;
-    friend Product_Automata;
 };
 
 class RG
@@ -64,6 +59,8 @@ public:
 public:
     RG(Petri *pt);
     void addRGNode(RGNode *mark);
+    void enCoder(unsigned short *equmark,RGNode *curnode){};
+    void deCoder(unsigned short *equmark,RGNode *curnode){};
     RGNode *RGinitialnode();
     RGNode *RGcreatenode(RGNode *curnode, int tranxnum, bool &exist);
     void getFireableTranx(Mark *curmark, index_t **isFirable, unsigned short &firecount);
