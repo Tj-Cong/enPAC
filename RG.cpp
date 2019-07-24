@@ -426,6 +426,7 @@ NUPN_RGNode* NUPN_RG::RGcreatenode(NUPN_RGNode *curnode, int tranxum, bool &exis
         if(repeated)
         {
             exist = true;
+            delete newnode;
             return p;
         }
         p=p->next;

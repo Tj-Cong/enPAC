@@ -15,8 +15,8 @@ CMemoryPool.h
 namespace MemPool
 {
 
-static const std::size_t DEFAULT_MEMORY_POOL_SIZE        = 1073741824;                          //!< Initial MemoryPool size (in Bytes)
-static const std::size_t DEFAULT_MEMORY_CHUNK_SIZE       = 256 ;                           //!< Default MemoryChunkSize (in Bytes)
+static const std::size_t DEFAULT_MEMORY_POOL_SIZE        = 2147483648;                          //!< Initial MemoryPool size (in Bytes)
+static const std::size_t DEFAULT_MEMORY_CHUNK_SIZE       = 128 ;                           //!< Default MemoryChunkSize (in Bytes)
 static const std::size_t DEFAULT_MEMORY_SIZE_TO_ALLOCATE = DEFAULT_MEMORY_CHUNK_SIZE * 2 ; //!< Default Minimal Memory-Size (in Bytes) to Allocate. 
 
 /*!\class CMemoryPool

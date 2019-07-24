@@ -6,6 +6,36 @@
 
 #IncludeRegexTransform: 
 
+/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
+stdlib.h
+-
+stdio.h
+-
+math.h
+-
+assert.h
+-
+iostream
+-
+fstream
+-
+
+/home/hecong/文档/enPAC_2020_3.0/CMemoryPool.cpp
+BasicIncludes.h
+/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
+SMemoryChunk.h
+/home/hecong/文档/enPAC_2020_3.0/SMemoryChunk.h
+CMemoryPool.h
+/home/hecong/文档/enPAC_2020_3.0/CMemoryPool.h
+string.h
+-
+
+/home/hecong/文档/enPAC_2020_3.0/CMemoryPool.h
+IMemoryBlock.h
+/home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
+SMemoryChunk.h
+/home/hecong/文档/enPAC_2020_3.0/SMemoryChunk.h
+
 /home/hecong/文档/enPAC_2020_3.0/Data_Structures.h
 iostream
 -
@@ -19,6 +49,10 @@ algorithm
 -
 Lexer.h
 /home/hecong/文档/enPAC_2020_3.0/Lexer.h
+
+/home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
+BasicIncludes.h
+/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
 
 /home/hecong/文档/enPAC_2020_3.0/Lexer.h
 iostream
@@ -42,6 +76,10 @@ tinyxml.h
 cmath
 -
 
+/home/hecong/文档/enPAC_2020_3.0/RG.cpp
+RG.h
+/home/hecong/文档/enPAC_2020_3.0/RG.h
+
 /home/hecong/文档/enPAC_2020_3.0/RG.h
 Petri_Net.h
 /home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
@@ -49,10 +87,18 @@ bitset
 -
 malloc.h
 -
+BasicIncludes.h
+/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
+CMemoryPool.h
+/home/hecong/文档/enPAC_2020_3.0/CMemoryPool.h
 
 /home/hecong/文档/enPAC_2020_3.0/SBA.h
 TBA.h
 /home/hecong/文档/enPAC_2020_3.0/TBA.h
+
+/home/hecong/文档/enPAC_2020_3.0/SMemoryChunk.h
+IMemoryBlock.h
+/home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
 
 /home/hecong/文档/enPAC_2020_3.0/Syntax_Tree.h
 Data_Structures.h

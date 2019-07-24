@@ -50,6 +50,7 @@ class hashtable
 public:
     Product<rgnode> **table;
     NUM_t nodecount;
+    NUM_t hash_conflict_times;
 public:
     hashtable();
     void insert(Product<rgnode> *n);
@@ -96,6 +97,7 @@ public:
     bool handleLTLC(string s, rgnode *state);
     void handleLTLCstep(short int &front_sum, short int &latter_sum, string s, rgnode *state);
     int getresult();
+    NUM_t getConflictTimes();
     int getNodecount();
     void printNegapth(ofstream &outpath);
     ~Product_Automata();
@@ -135,6 +137,7 @@ hashtable<rgnode>::hashtable() {
         table[i] = NULL;
     }
     nodecount = 0;
+    hash_conflict_times = 0;
 }
 
 template <class rgnode>
@@ -159,6 +162,8 @@ template <class rgnode>
 void hashtable<rgnode>::insert(Product<rgnode> *q)
 {
     int idex = hashfunction(q);
+    if(table[idex]!=NULL)
+        hash_conflict_times++;
     Product<rgnode> *qs = new Product<rgnode>(q);
     qs->hashnext = table[idex];
     table[idex] = qs;
@@ -757,6 +762,12 @@ template <class rgnode,class rg_T>
 int Product_Automata<rgnode,rg_T>::getresult() {
     return ret;
 }
+
+template <class rgnode,class rg_T>
+NUM_t Product_Automata<rgnode,rg_T>::getConflictTimes() {
+    return h.hash_conflict_times;
+}
+
 
 template <class rgnode,class rg_T>
 int Product_Automata<rgnode,rg_T>::getNodecount() {

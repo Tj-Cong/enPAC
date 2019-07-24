@@ -37,6 +37,15 @@ public:
     NUPN_RGNode(NUM_t marking_length);
     index_t Hash(NUM_t marking_length);
     ~NUPN_RGNode();
+    void *operator new(std::size_t ObjectSize)
+    {
+        return g_ptrMemPool->GetMemory(ObjectSize) ;
+    }
+
+    void operator delete(void *ptrObject, std::size_t ObjectSize)
+    {
+        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+    }
 };
 
 class RGNode
@@ -115,5 +124,14 @@ public:
     NUPN_RGNode *RGcreatenode(NUPN_RGNode *curnode,int tranxum, bool &exist);
     void Generate(NUPN_RGNode *node);
     ~NUPN_RG();
+    void *operator new(std::size_t ObjectSize)
+    {
+        return g_ptrMemPool->GetMemory(ObjectSize) ;
+    }
+
+    void operator delete(void *ptrObject, std::size_t ObjectSize)
+    {
+        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+    }
 };
 #endif //ENPAC_2020_3_0_RG_H

@@ -17,10 +17,6 @@ MemPool::CMemoryPool *g_ptrMemPool = NULL  ; //!< Global MemoryPool (Testing pur
 void print_info()
 {
     struct mallinfo mi = mallinfo();
-    printf("count by itself:\n");
-    printf("\theap_malloc_total=%lu heap_free_total=%lu heap_in_use=%lu\n\tmmap_total=%lu mmap_count=%lu\n",
-           heap_malloc_total*1024, heap_free_total*1024, heap_malloc_total*1024-heap_free_total*1024,
-           mmap_total*1024, mmap_count);
     printf("count by mallinfo:\n");
     printf("\theap_malloc_total=%lu heap_free_total=%lu heap_in_use=%lu\n\tmmap_total=%lu mmap_count=%lu\n",
            mi.arena, mi.fordblks, mi.uordblks,
@@ -58,7 +54,7 @@ void DestroyGlobalMemPool()
 
 
 
-int main() {
+int main0() {
 
     CreateGlobalMemPool() ;
     cout << "=================================================" << endl;
@@ -210,7 +206,7 @@ int main() {
             int ret = product->getresult();
 
             outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-
+            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
             delete product;
         }
         else{
@@ -220,7 +216,7 @@ int main() {
             int ret = product->getresult();
 
             outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-
+            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
             delete product;
         }
 
@@ -331,7 +327,7 @@ int main() {
             int ret = product->getresult();
 
             outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-
+            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
             delete product;
         }
         else{
@@ -340,7 +336,7 @@ int main() {
             int ret = product->getresult();
 
             outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-
+            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
             delete product;
         }
 
@@ -384,5 +380,36 @@ int main() {
 //    delete graph1;
     DestroyGlobalMemPool() ;
     delete ptnet;
+    return 0;
+}
+
+int main()
+{
+    CreateGlobalMemPool();
+    double starttime, endtime;
+    starttime = get_time();
+
+    Petri *ptnet = new Petri;
+    char filename[]="model.pnml";
+    ptnet->getSize(filename);
+    if(ptnet->NUPN)
+    {
+        ptnet->readNUPN(filename);
+    }
+    else{
+        ptnet->readPNML(filename);
+    }
+
+    NUPN_RG *graph = new NUPN_RG(ptnet);
+    NUPN_RGNode *initnode=graph->RGinitialnode();
+    graph->Generate(initnode);
+    cout<<"STATESPACE:"<<graph->nodecount<<endl;
+    endtime = get_time();
+    cout<<"RUNTIME:"<<endtime-starttime<<endl;
+    cout<<endl;
+    print_info();
+    delete ptnet;
+    delete graph;
+    DestroyGlobalMemPool();
     return 0;
 }
