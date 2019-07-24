@@ -27,6 +27,7 @@ using namespace std;
 extern bool timeflag;    //超时标志
 void  sig_handler(int num);
 extern NUM_t placecount;
+extern NUM_t MARKLEN;
 
 /*******************************************/
 
@@ -56,6 +57,17 @@ public:
     Product<rgnode> *search(Product<rgnode> *n);
     void pop(Product<rgnode> *n);
     ~hashtable();
+
+    void *operator new(std::size_t ObjectSize)
+    {
+        return g_ptrMemPool->GetMemory(ObjectSize) ;
+    }
+
+    void operator delete(void *ptrObject, std::size_t ObjectSize)
+    {
+        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+    }
+
 };
 
 template <class rgnode, class rg_T>
@@ -87,6 +99,16 @@ public:
     int getNodecount();
     void printNegapth(ofstream &outpath);
     ~Product_Automata();
+
+    void *operator new(std::size_t ObjectSize)
+    {
+        return g_ptrMemPool->GetMemory(ObjectSize) ;
+    }
+
+    void operator delete(void *ptrObject, std::size_t ObjectSize)
+    {
+        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+    }
 };
 
 template <class rgnode>
@@ -147,7 +169,8 @@ void hashtable<rgnode>::insert(Product<rgnode> *q)
 template <class rgnode>
 index_t hashtable<rgnode>::hashfunction(Product<rgnode> *q)
 {
-    index_t RGhashvalue = q->RGname_ptr->Hash(placecount);
+    index_t RGhashvalue;
+    RGhashvalue = q->RGname_ptr->Hash(MARKLEN);
     RGhashvalue = RGhashvalue % RGTABLE_SIZE;
 
     index_t Prohashvalue = RGhashvalue + q->BAname_id;
@@ -203,6 +226,7 @@ Product_Automata<rgnode,rg_T>::Product_Automata(Petri *pt, rg_T* r, SBA *sba) {
     ba = sba;
     result = true;
     placecount = ptnet->placecount;
+    MARKLEN = rg->RGNodelength;
 }
 
 /*bool Product_Automata::judgeF(string s)

@@ -8,9 +8,14 @@
 #include "Petri_Net.h"
 #include <bitset>
 #include <malloc.h>
+#include "BasicIncludes.h"
+#include "CMemoryPool.h"
 using namespace std;
 
 #define RGTABLE_SIZE 100000000
+
+
+extern MemPool::CMemoryPool *g_ptrMemPool;
 
 /*********************Global Functions**********************/
 void DecToBinary(index_t DecNum, unsigned short *Binarystr);
@@ -44,6 +49,18 @@ public:
     NUM_t tokensum(NUM_t placecount);
     index_t Hash(NUM_t placecount);
     ~RGNode();
+
+    void *operator new(std::size_t ObjectSize)
+    {
+        return g_ptrMemPool->GetMemory(ObjectSize) ;
+    }
+
+    void operator delete(void *ptrObject, std::size_t ObjectSize)
+    {
+        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+    }
+
+
 };
 
 class RG
@@ -67,6 +84,16 @@ public:
     void Generate(RGNode *node);
     void printRGNode(RGNode *node);
     ~RG();
+
+        void *operator new(std::size_t ObjectSize)
+    {
+        return g_ptrMemPool->GetMemory(ObjectSize) ;
+    }
+
+    void operator delete(void *ptrObject, std::size_t ObjectSize)
+    {
+        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+    }
 };
 
 class NUPN_RG

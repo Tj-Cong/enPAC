@@ -89,7 +89,7 @@ index_t RGNode::Hash(NUM_t length) {
  * function： 析构函数，释放空间
  * */
 RGNode::~RGNode() {
-    delete [] marking;
+    delete marking;
 }
 
 /****************************RG*****************************/
@@ -245,6 +245,7 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
         }
         if(repeated){
             exist = true;
+            delete newnode;
             return p;
         }
         p=p->next;
@@ -315,8 +316,7 @@ RG::~RG() {
             }
         }
     }
-    delete [] rgnode;
-    malloc_trim(0);
+    delete rgnode;
 }
 
 /*******************************************************************/
@@ -599,7 +599,6 @@ void NUPN_RG::getFireableTranx(unsigned short *equmark, index_t **isFirable, uns
     }
 
     delete [] firearray;
-    malloc_trim(0);
 }
 
 NUPN_RG::~NUPN_RG() {
@@ -618,5 +617,4 @@ NUPN_RG::~NUPN_RG() {
         }
     }
     delete [] rgnode;
-    malloc_trim(0);
 }

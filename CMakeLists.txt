@@ -30,4 +30,10 @@ add_executable(enPAC_2020_3_0
         tinyxmlerror.cpp
         tinyxmlparser.cpp
         xml2ltl.cpp
-        xml2ltl.h   main.cpp)
+        xml2ltl.h
+        BasicIncludes.h
+        CMemoryPool.cpp
+        CMemoryPool.h
+        IMemoryBlock.h
+        SMemoryChunk.h
+        main.cpp)

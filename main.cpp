@@ -10,6 +10,9 @@ using namespace std;
 
 size_t  heap_malloc_total, heap_free_total,mmap_total, mmap_count;
 NUM_t placecount;
+NUM_t MARKLEN;
+
+MemPool::CMemoryPool *g_ptrMemPool = NULL  ; //!< Global MemoryPool (Testing purpose)
 
 void print_info()
 {
@@ -31,9 +34,33 @@ double get_time() {
     gettimeofday(&t, NULL);
     return t.tv_sec + t.tv_usec / 1000000.0;
 }
+/**************************内存池***********************/
+/******************
+CreateGlobalMemPool
+******************/
+void CreateGlobalMemPool()
+{
+    std::cerr << "Creating MemoryPool...." ;
+    g_ptrMemPool = new MemPool::CMemoryPool() ;
+    std::cerr << "OK" << std::endl ;
+}
+
+/******************
+DestroyGlobalMemPool
+******************/
+void DestroyGlobalMemPool()
+{
+    std::cerr << "Deleting MemPool...." ;
+    if(g_ptrMemPool) ::delete g_ptrMemPool ;
+    std::cerr << "OK" << std::endl ;
+}
+/*/////////////////////内存池/////////////////////////*/
+
+
 
 int main() {
 
+    CreateGlobalMemPool() ;
     cout << "=================================================" << endl;
     cout << "=====This is our tool-enPAC for the MCC'2019=====" << endl;
     cout << "=================================================" << endl;
@@ -71,11 +98,9 @@ int main() {
     if(ptnet->NUPN)
     {
         ptnet->readNUPN(filename);
-        nupn_graph = new NUPN_RG(ptnet);
     }
     else{
         ptnet->readPNML(filename);
-        graph = new RG(ptnet);
     }
 
 
@@ -102,6 +127,15 @@ int main() {
     }
 
     while (getline(read, propertyid, ':')) {
+
+        if(ptnet->NUPN)
+        {
+            nupn_graph = new NUPN_RG(ptnet);
+        }
+        else{
+            graph = new RG(ptnet);
+        }
+
         timeleft  = totalruntime/formula_num;
         int timetemp = timeleft;
 
@@ -193,6 +227,17 @@ int main() {
 
         formula_num--;
         totalruntime = totalruntime - (timetemp - timeleft);
+
+
+        if(ptnet->NUPN)
+        {
+            delete nupn_graph;
+        }
+        else{
+            delete graph;
+        }
+
+
     }
 
     ifstream readF("LTLFireability.txt", ios::in);
@@ -205,6 +250,15 @@ int main() {
     //cout<<"timeleft:"<<timeleft*16<<endl;
     outresult << endl;
     while (getline(readF, propertyid, ':')) {
+
+        if(ptnet->NUPN)
+        {
+            nupn_graph = new NUPN_RG(ptnet);
+        }
+        else{
+            graph = new RG(ptnet);
+        }
+
         timeleft = totalruntime / formula_num;
         int timetemp;
 
@@ -292,6 +346,14 @@ int main() {
 
         formula_num--;
         totalruntime = totalruntime - (timetemp - timeleft);
+
+        if(ptnet->NUPN)
+        {
+            delete nupn_graph;
+        }
+        else{
+            delete graph;
+        }
     }
 
     endtime = get_time();
@@ -320,7 +382,7 @@ int main() {
 //    endtime = get_time();
 //    cout<<"RUNTIME:"<<endtime-starttime<<endl;
 //    delete graph1;
+    DestroyGlobalMemPool() ;
     delete ptnet;
-    delete graph;
     return 0;
 }

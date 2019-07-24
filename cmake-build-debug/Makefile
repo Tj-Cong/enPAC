@@ -123,6 +123,33 @@ enPAC_2020_3_0/fast:
 	$(MAKE) -f CMakeFiles/enPAC_2020_3_0.dir/build.make CMakeFiles/enPAC_2020_3_0.dir/build
 .PHONY : enPAC_2020_3_0/fast
 
+CMemoryPool.o: CMemoryPool.cpp.o
+
+.PHONY : CMemoryPool.o
+
+# target to build an object file
+CMemoryPool.cpp.o:
+	$(MAKE) -f CMakeFiles/enPAC_2020_3_0.dir/build.make CMakeFiles/enPAC_2020_3_0.dir/CMemoryPool.cpp.o
+.PHONY : CMemoryPool.cpp.o
+
+CMemoryPool.i: CMemoryPool.cpp.i
+
+.PHONY : CMemoryPool.i
+
+# target to preprocess a source file
+CMemoryPool.cpp.i:
+	$(MAKE) -f CMakeFiles/enPAC_2020_3_0.dir/build.make CMakeFiles/enPAC_2020_3_0.dir/CMemoryPool.cpp.i
+.PHONY : CMemoryPool.cpp.i
+
+CMemoryPool.s: CMemoryPool.cpp.s
+
+.PHONY : CMemoryPool.s
+
+# target to generate assembly for a file
+CMemoryPool.cpp.s:
+	$(MAKE) -f CMakeFiles/enPAC_2020_3_0.dir/build.make CMakeFiles/enPAC_2020_3_0.dir/CMemoryPool.cpp.s
+.PHONY : CMemoryPool.cpp.s
+
 Data_Structures.o: Data_Structures.cpp.o
 
 .PHONY : Data_Structures.o
@@ -537,6 +564,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... enPAC_2020_3_0"
 	@echo "... edit_cache"
+	@echo "... CMemoryPool.o"
+	@echo "... CMemoryPool.i"
+	@echo "... CMemoryPool.s"
 	@echo "... Data_Structures.o"
 	@echo "... Data_Structures.i"
 	@echo "... Data_Structures.s"
