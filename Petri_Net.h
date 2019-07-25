@@ -12,6 +12,8 @@
 #include <sstream>
 #include "tinyxml.h"
 #include <cmath>
+#include <google/tcmalloc.h>
+
 using namespace std;
 
 #define MultiFactor 1.3

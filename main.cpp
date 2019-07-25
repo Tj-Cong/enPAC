@@ -5,6 +5,7 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <google/tcmalloc.h>
 
 using namespace std;
 
@@ -385,7 +386,7 @@ int main0() {
 
 int main()
 {
-    CreateGlobalMemPool();
+//    CreateGlobalMemPool();
     double starttime, endtime;
     starttime = get_time();
 
@@ -400,16 +401,28 @@ int main()
         ptnet->readPNML(filename);
     }
 
-    NUPN_RG *graph = new NUPN_RG(ptnet);
-    NUPN_RGNode *initnode=graph->RGinitialnode();
+//    NUPN_RG *graph = new NUPN_RG(ptnet);
+//    NUPN_RGNode *initnode=graph->RGinitialnode();
+//    graph->Generate(initnode);
+//    cout<<"STATESPACE:"<<graph->nodecount<<endl;
+//    endtime = get_time();
+//    cout<<"RUNTIME:"<<endtime-starttime<<endl;
+//    cout<<endl;
+//    print_info();
+//    delete ptnet;
+//    delete graph;
+
+    RG *graph = new RG(ptnet);
+    RGNode *initnode = graph->RGinitialnode();
     graph->Generate(initnode);
-    cout<<"STATESPACE:"<<graph->nodecount<<endl;
+    cout<<"STATESPACE: "<<graph->nodecount<<endl;
     endtime = get_time();
     cout<<"RUNTIME:"<<endtime-starttime<<endl;
     cout<<endl;
-    print_info();
+    cout<<endl;
     delete ptnet;
     delete graph;
-    DestroyGlobalMemPool();
+    print_info();
+//    DestroyGlobalMemPool();
     return 0;
 }

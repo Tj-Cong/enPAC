@@ -5,25 +5,27 @@
 #include<set>
 #include<algorithm>
 #include"Lexer.h"
+#include <google/tcmalloc.h>
+
 using namespace std;
-#define max_set_num 1000               //Old, New, NextÖÐ¼¯ºÏÔªËØ×î´ó¸öÊý
+#define max_set_num 1000               //Old, New, Nextï¿½Ð¼ï¿½ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define max_incoming 1000
 #define max_nodes_num 1000
 
 class state_stack;
 class AP_disj;
-/**********************Óï·¨Ê÷ÓÃµ½µÄÊý¾Ý½á¹¹***************************/
+/**********************ï¿½ï·¨ï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý½á¹¹***************************/
 enum character_type {
-	unary_op,                   //µ¥Ä¿ÔËËã·û
-	binary_op,                  //Ë«Ä¿ÔËËã·û
-	AP,                             //Ô­×ÓÃüÌâ£¬°üÀ¨Æä·ñ¶¨ÐÎÊ½
+	unary_op,                   //ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
+	binary_op,                  //Ë«Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
+	AP,                             //Ô­ï¿½ï¿½ï¿½ï¿½ï¿½â£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 };
 enum privilege { unary=1, R_and_U=2, And=3, Or=4, Impli=5, Equ=6, root=7 };
 typedef struct Syntax_Tree_Node
 {
-	string character;         //¸Ã½Úµã´ú±íµÄÖ÷Âß¼­ÔËËã·û»òÔ­×ÓÃüÌâ
-	string formula;            //¸Ã½Úµã´ú±íµÄ¹«Ê½
-	character_type ctype;         //½ÚµãÀàÐÍ
+	string character;         //ï¿½Ã½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	string formula;            //ï¿½Ã½Úµï¿½ï¿½ï¿½ï¿½Ä¹ï¿½Ê½
+	character_type ctype;         //ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½
 	state_stack *cfnormal;
 	AP_disj *props;
 	bool isGetCF=false;
@@ -32,7 +34,7 @@ typedef struct Syntax_Tree_Node
 	Syntax_Tree_Node *parent;
 }ST_Node, *STNode;
 
-/*********************Äæ²¨À¼Ê½ÓÃµ½µÄ¶ÑÕ»½á¹¹************************/
+/*********************ï¿½æ²¨ï¿½ï¿½Ê½ï¿½Ãµï¿½ï¿½Ä¶ï¿½Õ»ï¿½á¹¹************************/
 typedef struct stack_unit
 {
 	word w;
@@ -40,7 +42,7 @@ typedef struct stack_unit
 	stack_unit *next;
 }LSNode;
 
-class list_stack           //Õ»Êý¾Ý½á¹¹
+class list_stack           //Õ»ï¿½ï¿½ï¿½Ý½á¹¹
 {
 private:
 	LSNode *top;
@@ -70,10 +72,10 @@ public:
 };
 
 /********************CF_Tree Date_Structures**********************/
-//CFÓï·¨Ê÷µÄÒ¶×Ó½Úµã£¬ Ã¿Ò»¸öÒ¶×Ó½Úµã´ú±íCF·¶Ê½µÄ»ù±¾½á¹¹
-//»ù±¾½á¹¹ÓÐÁ½²¿·Ö×é³É£¬Ò»¸öÊÇ×ªÒÆÌõ¼þ£¬ÁíÒ»¸öÊÇÏÂÒ»¸ö×´Ì¬
-//ÏÂÒ»¸ö×´Ì¬ÊÇÓÉLTL¹«Ê½µÄ×ÓÊ½×Ó×é³É£¬¼´ÓÉÓï·¨Ê÷ÖÐµÄ½Úµã×é³ÉµÄ¼¯ºÏ
-typedef struct CFTLeaf        //CFÓï·¨Ê÷Ò¶×Ó½Úµã
+//CFï¿½ï·¨ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½Ó½Úµã£¬ Ã¿Ò»ï¿½ï¿½Ò¶ï¿½Ó½Úµï¿½ï¿½ï¿½ï¿½CFï¿½ï¿½Ê½ï¿½Ä»ï¿½ï¿½ï¿½ï¿½á¹¹
+//ï¿½ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½Ò»ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬
+//ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½LTLï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï·¨ï¿½ï¿½ï¿½ÐµÄ½Úµï¿½ï¿½ï¿½ÉµÄ¼ï¿½ï¿½ï¿½
+typedef struct CFTLeaf        //CFï¿½ï·¨ï¿½ï¿½Ò¶ï¿½Ó½Úµï¿½
 {
 	set<string> trscod;         //transition condition beita
 	formula_stack xstate;       //next state
@@ -121,10 +123,10 @@ public:
     int size();
 };
 
-typedef struct CF_Tree_Node  //CFÓï·¨Ê÷½Úµã
+typedef struct CF_Tree_Node  //CFï¿½ï·¨ï¿½ï¿½ï¿½Úµï¿½
 {
 	string character;
-	state_stack ss;          //ssÖÐ´æ´¢µÄ¸Ã½ÚµãµÄËùÓÐ»ù±¾½á¹¹£¬¼´ËûµÄCF·¶Ê½
+	state_stack ss;          //ssï¿½Ð´æ´¢ï¿½Ä¸Ã½Úµï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CFï¿½ï¿½Ê½
 	CF_Tree_Node *nleft;
 	CF_Tree_Node *nright;
 	CFTreeLeaf *lleft;

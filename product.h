@@ -59,15 +59,15 @@ public:
     void pop(Product<rgnode> *n);
     ~hashtable();
 
-    void *operator new(std::size_t ObjectSize)
-    {
-        return g_ptrMemPool->GetMemory(ObjectSize) ;
-    }
-
-    void operator delete(void *ptrObject, std::size_t ObjectSize)
-    {
-        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-    }
+//    void *operator new(std::size_t ObjectSize)
+//    {
+//        return g_ptrMemPool->GetMemory(ObjectSize) ;
+//    }
+//
+//    void operator delete(void *ptrObject, std::size_t ObjectSize)
+//    {
+//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+//    }
 
 };
 
@@ -102,15 +102,15 @@ public:
     void printNegapth(ofstream &outpath);
     ~Product_Automata();
 
-    void *operator new(std::size_t ObjectSize)
-    {
-        return g_ptrMemPool->GetMemory(ObjectSize) ;
-    }
-
-    void operator delete(void *ptrObject, std::size_t ObjectSize)
-    {
-        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-    }
+//    void *operator new(std::size_t ObjectSize)
+//    {
+//        return g_ptrMemPool->GetMemory(ObjectSize) ;
+//    }
+//
+//    void operator delete(void *ptrObject, std::size_t ObjectSize)
+//    {
+//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+//    }
 };
 
 template <class rgnode>

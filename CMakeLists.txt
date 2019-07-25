@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.13)
 project(enPAC_2020_3_0)
 
 set(CMAKE_CXX_STANDARD 14)
+set(LINK_DIR /usr/local/lib)
+
+link_directories(${LINK_DIR})
+link_libraries(tcmalloc)
 
 include_directories(.)
 
@@ -37,3 +41,6 @@ add_executable(enPAC_2020_3_0
         IMemoryBlock.h
         SMemoryChunk.h
         main.cpp)
+
+
+target_link_libraries(enPAC_2020_3_0 tcmalloc)

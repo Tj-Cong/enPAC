@@ -2,6 +2,8 @@
 /*´Ê·¨·ÖÎöÆ÷*/
 #include<iostream>
 #include<string>
+#include <google/tcmalloc.h>
+
 using namespace std;
 #define ERROR 0
 #define OK 1

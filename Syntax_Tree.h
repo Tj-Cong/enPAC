@@ -1,5 +1,5 @@
 #pragma once
-/*Óï·¨·ÖÎöÆ÷*/
+/*ï¿½ï·¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 #include"Data_Structures.h"
 using namespace std;
 
@@ -22,20 +22,21 @@ class Syntax_Tree
 {
 public:
 	ST_Node *root;
-	list_stack Operator;            //²Ù×÷·ûÕ»
-	list_stack Operand;            //²Ù×÷ÊýÕ»
+	list_stack Operator;            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»
+	list_stack Operand;            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ»
 public:
 	Syntax_Tree();
 	void reverse_polish(Lexer lex);
-	void build_tree();             //½¨Á¢Õû¿ÃÓï·¨Ê÷
+	void build_tree();             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï·¨ï¿½ï¿½
 	void convert(ST_Node *T,formula_stack &Ustack);
 	void negconvert(ST_Node *T, formula_stack &Ustack);
 	void print_reverse_polish();
 	void print_syntax_tree(ST_Node *T, int n);
 	void print_state_stack(ST_Node *T, int n);
-	void simplify_LTL(ST_Node *T);                                        //»¯¼òLTL¹«Ê½
+	void simplify_LTL(ST_Node *T);                                        //ï¿½ï¿½ï¿½ï¿½LTLï¿½ï¿½Ê½
 	bool isTreeEqu(ST_Node *T1, ST_Node *T2);
 	void computeCurAP(ST_Node *T);
+	~Syntax_Tree();
 };
 
 
@@ -51,5 +52,6 @@ public:
 	void Disjunction(CFTreeNode *&ctn);  //convert to disjunction normal form
 	void DisjuncTreeBuilder(CFTreeNode *&ctn, state_stack ss);
 	void DelCFTree(CFTreeNode *ctn);
+	~CF_Tree();
 };
 

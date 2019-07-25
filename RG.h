@@ -12,10 +12,47 @@
 #include "CMemoryPool.h"
 using namespace std;
 
-#define RGTABLE_SIZE 100000000
+#define RGTABLE_SIZE 100000
 
 
 extern MemPool::CMemoryPool *g_ptrMemPool;
+
+typedef struct Bitfield
+{
+    unsigned int a0:1;
+    unsigned int a1:1;
+    unsigned int a2:1;
+    unsigned int a3:1;
+    unsigned int a4:1;
+    unsigned int a5:1;
+    unsigned int a6:1;
+    unsigned int a7:1;
+    unsigned int a8:1;
+    unsigned int a9:1;
+    unsigned int a10:1;
+    unsigned int a11:1;
+    unsigned int a12:1;
+    unsigned int a13:1;
+    unsigned int a14:1;
+    unsigned int a15:1;
+    unsigned int a16:1;
+    unsigned int a17:1;
+    unsigned int a18:1;
+    unsigned int a19:1;
+    unsigned int a20:1;
+    unsigned int a21:1;
+    unsigned int a22:1;
+    unsigned int a23:1;
+    unsigned int a24:1;
+    unsigned int a25:1;
+    unsigned int a26:1;
+    unsigned int a27:1;
+    unsigned int a28:1;
+    unsigned int a29:1;
+    unsigned int a30:1;
+    unsigned int a31:1;
+} myuint;
+
 
 /*********************Global Functions**********************/
 void DecToBinary(index_t DecNum, unsigned short *Binarystr);
@@ -37,15 +74,15 @@ public:
     NUPN_RGNode(NUM_t marking_length);
     index_t Hash(NUM_t marking_length);
     ~NUPN_RGNode();
-    void *operator new(std::size_t ObjectSize)
-    {
-        return g_ptrMemPool->GetMemory(ObjectSize) ;
-    }
-
-    void operator delete(void *ptrObject, std::size_t ObjectSize)
-    {
-        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-    }
+//    void *operator new(std::size_t ObjectSize)
+//    {
+//        return g_ptrMemPool->GetMemory(ObjectSize) ;
+//    }
+//
+//    void operator delete(void *ptrObject, std::size_t ObjectSize)
+//    {
+//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+//    }
 };
 
 class RGNode
@@ -59,15 +96,15 @@ public:
     index_t Hash(NUM_t placecount);
     ~RGNode();
 
-    void *operator new(std::size_t ObjectSize)
-    {
-        return g_ptrMemPool->GetMemory(ObjectSize) ;
-    }
-
-    void operator delete(void *ptrObject, std::size_t ObjectSize)
-    {
-        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-    }
+//    void *operator new(std::size_t ObjectSize)
+//    {
+//        return g_ptrMemPool->GetMemory(ObjectSize) ;
+//    }
+//
+//    void operator delete(void *ptrObject, std::size_t ObjectSize)
+//    {
+//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+//    }
 
 
 };
@@ -94,15 +131,15 @@ public:
     void printRGNode(RGNode *node);
     ~RG();
 
-        void *operator new(std::size_t ObjectSize)
-    {
-        return g_ptrMemPool->GetMemory(ObjectSize) ;
-    }
-
-    void operator delete(void *ptrObject, std::size_t ObjectSize)
-    {
-        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-    }
+//        void *operator new(std::size_t ObjectSize)
+//    {
+//        return g_ptrMemPool->GetMemory(ObjectSize) ;
+//    }
+//
+//    void operator delete(void *ptrObject, std::size_t ObjectSize)
+//    {
+//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+//    }
 };
 
 class NUPN_RG
@@ -124,14 +161,14 @@ public:
     NUPN_RGNode *RGcreatenode(NUPN_RGNode *curnode,int tranxum, bool &exist);
     void Generate(NUPN_RGNode *node);
     ~NUPN_RG();
-    void *operator new(std::size_t ObjectSize)
-    {
-        return g_ptrMemPool->GetMemory(ObjectSize) ;
-    }
-
-    void operator delete(void *ptrObject, std::size_t ObjectSize)
-    {
-        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-    }
+//    void *operator new(std::size_t ObjectSize)
+//    {
+//        return g_ptrMemPool->GetMemory(ObjectSize) ;
+//    }
+//
+//    void operator delete(void *ptrObject, std::size_t ObjectSize)
+//    {
+//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
+//    }
 };
 #endif //ENPAC_2020_3_0_RG_H
