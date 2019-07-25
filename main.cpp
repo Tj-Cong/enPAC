@@ -55,9 +55,9 @@ void DestroyGlobalMemPool()
 
 
 
-int main0() {
+int main() {
 
-    CreateGlobalMemPool() ;
+//    CreateGlobalMemPool() ;
     cout << "=================================================" << endl;
     cout << "=====This is our tool-enPAC for the MCC'2019=====" << endl;
     cout << "=================================================" << endl;
@@ -379,12 +379,12 @@ int main0() {
 //    endtime = get_time();
 //    cout<<"RUNTIME:"<<endtime-starttime<<endl;
 //    delete graph1;
-    DestroyGlobalMemPool() ;
+//    DestroyGlobalMemPool() ;
     delete ptnet;
     return 0;
 }
 
-int main()
+int main0()
 {
 //    CreateGlobalMemPool();
     double starttime, endtime;

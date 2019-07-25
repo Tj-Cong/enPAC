@@ -228,15 +228,15 @@ void Syntax_Tree::reverse_polish(Lexer lex)
 		node.w = curw;
 		node.prilevel = DecidePrilevel(curw.typenum);
 
-		if (isoperand(curw.typenum))             //ÊÇÔ­×ÓÃüÌâ
+		if (isoperand(curw.typenum))             //ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Operand.push_ls(node);
 		}
-		else if (curw.typenum == $Lpar)           //×óÀ¨ºÅ
+		else if (curw.typenum == $Lpar)           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			Operator.push_ls(node);
 		}
-		else if (curw.typenum == $Rpar)            //ÓÒÀ¨ºÅ
+		else if (curw.typenum == $Rpar)            //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			LSNode temp;
 			while (!Operator.istoplpar())
@@ -248,13 +248,13 @@ void Syntax_Tree::reverse_polish(Lexer lex)
 				}
 				Operand.push_ls(temp);
 			}
-			Operator.pop_ls();        //µ¯³ö×óÀ¨ºÅ
+			Operator.pop_ls();        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		}
 		else
 		{
 			if (Operator.istoplpar())
 				Operator.push_ls(node);
-			else if (node.prilevel <= Operator.topprilevel())    //±ÈÕ»¶¥ÔªËØÓÅÏÈ¼¶Òª¸ß£¬Ö±½ÓÑ¹Õ»
+			else if (node.prilevel <= Operator.topprilevel())    //ï¿½ï¿½Õ»ï¿½ï¿½Ôªï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½Òªï¿½ß£ï¿½Ö±ï¿½ï¿½Ñ¹Õ»
 			{
 				Operator.push_ls(node);
 			}
@@ -391,7 +391,7 @@ void Syntax_Tree::convert(ST_Node *T, formula_stack &Ustack)
 	if (T->character == "!")
 	{
 		p = T->parent;
-		if (p->left == T)              //TÊÇËû¸¸Ç×½ÚµãµÄ×ó×ÓÊ÷
+		if (p->left == T)              //Tï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			p->left = T->left;
 			T->left->parent = p;
@@ -1043,6 +1043,20 @@ void Syntax_Tree::computeCurAP(ST_Node *T) {
         }
     }
 }
+
+void Syntax_Tree::DelSynTree(ST_Node *T) {
+    if(T == NULL)
+        return;
+    if(T->left != NULL)
+        DelSynTree(T->left);
+    if(T->right!=NULL)
+        DelSynTree(T->right);
+    delete T;
+}
+
+Syntax_Tree::~Syntax_Tree() {
+    DelSynTree(root);
+}
 /****************************CF_Tree******************************/
 CF_Tree::CF_Tree()
 {
@@ -1189,7 +1203,7 @@ void CF_Tree::PrintCFTree(CFTreeNode *ctn, CFTreeLeaf *ctl, int n)
 }
 void CF_Tree::Disjunction(CFTreeNode *&ctn)
 {
-	//¼ôÖ¦
+	//ï¿½ï¿½Ö¦
 	/*if (ctn->character=="&&" && ctn->lleft != NULL)
 	{
 		if (isinclufalse(*ctn->lleft))
@@ -1208,7 +1222,7 @@ void CF_Tree::Disjunction(CFTreeNode *&ctn)
 		if (isinclufalse(*ctn->lright))
 		{
 			ctn->ss.clear();
-			if (ctn->nleft != NULL)       //ÄÚ´æ»ØÊÕ
+			if (ctn->nleft != NULL)       //ï¿½Ú´ï¿½ï¿½ï¿½ï¿½
 				DelCFTree(ctn->nleft);
 			delete ctn->lright;
 			ctn->lleft = ctn->lright = NULL;
@@ -1216,7 +1230,7 @@ void CF_Tree::Disjunction(CFTreeNode *&ctn)
 			return;
 		}
 	}*/
-	//ºóÐò±éÀú
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (ctn->nleft != NULL)
 		Disjunction(ctn->nleft);
 	if (ctn->nright != NULL)
@@ -1539,4 +1553,8 @@ void CF_Tree::DelCFTree(CFTreeNode *ctn)
 		DelCFTree(ctn->nright);
 	delete ctn->lright;
 	delete ctn;
+}
+
+CF_Tree::~CF_Tree() {
+    DelCFTree(root);
 }

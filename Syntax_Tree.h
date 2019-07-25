@@ -36,6 +36,7 @@ public:
 	void simplify_LTL(ST_Node *T);                                        //����LTL��ʽ
 	bool isTreeEqu(ST_Node *T1, ST_Node *T2);
 	void computeCurAP(ST_Node *T);
+	void DelSynTree(ST_Node *T);
 	~Syntax_Tree();
 };
 

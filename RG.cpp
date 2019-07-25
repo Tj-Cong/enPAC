@@ -143,12 +143,12 @@ void RG::getFireableTranx(Mark *curmark, index_t **isFirable, unsigned short &fi
     for(j;j<tlength;j++)
     {
         //对于第j个变迁
-        Transition tranx = ptnet->transition[j];
+        Transition *tranx = &ptnet->transition[j];
         firable = true;
 
         //遍历第j个变迁的所有前继库所
-        vector<SArc>::iterator iterpre = tranx.producer.begin();
-        vector<SArc>::iterator preend = tranx.producer.end();
+        vector<SArc>::iterator iterpre = tranx->producer.begin();
+        vector<SArc>::iterator preend = tranx->producer.end();
 
         //遍历ptnet.transition[j]的所有前继库所，看其token值是否大于weight
         for(iterpre; iterpre!=preend; iterpre++)
