@@ -17,7 +17,7 @@ using namespace std;
 
 extern MemPool::CMemoryPool *g_ptrMemPool;
 
-typedef struct Bitfield
+typedef struct Bitfielduint
 {
     unsigned int a0:1;
     unsigned int a1:1;
