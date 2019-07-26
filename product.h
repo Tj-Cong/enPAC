@@ -26,8 +26,11 @@ using namespace std;
 
 extern bool timeflag;    //超时标志
 void  sig_handler(int num);
-extern NUM_t placecount;
+extern NUM_t FIELDCOUNT;
 extern NUM_t MARKLEN;
+extern NUM_t placecount;
+extern bool NUPN;
+extern bool SAFE;
 
 /*******************************************/
 
@@ -232,6 +235,9 @@ Product_Automata<rgnode,rg_T>::Product_Automata(Petri *pt, rg_T* r, SBA *sba) {
     result = true;
     placecount = ptnet->placecount;
     MARKLEN = rg->RGNodelength;
+    FIELDCOUNT = ceil(double(MARKLEN)/(sizeof(myuint)*8));
+    NUPN = ptnet->NUPN;
+    SAFE = ptnet->NUPN;
 }
 
 /*bool Product_Automata::judgeF(string s)

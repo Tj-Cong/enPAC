@@ -24,17 +24,292 @@ void BinaryToDec(index_t &DecNum, unsigned short *Binarystr, NUM_t marklen)
 }
 
 
+void Bitfielduint::set(int index) {
+    switch (index)
+    {
+        case 0:{
+            a0 = 1;
+            break;
+        }
+        case 1:{
+            a1 =1;
+            break;
+        }
+        case 2:{
+            a2 = 1;
+            break;
+        }
+        case 3:{
+            a3 = 1;
+            break;
+        }
+        case 4:{
+            a4 = 1;
+            break;
+        }
+        case 5:{
+            a5 = 1;
+            break;
+        }
+        case 6:{
+            a6 = 1;
+            break;
+        }
+        case 7:{
+            a7 = 1;
+            break;
+        }
+        case 8:{
+            a8 = 1;
+            break;
+        }
+        case 9:{
+            a9 = 1;
+            break;
+        }
+        case 10:{
+            a10 = 1;
+            break;
+        }
+        case 11:{
+            a11 = 1;
+            break;
+        }
+        case 12:{
+            a12 = 1;
+            break;
+        }
+        case 13:{
+            a13 = 1;
+            break;
+        }
+        case 14:{
+            a14 = 1;
+            break;
+        }
+        case 15:{
+            a15 = 1;
+            break;
+        }
+        case 16:{
+            a16 = 1;
+            break;
+        }
+        case 17:{
+            a17 = 1;
+            break;
+        }
+        case 18:{
+            a18 = 1;
+            break;
+        }
+        case 19:{
+            a19 = 1;
+            break;
+        }
+        case 20:{
+            a20 = 1;
+            break;
+        }
+        case 21:{
+            a21 = 1;
+            break;
+        }
+        case 22:{
+            a22 = 1;
+            break;
+        }
+        case 23:{
+            a23 = 1;
+            break;
+        }
+        case 24:{
+            a24 = 1;
+            break;
+        }
+        case 25:{
+            a25 = 1;
+            break;
+        }
+        case 26:{
+            a26 = 1;
+            break;
+        }
+        case 27:{
+            a27 = 1;
+            break;
+        }
+        case 28:{
+            a28 = 1;
+            break;
+        }
+        case 29:{
+            a29 = 1;
+            break;
+        }
+        case 30:{
+            a30 = 1;
+            break;
+        }
+        case 31:{
+            a31 = 1;
+            break;
+        }
+        default:{
+            cerr<<"Bitfield wrong index"<<endl;
+            exit(0);
+        }
+    }
+}
+
+void Bitfielduint::reset(int index) {
+    switch (index)
+    {
+        case 0:{
+            a0 = 0;
+            break;
+        }
+        case 1:{
+            a1 =0;
+            break;
+        }
+        case 2:{
+            a2 = 0;
+            break;
+        }
+        case 3:{
+            a3 = 0;
+            break;
+        }
+        case 4:{
+            a4 = 0;
+            break;
+        }
+        case 5:{
+            a5 = 0;
+            break;
+        }
+        case 6:{
+            a6 = 0;
+            break;
+        }
+        case 7:{
+            a7 = 0;
+            break;
+        }
+        case 8:{
+            a8 = 0;
+            break;
+        }
+        case 9:{
+            a9 = 0;
+            break;
+        }
+        case 10:{
+            a10 = 0;
+            break;
+        }
+        case 11:{
+            a11 = 0;
+            break;
+        }
+        case 12:{
+            a12 = 0;
+            break;
+        }
+        case 13:{
+            a13 = 0;
+            break;
+        }
+        case 14:{
+            a14 = 0;
+            break;
+        }
+        case 15:{
+            a15 = 0;
+            break;
+        }
+        case 16:{
+            a16 = 0;
+            break;
+        }
+        case 17:{
+            a17 = 0;
+            break;
+        }
+        case 18:{
+            a18 = 0;
+            break;
+        }
+        case 19:{
+            a19 = 0;
+            break;
+        }
+        case 20:{
+            a20 = 0;
+            break;
+        }
+        case 21:{
+            a21 = 0;
+            break;
+        }
+        case 22:{
+            a22 = 0;
+            break;
+        }
+        case 23:{
+            a23 = 0;
+            break;
+        }
+        case 24:{
+            a24 = 0;
+            break;
+        }
+        case 25:{
+            a25 = 0;
+            break;
+        }
+        case 26:{
+            a26 = 0;
+            break;
+        }
+        case 27:{
+            a27 = 0;
+            break;
+        }
+        case 28:{
+            a28 = 0;
+            break;
+        }
+        case 29:{
+            a29 = 0;
+            break;
+        }
+        case 30:{
+            a30 = 0;
+            break;
+        }
+        case 31:{
+            a31 = 0;
+            break;
+        }
+        default:{
+            cerr<<"Bitfield wrong index"<<endl;
+            exit(0);
+        }
+    }
+}
 /*************************************************************/
-NUPN_RGNode::NUPN_RGNode(NUM_t marking_length) {
-    marking = new bitset<1>[marking_length];
+NUPN_RGNode::NUPN_RGNode() {
+    marking = new myuint[FIELDCOUNT];
     next = NULL;
 }
 
-index_t NUPN_RGNode::Hash(NUM_t marking_length) {
+index_t NUPN_RGNode::Hash() {
     unsigned int seed = 3;
     unsigned int hash = 0;
     int i = 0;
-    for(i; i<marking_length; i++){
+    for(i; i<MARKLEN; i++){
         hash = hash*seed + (unsigned int)marking[i].to_ulong();
     }
     //int result = hash & 0x7fffffff;
@@ -43,53 +318,6 @@ index_t NUPN_RGNode::Hash(NUM_t marking_length) {
 
 NUPN_RGNode::~NUPN_RGNode() {
     delete [] marking;
-}
-/*****************************************************************/
-/*RGNode::RGNode(int marking_length)
- * function: 构造函数，为marking数组申请空间，申请大小为哈希表大小，
- * 并全部初始化为0；
- * in: marking_length, 库所哈希表大小；
- * */
-RGNode::RGNode(NUM_t marking_length) {
-    marking = new Mark[marking_length];
-    memset(marking, 0, sizeof(Mark)*marking_length);
-    next = NULL;
-}
-
-/*int RGNode::tokensum(int marking_length)
- * function: 求当前marking每个库所的token和
- * in: marking_length, 状态数组长度
- * out: sum, token和
- * */
-NUM_t RGNode::tokensum(NUM_t marking_length) {
-    NUM_t sum = 0;
-    for(int i=0; i<marking_length; i++){
-        sum += marking[i];
-    }
-    return sum;
-}
-
-/*int RGNode::Hash(int length)
- * function: 求当前marking的哈希值；哈希函数类似于BKDR，种子的值取3；
- * in: length, 状态数组长度
- * out: hash value;
- * */
-index_t RGNode::Hash(NUM_t length) {
-    unsigned int seed = 3;
-    unsigned int hash = 0;
-    int i = 0;
-    for(i; i<length; i++){
-        hash = hash*seed + marking[i];
-    }
-    //int result = hash & 0x7fffffff;
-    return hash;
-}
-
-/*RGNode::~RGNode()
- * function： 析构函数，释放空间
- * */
-RGNode::~RGNode() {
-    delete marking;
 }
 
 /****************************RG*****************************/

@@ -98,6 +98,7 @@ public:
     PT_Size size;
     NUM_t hash_conflict_times;
     bool NUPN;
+    bool SAFE;
 public:
     Petri();
     void getSize(char *filename);

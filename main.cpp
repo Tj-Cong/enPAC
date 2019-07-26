@@ -9,9 +9,11 @@
 
 using namespace std;
 
-size_t  heap_malloc_total, heap_free_total,mmap_total, mmap_count;
+NUM_t FIELDCOUNT;
 NUM_t placecount;
 NUM_t MARKLEN;
+bool NUPN;
+bool SAFE;
 
 MemPool::CMemoryPool *g_ptrMemPool = NULL  ; //!< Global MemoryPool (Testing purpose)
 
