@@ -24,6 +24,11 @@ typedef unsigned short weight_t;
 typedef unsigned short initM_t;
 typedef unsigned int NUM_t;
 
+extern NUM_t FIELDCOUNT;   //占用bitfield个数，仅仅用于NUPN和SAFE网
+extern NUM_t MARKLEN;      //Petri网
+extern NUM_t placecount;   //Petri网库所个数
+extern bool NUPN;          //当前Petri网是否有NUPN信息
+extern bool SAFE;          //当前Petri网是否为安全网
 
 /****************Global Functions**************/
 unsigned int BKDRHash(string str);
@@ -112,6 +117,7 @@ public:
     index_t getPosition(string str, bool &isplace);
     void readPNML(char *filename);
     void computeUnitMarkLen();
+    void judgeSAFE();
     void printPlace();
     void printTransition();
     void printGraph();

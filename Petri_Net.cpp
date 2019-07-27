@@ -76,6 +76,7 @@ Petri::Petri() {
     arccount = 0;
     hash_conflict_times = 0;
     NUPN = false;
+    SAFE = false;
 }
 
 /*析构函数
@@ -84,6 +85,9 @@ Petri::~Petri() {
     delete [] place;
     delete [] transition;
     delete [] arc;
+    delete [] Directory;
+    if(NUPN)
+        delete [] unittable;
 }
 
 /*void getSize();
@@ -131,7 +135,7 @@ void Petri::getSize(char *filename) {
             else if(value == "toolspecific")
             {
                 NUPN = true;
-
+                SAFE = false;
                 TiXmlElement *PTsize = pageElement->FirstChildElement("size");
                 TiXmlAttribute *attr = PTsize->FirstAttribute();
                 placecount = stringToNum(attr->Value());
@@ -153,7 +157,7 @@ void Petri::getSize(char *filename) {
                 allocHashTable();
 
                 preNUPN(structure);
-
+                delete mydoc;
                 return;
             }
             pageElement = pageElement->NextSiblingElement();
@@ -167,6 +171,7 @@ void Petri::getSize(char *filename) {
     Dicsize = size.placesum + size.transitionsum;
 
     allocHashTable();
+    delete mydoc;
 }
 
 /*void Petri::preNUPN(TiXmlElement *structure)
@@ -284,7 +289,7 @@ index_t Petri::arrange(string id, bool isPlace) {
  * out:place's index
  * */
 index_t Petri::getPPosition(string str) {
-    int idx = BKDRHash(str);
+    index_t idx = BKDRHash(str);
     idx = idx % Dicsize;
 
     index_t start = idx;
@@ -487,6 +492,7 @@ void Petri::readNUPN(char *filename) {
     }
 
     computeUnitMarkLen();
+    delete mydoc;
 }
 
 /*void Petri::readPNML(char *filename)
@@ -626,6 +632,7 @@ void Petri::readPNML(char *filename) {
             }
         }
     }
+    delete mydoc;
 }
 
 
@@ -645,6 +652,44 @@ void Petri::computeUnitMarkLen() {
     }
 }
 
+void Petri::judgeSAFE() {
+    if(NUPN){
+        SAFE = false;
+        return;
+    }
+    char filename[] = "GenericPropertiesVerdict.xml";
+    TiXmlDocument *mydoc = new TiXmlDocument(filename);
+    if(!mydoc->LoadFile()) {
+        cerr << mydoc->ErrorDesc() <<endl;
+    }
+
+    //获得根元素
+    TiXmlElement *root = mydoc->RootElement();
+    if(root == NULL) {
+        cerr<<"Failed to load file: no root element!"<<endl;
+        mydoc->Clear();
+    }
+
+    TiXmlElement *verdict = root->FirstChildElement("verdict");
+    while(verdict)
+    {
+        TiXmlAttribute *attr = verdict->FirstAttribute();
+        attr = attr->Next();
+        string value = attr->Value();
+        if(value == "SAFE"){
+            attr = attr->Next();
+            string isafe = attr->Value();
+            if(isafe == "true"){
+                SAFE = true;
+            }
+            else {
+                SAFE = false;
+            }
+            return;
+        }
+        verdict = verdict->NextSiblingElement();
+    }
+}
 /*void printPlace();
  * function:按以下格式打印出所有的库所：
  * Total places：

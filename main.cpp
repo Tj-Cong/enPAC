@@ -6,14 +6,15 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <google/tcmalloc.h>
+#include <google/malloc_extension.h>
 
 using namespace std;
 
 NUM_t FIELDCOUNT;
 NUM_t placecount;
 NUM_t MARKLEN;
-bool NUPN;
-bool SAFE;
+bool NUPN = false;
+bool SAFE = false;
 
 MemPool::CMemoryPool *g_ptrMemPool = NULL  ; //!< Global MemoryPool (Testing purpose)
 
@@ -90,8 +91,7 @@ int main() {
     double starttime, endtime;
     starttime = get_time();
     Petri *ptnet = new Petri;
-    NUPN_RG *nupn_graph = NULL;
-    RG *graph = NULL;
+    ptnet->judgeSAFE();
     char filename[]="model.pnml";
     ptnet->getSize(filename);
     if(ptnet->NUPN)
@@ -102,17 +102,9 @@ int main() {
         ptnet->readPNML(filename);
     }
 
-
-
-//    NUPN_RGNode *initnode=graph->RGinitialnode();
-//    graph->Generate(initnode);
-//    cout<<"STATESPACE:"<<graph->nodecount<<endl;
-//    endtime = get_time();
-//    cout<<"RUNTIME:"<<endtime-starttime<<endl;
-//    cout<<endl;
-//    print_info();
-//    malloc_stats();
-
+    setGlobalValue(ptnet);
+    BitRG *bitgraph;
+    RG *graph;
     string S, propertyid; //propertyid stores names of LTL formulae
     char form[20000];     //store LTL formulae
 
@@ -127,9 +119,9 @@ int main() {
 
     while (getline(read, propertyid, ':')) {
 
-        if(ptnet->NUPN)
+        if(NUPN || SAFE)
         {
-            nupn_graph = new NUPN_RG(ptnet);
+            bitgraph = new BitRG(ptnet);
         }
         else{
             graph = new RG(ptnet);
@@ -201,10 +193,10 @@ int main() {
         sba->Compress();
         delete tba;
         //cout << "begin:ON-THE-FLY" << endl;
-        if(ptnet->NUPN)
+        if(NUPN || SAFE)
         {
-            Product_Automata<NUPN_RGNode, NUPN_RG> * product;
-            product = new Product_Automata<NUPN_RGNode, NUPN_RG>(ptnet, nupn_graph, sba);
+            Product_Automata<BitRGNode, BitRG> * product;
+            product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
             product->ModelChecker(propertyid,timeleft);
             int ret = product->getresult();
 
@@ -228,15 +220,15 @@ int main() {
         totalruntime = totalruntime - (timetemp - timeleft);
 
 
-        if(ptnet->NUPN)
+        if(NUPN || SAFE)
         {
-            delete nupn_graph;
+            delete bitgraph;
         }
         else{
             delete graph;
         }
 
-
+        MallocExtension::instance()->ReleaseFreeMemory();
     }
 
     ifstream readF("LTLFireability.txt", ios::in);
@@ -250,9 +242,9 @@ int main() {
     outresult << endl;
     while (getline(readF, propertyid, ':')) {
 
-        if(ptnet->NUPN)
+        if(NUPN || SAFE)
         {
-            nupn_graph = new NUPN_RG(ptnet);
+            bitgraph = new BitRG(ptnet);
         }
         else{
             graph = new RG(ptnet);
@@ -323,9 +315,9 @@ int main() {
         delete tba;
         //cout << "begin:ON-THE-FLY" << endl;
 
-        if(ptnet->NUPN)
+        if(NUPN || SAFE)
         {
-            Product_Automata<NUPN_RGNode,NUPN_RG> *product = new Product_Automata<NUPN_RGNode,NUPN_RG>(ptnet,nupn_graph,sba);
+            Product_Automata<BitRGNode,BitRG> *product = new Product_Automata<BitRGNode,BitRG>(ptnet,bitgraph,sba);
             product->ModelChecker(propertyid,timeleft);
             int ret = product->getresult();
 
@@ -346,54 +338,32 @@ int main() {
         formula_num--;
         totalruntime = totalruntime - (timetemp - timeleft);
 
-        if(ptnet->NUPN)
+        if(NUPN || SAFE)
         {
-            delete nupn_graph;
+            delete bitgraph;
         }
         else{
             delete graph;
         }
+
+        MallocExtension::instance()->ReleaseFreeMemory();
     }
 
     endtime = get_time();
     cout<<"RUNTIME:"<<endtime-starttime<<endl;
-//    ptnet.printPlace();
-//    ptnet.printTransition();
-//    ptnet.printGraph();
-//    ptnet.printUnit();
-
-//    RG *graph = new RG(&ptnet);
-//    RGNode *initnode = graph->RGinitialnode();
-//    graph->Generate(initnode);
-//    cout<<"STATESPACE: "<<graph->nodecount<<endl;
-//    endtime = get_time();
-//    cout<<"RUNTIME:"<<endtime-starttime<<endl;
-//    cout<<endl;
-//    print_info();
-//    cout<<endl;
-//    delete graph;
-//    print_info();
-
-//    RG *graph1 = new RG(&ptnet);
-//    RGNode *initnode1 = graph1->RGinitialnode();
-//    graph1->Generate(initnode1);
-//    cout<<"STATESPACE: "<<graph1->nodecount<<endl;
-//    endtime = get_time();
-//    cout<<"RUNTIME:"<<endtime-starttime<<endl;
-//    delete graph1;
-//    DestroyGlobalMemPool() ;
     delete ptnet;
     return 0;
 }
 
 int main0()
 {
-//    CreateGlobalMemPool();
+    //CreateGlobalMemPool();
     double starttime, endtime;
     starttime = get_time();
 
     Petri *ptnet = new Petri;
     char filename[]="model.pnml";
+    ptnet->judgeSAFE();
     ptnet->getSize(filename);
     if(ptnet->NUPN)
     {
@@ -402,6 +372,8 @@ int main0()
     else{
         ptnet->readPNML(filename);
     }
+
+    setGlobalValue(ptnet);
 
 //    NUPN_RG *graph = new NUPN_RG(ptnet);
 //    NUPN_RGNode *initnode=graph->RGinitialnode();
@@ -414,17 +386,34 @@ int main0()
 //    delete ptnet;
 //    delete graph;
 
-    RG *graph = new RG(ptnet);
-    RGNode *initnode = graph->RGinitialnode();
-    graph->Generate(initnode);
-    cout<<"STATESPACE: "<<graph->nodecount<<endl;
-    endtime = get_time();
-    cout<<"RUNTIME:"<<endtime-starttime<<endl;
-    cout<<endl;
-    cout<<endl;
+    if(NUPN || SAFE)
+    {
+        BitRG *graph = new BitRG(ptnet);
+        BitRGNode *initnode = graph->RGinitialnode();
+        graph->Generate(initnode);
+        cout<<"STATESPACE: "<<graph->nodecount<<endl;
+        endtime = get_time();
+        cout<<"RUNTIME:"<<endtime-starttime<<endl;
+        cout<<endl;
+        cout<<endl;
+        print_info();
+        delete graph;
+    }
+    else {
+        RG *graph = new RG(ptnet);
+        RGNode *initnode = graph->RGinitialnode();
+        graph->Generate(initnode);
+        cout<<"STATESPACE: "<<graph->nodecount<<endl;
+        endtime = get_time();
+        cout<<"RUNTIME:"<<endtime-starttime<<endl;
+        cout<<endl;
+        cout<<endl;
+        print_info();
+        delete graph;
+    }
+
     delete ptnet;
-    delete graph;
     print_info();
-//    DestroyGlobalMemPool();
+    //DestroyGlobalMemPool();
     return 0;
 }

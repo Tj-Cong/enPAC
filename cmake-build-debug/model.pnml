@@ -1,348 +1,278 @@
 <?xml version="1.0"?>
 <pnml xmlns="http://www.pnml.org/version-2009/grammar/pnml">
-  <net id="ClientsAndServers-PT-N0002P1" type="http://www.pnml.org/version-2009/grammar/ptnet">
+  <net id="SmallOperatingSystem-PT-MT0032DC0016" type="http://www.pnml.org/version-2009/grammar/ptnet">
     <page id="page0">
       <name>
         <text>DefaultPage</text>
       </name>
-      <place id="Uf">
+      <place id="TaskOnDisk">
         <name>
-          <text>Uf</text>
+          <graphics>
+            <offset x="-41" y="290"/>
+          </graphics>
+          <text>TaskOnDisk</text>
         </name>
+        <graphics>
+          <position x="340" y="340"/>
+        </graphics>
         <initialMarking>
+          <graphics>
+            <offset x="-68" y="271"/>
+          </graphics>
+          <text>32</text>
+        </initialMarking>
+      </place>
+      <place id="FreeMemSegment">
+        <name>
+          <graphics>
+            <offset x="-153" y="-144"/>
+          </graphics>
+          <text>FreeMemSegment</text>
+        </name>
+        <graphics>
+          <position x="-10" y="-10"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="-133" y="-144"/>
+          </graphics>
+          <text>32</text>
+        </initialMarking>
+      </place>
+      <place id="DiskControllerUnit">
+        <name>
+          <graphics>
+            <offset x="-170" y="-40"/>
+          </graphics>
+          <text>DiskControllerUnit</text>
+        </name>
+        <graphics>
+          <position x="195" y="195"/>
+        </graphics>
+        <initialMarking>
+          <graphics>
+            <offset x="-216" y="-19"/>
+          </graphics>
           <text>16</text>
         </initialMarking>
       </place>
-      <place id="SA">
+      <place id="TransferToDisk">
         <name>
-          <text>SA</text>
+          <graphics>
+            <offset x="-20" y="-2"/>
+          </graphics>
+          <text>TransferToDisk</text>
         </name>
+        <graphics>
+          <position x="566" y="161"/>
+        </graphics>
       </place>
-      <place id="SF">
+      <place id="TaskReady">
         <name>
-          <text>SF</text>
+          <graphics>
+            <offset x="62" y="-16"/>
+          </graphics>
+          <text>TaskReady</text>
         </name>
+        <graphics>
+          <position x="246" y="266"/>
+        </graphics>
       </place>
-      <place id="SR">
+      <place id="TaskSuspended">
         <name>
-          <text>SR</text>
+          <graphics>
+            <offset x="-20" y="-2"/>
+          </graphics>
+          <text>TaskSuspended</text>
         </name>
+        <graphics>
+          <position x="566" y="291"/>
+        </graphics>
       </place>
-      <place id="CA">
+      <place id="CPUUnit">
         <name>
-          <text>CA</text>
+          <graphics>
+            <offset x="-314" y="-280"/>
+          </graphics>
+          <text>CPUUnit</text>
         </name>
-      </place>
-      <place id="CF">
-        <name>
-          <text>CF</text>
-        </name>
-      </place>
-      <place id="StF">
-        <name>
-          <text>StF</text>
-        </name>
-      </place>
-      <place id="CG">
-        <name>
-          <text>CG</text>
-        </name>
-      </place>
-      <place id="CR">
-        <name>
-          <text>CR</text>
-        </name>
-      </place>
-      <place id="MpA">
-        <name>
-          <text>MpA</text>
-        </name>
-      </place>
-      <place id="MtF">
-        <name>
-          <text>MtF</text>
-        </name>
-      </place>
-      <place id="SG">
-        <name>
-          <text>SG</text>
-        </name>
-      </place>
-      <place id="MpG">
-        <name>
-          <text>MpG</text>
-        </name>
-      </place>
-      <place id="MwU">
-        <name>
-          <text>MwU</text>
-        </name>
-      </place>
-      <place id="Mi">
-        <name>
-          <text>Mi</text>
-        </name>
+        <graphics>
+          <position x="75" y="75"/>
+        </graphics>
         <initialMarking>
-          <text>3</text>
+          <graphics>
+            <offset x="-333" y="-259"/>
+          </graphics>
+          <text>32</text>
         </initialMarking>
       </place>
-      <place id="Si">
+      <place id="ExecutingTask">
         <name>
-          <text>Si</text>
+          <graphics>
+            <offset x="26" y="-21"/>
+          </graphics>
+          <text>ExecutingTask</text>
         </name>
-        <initialMarking>
-          <text>4</text>
-        </initialMarking>
+        <graphics>
+          <position x="406" y="386"/>
+        </graphics>
       </place>
-      <place id="StR">
+      <place id="LoadingMem">
         <name>
-          <text>StR</text>
+          <graphics>
+            <offset x="75" y="-3"/>
+          </graphics>
+          <text>LoadingMem</text>
         </name>
+        <graphics>
+          <position x="246" y="161"/>
+        </graphics>
       </place>
-      <place id="SwG">
+      <transition id="startLoading">
         <name>
-          <text>SwG</text>
+          <graphics>
+            <offset x="-22" y="3"/>
+          </graphics>
+          <text>startLoading</text>
         </name>
-      </place>
-      <place id="SpG">
-        <name>
-          <text>SpG</text>
-        </name>
-      </place>
-      <place id="SwA">
-        <name>
-          <text>SwA</text>
-        </name>
-      </place>
-      <place id="SpA">
-        <name>
-          <text>SpA</text>
-        </name>
-      </place>
-      <place id="CwA">
-        <name>
-          <text>CwA</text>
-        </name>
-      </place>
-      <place id="Cb">
-        <name>
-          <text>Cb</text>
-        </name>
-      </place>
-      <place id="CwG">
-        <name>
-          <text>CwG</text>
-        </name>
-      </place>
-      <place id="Ci">
-        <name>
-          <text>Ci</text>
-        </name>
-        <initialMarking>
-          <text>16</text>
-        </initialMarking>
-      </place>
-      <transition id="ssF">
-        <name>
-          <text>ssF</text>
-        </name>
+        <graphics>
+          <position x="245" y="102"/>
+        </graphics>
       </transition>
-      <transition id="srF">
+      <transition id="endLoading">
         <name>
-          <text>srF</text>
+          <graphics>
+            <offset x="68" y="3"/>
+          </graphics>
+          <text>endLoading</text>
         </name>
+        <graphics>
+          <position x="245" y="217"/>
+        </graphics>
       </transition>
-      <transition id="msA">
+      <transition id="endUnload">
         <name>
-          <text>msA</text>
+          <graphics>
+            <offset x="-22" y="5"/>
+          </graphics>
+          <text>endUnload</text>
         </name>
+        <graphics>
+          <position x="565" y="102"/>
+        </graphics>
       </transition>
-      <transition id="mfU">
+      <transition id="startUnload">
         <name>
-          <text>mfU</text>
+          <graphics>
+            <offset x="-22" y="3"/>
+          </graphics>
+          <text>startUnload</text>
         </name>
+        <graphics>
+          <position x="565" y="217"/>
+        </graphics>
       </transition>
-      <transition id="mrF">
+      <transition id="startFirst">
         <name>
-          <text>mrF</text>
+          <graphics>
+            <offset x="55" y="3"/>
+          </graphics>
+          <text>startFirst</text>
         </name>
+        <graphics>
+          <position x="245" y="337"/>
+        </graphics>
       </transition>
-      <transition id="msG">
+      <transition id="startNext">
         <name>
-          <text>msG</text>
+          <graphics>
+            <offset x="19" y="15"/>
+          </graphics>
+          <text>startNext</text>
         </name>
+        <graphics>
+          <position x="445" y="297"/>
+        </graphics>
       </transition>
-      <transition id="maU">
+      <transition id="suspend">
         <name>
-          <text>maU</text>
+          <graphics>
+            <offset x="-22" y="3"/>
+          </graphics>
+          <text>suspend</text>
         </name>
+        <graphics>
+          <position x="565" y="337"/>
+        </graphics>
       </transition>
-      <transition id="mrR">
+      <transition id="freeMemory">
         <name>
-          <text>mrR</text>
+          <graphics>
+            <offset x="-23" y="4"/>
+          </graphics>
+          <text>freeMemory</text>
         </name>
+        <graphics>
+          <position x="120" y="242"/>
+        </graphics>
       </transition>
-      <transition id="srR">
-        <name>
-          <text>srR</text>
-        </name>
-      </transition>
-      <transition id="ssR">
-        <name>
-          <text>ssR</text>
-        </name>
-      </transition>
-      <transition id="srG">
-        <name>
-          <text>srG</text>
-        </name>
-      </transition>
-      <transition id="ssG">
-        <name>
-          <text>ssG</text>
-        </name>
-      </transition>
-      <transition id="srA">
-        <name>
-          <text>srA</text>
-        </name>
-      </transition>
-      <transition id="ssA">
-        <name>
-          <text>ssA</text>
-        </name>
-      </transition>
-      <transition id="crA">
-        <name>
-          <text>crA</text>
-        </name>
-      </transition>
-      <transition id="csF">
-        <name>
-          <text>csF</text>
-        </name>
-      </transition>
-      <transition id="crG">
-        <name>
-          <text>crG</text>
-        </name>
-      </transition>
-      <transition id="csR">
-        <name>
-          <text>csR</text>
-        </name>
-      </transition>
-      <arc id="cId-900429218179539815645" source="mfU" target="Uf">
+      <arc id="cId-816392210690751335719" source="TaskOnDisk" target="startLoading">
       </arc>
-      <arc id="cId-895637014703672196346" source="Uf" target="maU">
+      <arc id="cId-816061714047414510020" source="startLoading" target="LoadingMem">
       </arc>
-      <arc id="cId-895637014703672196347" source="Mi" target="mrF">
+      <arc id="cId-816061714047414510021" source="LoadingMem" target="endLoading">
       </arc>
-      <arc id="cId-895637014703672196348" source="msG" target="Mi">
+      <arc id="cId-816061714047414510022" source="endLoading" target="TaskReady">
       </arc>
-      <arc id="cId-895637014703672196349" source="SG" target="srG">
+      <arc id="cId-816061714047414510023" source="FreeMemSegment" target="startLoading">
       </arc>
-      <arc id="cId-895637014703672196350" source="msA" target="SA">
+      <arc id="cId-816061714047414510026" source="TaskReady" target="startFirst">
       </arc>
-      <arc id="cId-895637014703672196351" source="SA" target="srA">
+      <arc id="cId-816061714047414510027" source="startFirst" target="ExecutingTask">
       </arc>
-      <arc id="cId-895637014703672196352" source="SF" target="mrF">
+      <arc id="cId-816061714047414510028" source="CPUUnit" target="startFirst">
       </arc>
-      <arc id="cId-895637014703672196353" source="ssF" target="SF">
+      <arc id="cId-816061714047414510029" source="CPUUnit" target="startNext">
       </arc>
-      <arc id="cId-895637014703672196354" source="SR" target="mrR">
+      <arc id="cId-816061714047414510030" source="suspend" target="CPUUnit">
       </arc>
-      <arc id="cId-895637014703672196355" source="ssR" target="SR">
+      <arc id="cId-816061714047414510031" source="ExecutingTask" target="suspend">
       </arc>
-      <arc id="cId-895637014703672196356" source="ssF" target="SwA">
+      <arc id="cId-816061714047414510032" source="TaskSuspended" target="startNext">
       </arc>
-      <arc id="cId-895637014703672196357" source="CA" target="crA">
+      <arc id="cId-816061714047414510033" source="startNext" target="ExecutingTask">
       </arc>
-      <arc id="cId-895637014703672196358" source="ssA" target="CA">
+      <arc id="cId-816061714047414510034" source="suspend" target="TaskSuspended">
       </arc>
-      <arc id="cId-895637014703672196359" source="Si" target="srF">
+      <arc id="cId-816061714047414510035" source="TaskSuspended" target="startUnload">
       </arc>
-      <arc id="cId-895637014703672196360" source="CF" target="srF">
+      <arc id="cId-816061714047414510036" source="startUnload" target="TransferToDisk">
       </arc>
-      <arc id="cId-895637014703672196361" source="csF" target="CF">
+      <arc id="cId-816061714047414510037" source="TransferToDisk" target="endUnload">
       </arc>
-      <arc id="cId-895637014703672196362" source="StF" target="ssF">
+      <arc id="cId-816061714047414510038" source="endUnload" target="TaskOnDisk">
       </arc>
-      <arc id="cId-895802263025340609163" source="srF" target="StF">
+      <arc id="cId-816061714047414510039" source="DiskControllerUnit" target="startLoading">
       </arc>
-      <arc id="cId-895802263025340609164" source="ssG" target="Si">
+      <arc id="cId-816061714047414510040" source="endLoading" target="DiskControllerUnit">
       </arc>
-      <arc id="cId-895802263025340609165" source="CG" target="crG">
+      <arc id="cId-816061714047414510041" source="DiskControllerUnit" target="startUnload">
       </arc>
-      <arc id="cId-895802263025340609166" source="ssG" target="CG">
+      <arc id="cId-816061714047414510042" source="endUnload" target="DiskControllerUnit">
       </arc>
-      <arc id="cId-895802263025340609167" source="CR" target="srR">
+      <arc id="cId-822175904955622891043" source="endLoading" target="TaskOnDisk">
       </arc>
-      <arc id="cId-895802263025340609168" source="csR" target="CR">
+      <arc id="cId-822175904955622891044" source="TaskOnDisk" target="startUnload">
       </arc>
-      <arc id="cId-895802263025340609169" source="csF" target="CwA">
+      <arc id="cId-822175904955622891058" source="TaskReady" target="freeMemory">
       </arc>
-      <arc id="cId-895802263025340609170" source="crA" target="Ci">
+      <arc id="cId-822175904955622891059" source="freeMemory" target="FreeMemSegment">
       </arc>
-      <arc id="cId-895802263025340609171" source="CwG" target="crG">
-      </arc>
-      <arc id="cId-895802263025340609172" source="msA" target="Mi">
-      </arc>
-      <arc id="cId-895802263025340609173" source="msG" target="SG">
-      </arc>
-      <arc id="cId-895802263025340609174" source="MpA" target="msA">
-      </arc>
-      <arc id="cId-895802263025340609175" source="mfU" target="MpA">
-      </arc>
-      <arc id="cId-895802263025340609176" source="MtF" target="mfU">
-      </arc>
-      <arc id="cId-895802263025340609177" source="mrF" target="MtF">
-      </arc>
-      <arc id="cId-895802263025340609178" source="MpG" target="msG">
-      </arc>
-      <arc id="cId-895802263025340609179" source="maU" target="MpG">
-      </arc>
-      <arc id="cId-895802263025340609180" source="MwU" target="maU">
-      </arc>
-      <arc id="cId-895802263025340609181" source="mrR" target="MwU">
-      </arc>
-      <arc id="cId-895802263025340609182" source="Mi" target="mrR">
-      </arc>
-      <arc id="cId-895802263025340609183" source="ssA" target="Si">
-      </arc>
-      <arc id="cId-895802263025340609184" source="SpG" target="ssG">
-      </arc>
-      <arc id="cId-895802263025340609185" source="srG" target="SpG">
-      </arc>
-      <arc id="cId-895802263025340609186" source="SpA" target="ssA">
-      </arc>
-      <arc id="cId-895802263025340609187" source="srA" target="SpA">
-      </arc>
-      <arc id="cId-895802263025340609188" source="SwA" target="srA">
-      </arc>
-      <arc id="cId-895802263025340609189" source="SwG" target="srG">
-      </arc>
-      <arc id="cId-895802263025340609190" source="ssR" target="SwG">
-      </arc>
-      <arc id="cId-895802263025340609191" source="StR" target="ssR">
-      </arc>
-      <arc id="cId-895802263025340609192" source="srR" target="StR">
-      </arc>
-      <arc id="cId-895802263025340609193" source="Si" target="srR">
-      </arc>
-      <arc id="cId-895802263025340609194" source="Cb" target="csF">
-      </arc>
-      <arc id="cId-895802263025340609195" source="crG" target="Cb">
-      </arc>
-      <arc id="cId-895802263025340609196" source="CwA" target="crA">
-      </arc>
-      <arc id="cId-895306517630838641197" source="csR" target="CwG">
-      </arc>
-      <arc id="cId-895306517630838641198" source="Ci" target="csR">
+      <arc id="cId-822175904955622891060" source="endUnload" target="TaskReady">
       </arc>
     </page>
     <name>
-      <text>ClientsAndServers-PT-N0002P1</text>
+      <text>SmallOperatingSystem-PT-MT0032DC0016</text>
     </name>
   </net>
 </pnml>

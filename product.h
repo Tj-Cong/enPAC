@@ -26,6 +26,7 @@ using namespace std;
 
 extern bool timeflag;    //超时标志
 void  sig_handler(int num);
+
 extern NUM_t FIELDCOUNT;
 extern NUM_t MARKLEN;
 extern NUM_t placecount;
@@ -95,7 +96,7 @@ public:
     void simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid);          //CBANid: current biggest accepted node id
     bool isLabel(rgnode *state, int sj);  //判断能否合成交状态
     bool judgeF(string s);         //判断该公式是否为F类型的公式
-    short int sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
+    NUM_t sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
     bool handleLTLF(string s, rgnode *state);
     bool handleLTLC(string s, rgnode *state);
     void handleLTLCstep(short int &front_sum, short int &latter_sum, string s, rgnode *state);
@@ -159,6 +160,7 @@ hashtable<rgnode>::~hashtable() {
         }
     }
     delete [] table;
+    MallocExtension::instance()->ReleaseFreeMemory();
 }
 
 template <class rgnode>
@@ -178,7 +180,7 @@ template <class rgnode>
 index_t hashtable<rgnode>::hashfunction(Product<rgnode> *q)
 {
     index_t RGhashvalue;
-    RGhashvalue = q->RGname_ptr->Hash(MARKLEN);
+    RGhashvalue = q->RGname_ptr->Hash();
     RGhashvalue = RGhashvalue % RGTABLE_SIZE;
 
     index_t Prohashvalue = RGhashvalue + q->BAname_id;
@@ -233,11 +235,6 @@ Product_Automata<rgnode,rg_T>::Product_Automata(Petri *pt, rg_T* r, SBA *sba) {
     rg = r;
     ba = sba;
     result = true;
-    placecount = ptnet->placecount;
-    MARKLEN = rg->RGNodelength;
-    FIELDCOUNT = ceil(double(MARKLEN)/(sizeof(myuint)*8));
-    NUPN = ptnet->NUPN;
-    SAFE = ptnet->NUPN;
 }
 
 /*bool Product_Automata::judgeF(string s)
@@ -356,20 +353,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
         }
         index_t *isFirable;
         unsigned short firecount;
-        unsigned short *equmark = new unsigned short[ptnet->placecount];
-        if(ptnet->NUPN)   //NUPN网
-        {
-            rg->deCoder(equmark,q->RGname_ptr);
-            rg->getFireableTranx(equmark,&isFirable,firecount);
-            delete [] equmark;
-        }
-        else
-        {
-            memcpy(equmark,q->RGname_ptr->marking, sizeof(short)*ptnet->placecount);
-            rg->getFireableTranx(equmark,&isFirable,firecount);
-            delete [] equmark;
-        }
-
+        rg->getFireableTranx(q->RGname_ptr,&isFirable,firecount);
 
         int rg_i = 0;
         if(firecount == 0)
@@ -442,9 +426,12 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
                 delete qs;
             }
         }
+        if(firecount>0)
+            delete [] isFirable;
         pba = pba->nextarc;
     }
     dfs_stack.pop(q);
+    MallocExtension::instance()->ReleaseFreeMemory();
 }
 
 /*void Product_Automata::addinitial_status(RGNode *initnode)
@@ -559,20 +546,7 @@ bool Product_Automata<rgnode,rg_T>::handleLTLF(string s, rgnode *state) {
 
     index_t *isFirable;
     unsigned short firecount = 0;
-    unsigned short *equmark = new unsigned short[ptnet->placecount];
-
-    if(ptnet->NUPN)
-    {
-        rg->deCoder(equmark,state);
-        rg->getFireableTranx(equmark,&isFirable,firecount);
-        delete [] equmark;
-    }
-    else
-    {
-        memcpy(equmark,state->marking, sizeof(short)*ptnet->placecount);
-        rg->getFireableTranx(equmark,&isFirable,firecount);
-        delete [] equmark;
-    }
+    rg->getFireableTranx(state,&isFirable,firecount);
 
 
     if(s[0] == '!') //前面带有'!'的is-fireable{}
@@ -731,36 +705,81 @@ void Product_Automata<rgnode,rg_T>::handleLTLCstep(short int &front_sum, short i
  * out: 库所的token和
  * */
 template <class rgnode,class rg_T>
-short int Product_Automata<rgnode,rg_T>::sumtoken(string s, rgnode *state) {
-    const int marklen = ptnet->placecount;
-    Mark marking[marklen];
+NUM_t Product_Automata<rgnode,rg_T>::sumtoken(string s, rgnode *state) {
 
-    if(ptnet->NUPN)
-    {
+    Mark *marking = new Mark[ptnet->placecount];
+    NUM_t sum = 0;
+
+    if(ptnet->NUPN) {
         rg->deCoder(marking,state);
+        while(1)
+        {
+            int pos = s.find_first_of(",");
+            if (pos == string::npos)
+                break;
+            string subs = s.substr(0, pos);        //取得一个p1
+            index_t idex = ptnet->getPPosition(subs);  //得到该库所的索引号
+
+            if(idex ==INDEX_ERROR) {
+                cerr<<"Can not find place:"<<subs<<endl;
+                exit(0);
+            }
+
+            sum += marking[idex];
+
+            //将前面的用过的P1去除 从p2开始作为新的s串
+            s = s.substr(pos + 1, s.length() - pos);
+        }
+    }
+    else if(ptnet->SAFE){
+        myuint *bitmark = new myuint[FIELDCOUNT];
+        memcpy(bitmark,state->marking, sizeof(myuint)*FIELDCOUNT);
+
+        while(1)
+        {
+            int pos = s.find_first_of(",");
+            if (pos == string::npos)
+                break;
+            string subs = s.substr(0, pos);        //取得一个p1
+            index_t idex = ptnet->getPPosition(subs);  //得到该库所的索引号
+
+            if(idex ==INDEX_ERROR) {
+                cerr<<"Can not find place:"<<subs<<endl;
+                exit(0);
+            }
+
+            int unit = idex / (sizeof(myuint)*8);
+            int offset = idex % (sizeof(myuint)*8);
+            sum += (bitmark[unit].test1(offset))?1:0;
+
+            //将前面的用过的P1去除 从p2开始作为新的s串
+            s = s.substr(pos + 1, s.length() - pos);
+        }
+        delete [] bitmark;
     }
     else {
-        memcpy(marking,state->marking, sizeof(Mark)*marklen);
-    }
-    short int sum = 0;
-    while(1)
-    {
-        int pos = s.find_first_of(",");
-        if (pos == string::npos)
-            break;
-        string subs = s.substr(0, pos);        //取得一个p1
-        int idex = ptnet->getPPosition(subs);  //得到该库所的索引号
+        memcpy(marking,state->marking, sizeof(Mark)*(ptnet->placecount));
+        while(1)
+        {
+            int pos = s.find_first_of(",");
+            if (pos == string::npos)
+                break;
+            string subs = s.substr(0, pos);        //取得一个p1
+            index_t idex = ptnet->getPPosition(subs);  //得到该库所的索引号
 
-        if(idex ==INDEX_ERROR) {
-            cerr<<"Can not find place:"<<subs<<endl;
-            exit(0);
+            if(idex ==INDEX_ERROR) {
+                cerr<<"Can not find place:"<<subs<<endl;
+                exit(0);
+            }
+
+            sum += marking[idex];
+
+            //将前面的用过的P1去除 从p2开始作为新的s串
+            s = s.substr(pos + 1, s.length() - pos);
         }
-
-        sum += marking[idex];
-
-        //将前面的用过的P1去除 从p2开始作为新的s串
-        s = s.substr(pos + 1, s.length() - pos);
     }
+
+    delete [] marking;
     return sum;
 }
 
