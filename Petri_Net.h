@@ -12,7 +12,7 @@
 #include <sstream>
 #include "tinyxml.h"
 #include <cmath>
-#include <google/tcmalloc.h>
+#include <gperftools/tcmalloc.h>
 
 using namespace std;
 

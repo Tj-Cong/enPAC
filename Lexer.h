@@ -2,7 +2,7 @@
 /*词法分析器*/
 #include<iostream>
 #include<string>
-#include <google/tcmalloc.h>
+#include <gperftools/tcmalloc.h>
 
 using namespace std;
 #define ERROR 0
@@ -22,6 +22,7 @@ using namespace std;
 #define $ID 13      //原子命题
 #define $End 14
 #define $root 15
+#define MAXFORMLEN 20000
 
 typedef struct Lexer_word
 {

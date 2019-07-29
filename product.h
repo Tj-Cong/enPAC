@@ -20,8 +20,8 @@
 #define TIME_LEFT 112
 #define max_to_string 30
 #define max_array_num 10000
-#define hash_table_num 100000
-#define each_ltl_time 120
+#define hash_table_num 10000000
+#define each_ltl_time 200
 using namespace std;
 
 extern bool timeflag;    //超时标志
@@ -324,7 +324,7 @@ void Product_Automata<rgnode,rg_T>::getProduct() {
 //        dfs1(init);
         simplified_dfs(init,0,-1);
         delete init;
-        if(!timeflag)  //如果已经出结果或超时，则退出
+        if(!result || !timeflag)  //如果已经出结果或超时，则退出
             break;
     }
 }
@@ -347,10 +347,11 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
 
     //遍历BA的后继结点
     while(pba != NULL) {
-        if (!result || !timeflag)
-        {
-            return;
+
+        if(!result || !timeflag){
+            return ;
         }
+
         index_t *isFirable;
         unsigned short firecount;
         rg->getFireableTranx(q->RGname_ptr,&isFirable,firecount);
@@ -358,10 +359,10 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
         int rg_i = 0;
         if(firecount == 0)
         {
-            if (!result || !timeflag)
-            {
-                return;
+            if(!result || !timeflag){
+                return ;
             }
+
             rgnode *rgseed = q->RGname_ptr;
             if(isLabel(rgseed, pba->adjvex))
             {
@@ -389,10 +390,10 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
         }
         for(rg_i; rg_i<firecount; rg_i++)
         {
-            if (!result || !timeflag)
-            {
-                return;
+            if(!result || !timeflag){
+                return ;
             }
+
             bool exist;
             rgnode *rgseed = rg->RGcreatenode(q->RGname_ptr,isFirable[rg_i],exist);
             if(isLabel(rgseed, pba->adjvex))

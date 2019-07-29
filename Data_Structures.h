@@ -5,7 +5,7 @@
 #include<set>
 #include<algorithm>
 #include"Lexer.h"
-#include <google/tcmalloc.h>
+#include <gperftools/tcmalloc.h>
 
 using namespace std;
 #define max_set_num 1000               //Old, New, Next�м���Ԫ��������

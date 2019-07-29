@@ -10,11 +10,11 @@
 #include <malloc.h>
 #include "BasicIncludes.h"
 #include "CMemoryPool.h"
-#include <google/malloc_extension.h>
+#include <gperftools/malloc_extension.h>
 
 using namespace std;
 
-#define RGTABLE_SIZE 100000
+#define RGTABLE_SIZE 10000000
 
 
 extern MemPool::CMemoryPool *g_ptrMemPool;

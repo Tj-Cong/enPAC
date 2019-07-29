@@ -1047,7 +1047,7 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
             if(repeated){
                 exist = true;
                 delete newnode;
-                MallocExtension::instance()->ReleaseFreeMemory();
+                //MallocExtension::instance()->ReleaseFreeMemory();
                 return p;
             }
             p=p->next;
@@ -1344,6 +1344,7 @@ BitRGNode *BitRG::RGcreatenode(BitRGNode *curnode, int tranxnum, bool &exist) {
                 delete [] curmark;
                 delete [] newmark;
                 delete newnode;
+                //MallocExtension::instance()->ReleaseFreeMemory();
                 return p;
             }
             p=p->next;

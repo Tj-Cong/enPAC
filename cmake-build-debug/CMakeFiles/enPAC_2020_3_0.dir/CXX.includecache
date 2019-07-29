@@ -39,7 +39,7 @@ algorithm
 -
 Lexer.h
 /home/hecong/文档/enPAC_2020_3.0/Lexer.h
-google/tcmalloc.h
+gperftools/tcmalloc.h
 -
 
 /home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
@@ -51,14 +51,8 @@ iostream
 -
 string
 -
-google/tcmalloc.h
+gperftools/tcmalloc.h
 -
-
-/home/hecong/文档/enPAC_2020_3.0/Petri_Net.cpp
-iostream
--
-Petri_Net.h
-/home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
 
 /home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
 string
@@ -75,12 +69,8 @@ tinyxml.h
 /home/hecong/文档/enPAC_2020_3.0/tinyxml.h
 cmath
 -
-google/tcmalloc.h
+gperftools/tcmalloc.h
 -
-
-/home/hecong/文档/enPAC_2020_3.0/RG.cpp
-RG.h
-/home/hecong/文档/enPAC_2020_3.0/RG.h
 
 /home/hecong/文档/enPAC_2020_3.0/RG.h
 Petri_Net.h
@@ -93,7 +83,7 @@ BasicIncludes.h
 /home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
 CMemoryPool.h
 /home/hecong/文档/enPAC_2020_3.0/CMemoryPool.h
-google/malloc_extension.h
+gperftools/malloc_extension.h
 -
 
 /home/hecong/文档/enPAC_2020_3.0/SBA.h
@@ -136,10 +126,6 @@ sys/time.h
 sys/mman.h
 -
 unistd.h
--
-google/tcmalloc.h
--
-google/malloc_extension.h
 -
 
 /home/hecong/文档/enPAC_2020_3.0/product.cpp

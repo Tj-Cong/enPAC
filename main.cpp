@@ -5,8 +5,6 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <google/tcmalloc.h>
-#include <google/malloc_extension.h>
 
 using namespace std;
 
@@ -17,7 +15,6 @@ bool NUPN = false;
 bool SAFE = false;
 
 MemPool::CMemoryPool *g_ptrMemPool = NULL  ; //!< Global MemoryPool (Testing purpose)
-
 void print_info()
 {
     struct mallinfo mi = mallinfo();
@@ -106,7 +103,7 @@ int main() {
     BitRG *bitgraph;
     RG *graph;
     string S, propertyid; //propertyid stores names of LTL formulae
-    char form[20000];     //store LTL formulae
+    char *form = new char[20000];     //store LTL formulae
 
     ofstream outresult("boolresult.txt", ios::out);  //outresult export results to boolresult.txt
 
@@ -135,7 +132,12 @@ int main() {
         strcpy(form, S.c_str());
         //cout << form << endl;
         cout << endl;
-
+        int len = S.length();
+        if(len>10000){
+            outresult <<'?';
+            cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE"<<endl;
+            continue;
+        }
 //        starttime = get_time();
 
         //lexer
