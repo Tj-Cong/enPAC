@@ -14,7 +14,7 @@
 
 using namespace std;
 
-#define RGTABLE_SIZE 10000000
+#define RGTABLE_SIZE 100000
 
 
 extern MemPool::CMemoryPool *g_ptrMemPool;
@@ -62,10 +62,10 @@ typedef struct Bitfielduint
     unsigned int a31:1;
 
     //将相应位置上设置为1；
-    void set(int index);
-    void reset(int index);   //将相应位置上设置为0；
-    bool test0(int index);
-    bool test1(int index);
+    void set(int index);     //设置index位上为1
+    void reset(int index);   //将index位置上设置为0；
+    bool test0(int index);   //判断index位上是否为0；
+    bool test1(int index);   //判断index位上是否为1；
 } myuint;
 
 
@@ -98,6 +98,7 @@ public:
 //    }
 };
 
+//用于SAFE和NUPN
 class BitRGNode
 {
 public:
@@ -124,11 +125,11 @@ public:
 class RG
 {
 public:
-    RGNode **rgnode;
-    Petri *ptnet;
-    RGNode *initnode;
-    NUM_t RGNodelength;
-    unsigned long nodecount;
+    RGNode **rgnode;        //状态哈希表
+    Petri *ptnet;           //Petri网
+    RGNode *initnode;       //初始状态节点
+    NUM_t RGNodelength;     //marking长度
+    unsigned long nodecount;//状态个数
     int hash_conflict_times;
     ofstream outRG;
 public:

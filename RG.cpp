@@ -979,12 +979,7 @@ void RG::getFireableTranx(RGNode *curnode, index_t **isFirable, unsigned short &
     MallocExtension::instance()->ReleaseFreeMemory();
 }
 
-/*void RG::RGinitialnode()
- * function:计算初始状态；分为三步：1.计算（marking），2.计算初始状态的可发生变迁，
- * 3.将当前状态加入到rgnode哈希表中
- * in:
- * out:
- * */
+//计算初始状态节点
 RGNode *RG::RGinitialnode() {
     RGNode *rg = new RGNode;
 
@@ -1000,12 +995,7 @@ RGNode *RG::RGinitialnode() {
     return rg;
 }
 
-/*RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist)
- * function: 根据当前节点rg, 和可发生变迁，创建新的状态节点；
- * 分为5步：1.计算状态值，2.判断是否无界，3.判断是否已存在该节点，4.计算可发生变迁，5.加入rgnode哈希表中
- * in:curnode,当前节点； tranxnum,transition表中第tranxnum个变迁
- * out:新加入节点的地址
- * */
+//当前状态cuenode发生transition[tranxnum]变前后所得到的状态，并把该状态返回
 RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
 
     RGNode *newnode = new RGNode;
@@ -1018,6 +1008,7 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
     vector<SArc>::iterator postend = firingTanx->consumer.end();
 
         memcpy(newnode->marking, curnode->marking, sizeof(Mark)*RGNodelength);
+
         //1.1 计算前继节点的token值；前继库所的token值=当前前继节点的token值-weight
         for(iterpre; iterpre!=preend; iterpre++){
             newnode->marking[iterpre->idx] = newnode->marking[iterpre->idx] - iterpre->weight;
@@ -1027,6 +1018,8 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
         for(iterpost; iterpost!=postend; iterpost++){
             newnode->marking[iterpost->idx] = newnode->marking[iterpost->idx] + iterpost->weight;
         }
+
+
         //3.判断是否已存在该节点
         index_t hashvalue = newnode->Hash();
         hashvalue = hashvalue % RGTABLE_SIZE;
@@ -1058,6 +1051,7 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
     return newnode;
 }
 
+//一次性生成全部状态空间
 void RG::Generate(RGNode *node) {
     int i=0;
 
@@ -1176,6 +1170,7 @@ void BitRG::addRGNode(BitRGNode *mark) {
 }
 
 void BitRG::getFireableTranx(BitRGNode *curnode, index_t **isFirable, unsigned short &firecount) {
+
     unsigned short *mark = NULL;
     if(NUPN){
         mark = new unsigned short[placecount];
@@ -1485,6 +1480,7 @@ BitRG::~BitRG() {
     MallocExtension::instance()->ReleaseFreeMemory();
 }
 
+//
 void BitRG::enCoder(unsigned short *equmark, BitRGNode *curnode) {
     if(NUPN)
     {
@@ -1547,6 +1543,7 @@ void BitRG::enCoder(unsigned short *equmark, BitRGNode *curnode) {
     }
     MallocExtension::instance()->ReleaseFreeMemory();
 }
+
 
 void BitRG::deCoder(unsigned short *equmark, BitRGNode *curnode) {
     if(!NUPN)

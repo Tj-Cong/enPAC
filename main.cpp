@@ -58,6 +58,13 @@ void DestroyGlobalMemPool()
 int main() {
 
 //    CreateGlobalMemPool() ;
+//    string category = argv[1];
+//    if(category!="LTLFireability" && category!="LTLCardinality")
+//    {
+//        cout<<"DO_NOT_COMPUTE"<<endl;
+//        exit(0);
+//    }
+
     cout << "=================================================" << endl;
     cout << "=====This is our tool-enPAC for the MCC'2019=====" << endl;
     cout << "=================================================" << endl;
@@ -114,242 +121,241 @@ int main() {
         exit(-1);
     }
 
-    while (getline(read, propertyid, ':')) {
+    //if(category == "LTLCardinality") {
+        while (getline(read, propertyid, ':')) {
 
-        if(NUPN || SAFE)
-        {
-            bitgraph = new BitRG(ptnet);
-        }
-        else{
-            graph = new RG(ptnet);
-        }
+            if (NUPN || SAFE) {
+                bitgraph = new BitRG(ptnet);
+            } else {
+                graph = new RG(ptnet);
+            }
 
-        timeleft  = totalruntime/formula_num;
-        int timetemp = timeleft;
+            timeleft = totalruntime / formula_num;
+            int timetemp = timeleft;
 
-        cout << propertyid << ':';
-        getline(read, S);
-        strcpy(form, S.c_str());
-        //cout << form << endl;
-        cout << endl;
-        int len = S.length();
-        if(len>10000){
-            outresult <<'?';
-            cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE"<<endl;
-            continue;
-        }
+            cout << propertyid << ':';
+            getline(read, S);
+            strcpy(form, S.c_str());
+            //cout << form << endl;
+            cout << endl;
+            int len = S.length();
+            if (len > 10000) {
+                outresult << '?';
+                cout << "FORMULA " + propertyid + " " + "CANNOT_COMPUTE" << endl;
+                continue;
+            }
 //        starttime = get_time();
 
-        //lexer
-        Lexer *lex = new Lexer(form, S.length());
-        //syntax analysis
-        Syntax_Tree *ST;
-        ST = new Syntax_Tree;
-        formula_stack Ustack;
-        ST->reverse_polish(*lex);
-        ST->build_tree();
-        /*cout << "The syntax tree of unsimplified formula£º" << endl;
-        ST.print_syntax_tree(ST.root, 0);*/
-        //LTL formula rewrite
-        ST->simplify_LTL(ST->root->left);
-        /*cout << endl;
-        cout << "The syntax tree of simplified formula£º" << endl;
-        ST.print_syntax_tree(ST.root, 0);*/
-        //syntax tree convert
-        ST->negconvert(ST->root->left, Ustack);
-        ST->computeCurAP(ST->root->left);
-        delete lex;
-        /*cout << endl;
-        cout << "The converted formula£º" << endl;
-        cout << ST.root->left->formula << endl;
-        cout << endl;*/
-        //Êä³öU×ÓÊ½
-        /*cout << "The subformulas of LTL whose main operator is \'U\'£º" << endl;
-        vector<STNode>::iterator Uiter;
-        for (Uiter = Ustack.loc.begin(); Uiter != Ustack.loc.end(); Uiter++)
-        {
-            cout << (*Uiter)->formula << endl;
+            //lexer
+            Lexer *lex = new Lexer(form, S.length());
+            //syntax analysis
+            Syntax_Tree *ST;
+            ST = new Syntax_Tree;
+            formula_stack Ustack;
+            ST->reverse_polish(*lex);
+            ST->build_tree();
+            /*cout << "The syntax tree of unsimplified formula£º" << endl;
+            ST.print_syntax_tree(ST.root, 0);*/
+            //LTL formula rewrite
+            ST->simplify_LTL(ST->root->left);
+            /*cout << endl;
+            cout << "The syntax tree of simplified formula£º" << endl;
+            ST.print_syntax_tree(ST.root, 0);*/
+            //syntax tree convert
+            ST->negconvert(ST->root->left, Ustack);
+            ST->computeCurAP(ST->root->left);
+            delete lex;
+            /*cout << endl;
+            cout << "The converted formula£º" << endl;
+            cout << ST.root->left->formula << endl;
+            cout << endl;*/
+            //Êä³öU×ÓÊ½
+            /*cout << "The subformulas of LTL whose main operator is \'U\'£º" << endl;
+            vector<STNode>::iterator Uiter;
+            for (Uiter = Ustack.loc.begin(); Uiter != Ustack.loc.end(); Uiter++)
+            {
+                cout << (*Uiter)->formula << endl;
+            }
+            cout << endl;*/
+            //¹¹ÔìTGBA
+            TGBA *Tgba;
+            Tgba = new TGBA;
+            Tgba->CreatTGBA(Ustack, ST->root->left);
+            //Tgba->SimplifyStates();
+            delete ST;
+            //cout << endl;
+            //¹¹ÔìTBA
+            TBA *tba;
+            tba = new TBA;
+            tba->CreatTBA(*Tgba, Ustack);
+            delete Tgba;
+            string filename = propertyid + ".txt";
+            //tba.PrintBuchi(filename);
+            /*cout << "Please check the file" + filename + ". In this file you can see the Buchi automata related to the LTL formula!";
+            cout << endl;*/
+            //¹¹ÔìSBA
+            SBA *sba;
+            sba = new SBA;
+            sba->CreatSBA(*tba);
+            sba->Simplify();
+            sba->Compress();
+            delete tba;
+            //cout << "begin:ON-THE-FLY" << endl;
+            if (NUPN || SAFE) {
+                Product_Automata<BitRGNode, BitRG> *product;
+                product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
+                product->ModelChecker(propertyid, timeleft);
+                int ret = product->getresult();
+
+                outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
+                //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
+                delete product;
+            } else {
+                Product_Automata<RGNode, RG> *product;
+                product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+                product->ModelChecker(propertyid, timeleft);
+                int ret = product->getresult();
+
+                outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
+                //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
+                delete product;
+            }
+
+
+            formula_num--;
+            totalruntime = totalruntime - (timetemp - timeleft);
+
+
+            if (NUPN || SAFE) {
+                delete bitgraph;
+            } else {
+                delete graph;
+            }
+
+            MallocExtension::instance()->ReleaseFreeMemory();
         }
-        cout << endl;*/
-        //¹¹ÔìTGBA
-        TGBA *Tgba;
-        Tgba = new TGBA;
-        Tgba->CreatTGBA(Ustack, ST->root->left);
-        //Tgba->SimplifyStates();
-        delete ST;
-        //cout << endl;
-        //¹¹ÔìTBA
-        TBA *tba;
-        tba = new TBA;
-        tba->CreatTBA(*Tgba, Ustack);
-        delete Tgba;
-        string filename = propertyid + ".txt";
-        //tba.PrintBuchi(filename);
-        /*cout << "Please check the file" + filename + ". In this file you can see the Buchi automata related to the LTL formula!";
-        cout << endl;*/
-        //¹¹ÔìSBA
-        SBA *sba;
-        sba = new SBA;
-        sba->CreatSBA(*tba);
-        sba->Simplify();
-        sba->Compress();
-        delete tba;
-        //cout << "begin:ON-THE-FLY" << endl;
-        if(NUPN || SAFE)
-        {
-            Product_Automata<BitRGNode, BitRG> * product;
-            product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
-            product->ModelChecker(propertyid,timeleft);
-            int ret = product->getresult();
+    //}
 
-            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
-            delete product;
-        }
-        else{
-            Product_Automata<RGNode, RG> * product;
-            product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
-            product->ModelChecker(propertyid,timeleft);
-            int ret = product->getresult();
-
-            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
-            delete product;
-        }
-
-
-        formula_num--;
-        totalruntime = totalruntime - (timetemp - timeleft);
-
-
-        if(NUPN || SAFE)
-        {
-            delete bitgraph;
-        }
-        else{
-            delete graph;
-        }
-
-        MallocExtension::instance()->ReleaseFreeMemory();
-    }
-
-    ifstream readF("LTLFireability.txt", ios::in);
-    if (!readF) {
-        cout << "error!";
-        getchar();
-        exit(-1);
-    }
-
-    //cout<<"timeleft:"<<timeleft*16<<endl;
-    outresult << endl;
-    while (getline(readF, propertyid, ':')) {
-
-        if(NUPN || SAFE)
-        {
-            bitgraph = new BitRG(ptnet);
-        }
-        else{
-            graph = new RG(ptnet);
+    //if(category == "LTLFireability") {
+        ifstream readF("LTLFireability.txt", ios::in);
+        if (!readF) {
+            cout << "error!";
+            getchar();
+            exit(-1);
         }
 
-        timeleft = totalruntime / formula_num;
-        int timetemp;
+        //cout<<"timeleft:"<<timeleft*16<<endl;
+        outresult << endl;
+        while (getline(readF, propertyid, ':')) {
 
-        cout << propertyid << ':';
-        getline(readF, S);
-        strcpy(form, S.c_str());
-        //cout << form << endl;
-        cout << endl;
-        //lexer
+            if (NUPN || SAFE) {
+                bitgraph = new BitRG(ptnet);
+            } else {
+                graph = new RG(ptnet);
+            }
+
+            timeleft = totalruntime / formula_num;
+            int timetemp;
+
+            cout << propertyid << ':';
+            getline(readF, S);
+            strcpy(form, S.c_str());
+            //cout << form << endl;
+            cout << endl;
+            int len = S.length();
+            if (len > 10000) {
+                outresult << '?';
+                cout << "FORMULA " + propertyid + " " + "CANNOT_COMPUTE" << endl;
+                continue;
+            }
+            //lexer
 //        starttime = get_time();
 
-        Lexer *lex = new Lexer(form, S.length());
-        //syntax analysis
-        Syntax_Tree *ST;
-        ST = new Syntax_Tree;
-        formula_stack Ustack;
-        ST->reverse_polish(*lex);
-        ST->build_tree();
-        /*cout << "The syntax tree of unsimplified formula£º" << endl;
-        ST.print_syntax_tree(ST.root, 0);*/
-        //LTL formula rewrite
-        ST->simplify_LTL(ST->root->left);
-        /*cout << endl;
-        cout << "The syntax tree of simplified formula£º" << endl;
-        ST.print_syntax_tree(ST.root, 0);*/
-        //syntax tree convert
-        ST->negconvert(ST->root->left, Ustack);
-        ST->computeCurAP(ST->root->left);
-        /*cout << endl;
-        cout << "The converted formula£º" << endl;
-        cout << ST.root->left->formula << endl;
-        cout << endl;*/
-        //Êä³öU×ÓÊ½
-        /*cout << "The subformulas of LTL whose main operator is \'U\'£º" << endl;
-        vector<STNode>::iterator Uiter;
-        for (Uiter = Ustack.loc.begin(); Uiter != Ustack.loc.end(); Uiter++)
-        {
-            cout << (*Uiter)->formula << endl;
+            Lexer *lex = new Lexer(form, S.length());
+            //syntax analysis
+            Syntax_Tree *ST;
+            ST = new Syntax_Tree;
+            formula_stack Ustack;
+            ST->reverse_polish(*lex);
+            ST->build_tree();
+            /*cout << "The syntax tree of unsimplified formula£º" << endl;
+            ST.print_syntax_tree(ST.root, 0);*/
+            //LTL formula rewrite
+            ST->simplify_LTL(ST->root->left);
+            /*cout << endl;
+            cout << "The syntax tree of simplified formula£º" << endl;
+            ST.print_syntax_tree(ST.root, 0);*/
+            //syntax tree convert
+            ST->negconvert(ST->root->left, Ustack);
+            ST->computeCurAP(ST->root->left);
+            /*cout << endl;
+            cout << "The converted formula£º" << endl;
+            cout << ST.root->left->formula << endl;
+            cout << endl;*/
+            //Êä³öU×ÓÊ½
+            /*cout << "The subformulas of LTL whose main operator is \'U\'£º" << endl;
+            vector<STNode>::iterator Uiter;
+            for (Uiter = Ustack.loc.begin(); Uiter != Ustack.loc.end(); Uiter++)
+            {
+                cout << (*Uiter)->formula << endl;
+            }
+            cout << endl;*/
+            //¹¹ÔìTGBA
+            TGBA *Tgba;
+            Tgba = new TGBA;
+            Tgba->CreatTGBA(Ustack, ST->root->left);
+            //Tgba->SimplifyStates();
+            delete ST;
+            //cout << endl;
+            //¹¹ÔìTBA
+            TBA *tba;
+            tba = new TBA;
+            tba->CreatTBA(*Tgba, Ustack);
+            delete Tgba;
+            string filename = propertyid + ".txt";
+            //tba->PrintBuchi(filename);
+            /*cout << "Please check the file" + filename + ". In this file you can see the Buchi automata related to the LTL formula!";
+            cout << endl;*/
+            //¹¹ÔìSBA
+            SBA *sba;
+            sba = new SBA;
+            sba->CreatSBA(*tba);
+            sba->Simplify();
+            sba->Compress();
+            delete tba;
+            //cout << "begin:ON-THE-FLY" << endl;
+
+            if (NUPN || SAFE) {
+                Product_Automata<BitRGNode, BitRG> *product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph,
+                                                                                                     sba);
+                product->ModelChecker(propertyid, timeleft);
+                int ret = product->getresult();
+
+                outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
+                //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
+                delete product;
+            } else {
+                Product_Automata<RGNode, RG> *product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+                product->ModelChecker(propertyid, timeleft);
+                int ret = product->getresult();
+
+                outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
+                //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
+                delete product;
+            }
+
+            formula_num--;
+            totalruntime = totalruntime - (timetemp - timeleft);
+
+            if (NUPN || SAFE) {
+                delete bitgraph;
+            } else {
+                delete graph;
+            }
+
+            MallocExtension::instance()->ReleaseFreeMemory();
         }
-        cout << endl;*/
-        //¹¹ÔìTGBA
-        TGBA *Tgba;
-        Tgba = new TGBA;
-        Tgba->CreatTGBA(Ustack, ST->root->left);
-        //Tgba->SimplifyStates();
-        delete ST;
-        //cout << endl;
-        //¹¹ÔìTBA
-        TBA *tba;
-        tba = new TBA;
-        tba->CreatTBA(*Tgba, Ustack);
-        delete Tgba;
-        string filename = propertyid + ".txt";
-        //tba->PrintBuchi(filename);
-        /*cout << "Please check the file" + filename + ". In this file you can see the Buchi automata related to the LTL formula!";
-        cout << endl;*/
-        //¹¹ÔìSBA
-        SBA *sba;
-        sba = new SBA;
-        sba->CreatSBA(*tba);
-        sba->Simplify();
-        sba->Compress();
-        delete tba;
-        //cout << "begin:ON-THE-FLY" << endl;
-
-        if(NUPN || SAFE)
-        {
-            Product_Automata<BitRGNode,BitRG> *product = new Product_Automata<BitRGNode,BitRG>(ptnet,bitgraph,sba);
-            product->ModelChecker(propertyid,timeleft);
-            int ret = product->getresult();
-
-            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
-            delete product;
-        }
-        else{
-            Product_Automata<RGNode,RG> *product = new Product_Automata<RGNode,RG>(ptnet,graph,sba);
-            product->ModelChecker(propertyid,timeleft);
-            int ret = product->getresult();
-
-            outresult << (ret==-1?'?':(ret == 0?'F':'T'));
-            //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
-            delete product;
-        }
-
-        formula_num--;
-        totalruntime = totalruntime - (timetemp - timeleft);
-
-        if(NUPN || SAFE)
-        {
-            delete bitgraph;
-        }
-        else{
-            delete graph;
-        }
-
-        MallocExtension::instance()->ReleaseFreeMemory();
-    }
+    //}
 
     endtime = get_time();
     cout<<"RUNTIME:"<<endtime-starttime<<endl;

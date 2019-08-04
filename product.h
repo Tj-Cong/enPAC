@@ -20,8 +20,8 @@
 #define TIME_LEFT 112
 #define max_to_string 30
 #define max_array_num 10000
-#define hash_table_num 10000000
-#define each_ltl_time 200
+#define hash_table_num 100000
+#define each_ltl_time 60
 using namespace std;
 
 extern bool timeflag;    //超时标志
@@ -181,7 +181,7 @@ index_t hashtable<rgnode>::hashfunction(Product<rgnode> *q)
 {
     index_t RGhashvalue;
     RGhashvalue = q->RGname_ptr->Hash();
-    RGhashvalue = RGhashvalue % RGTABLE_SIZE;
+    RGhashvalue = RGhashvalue % hash_table_num;
 
     index_t Prohashvalue = RGhashvalue + q->BAname_id;
     Prohashvalue = Prohashvalue % hash_table_num;

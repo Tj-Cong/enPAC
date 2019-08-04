@@ -3,7 +3,7 @@
 #include<fstream>
 #include<iomanip>
 #include<cstring>
-#define MAX_VERTEX_NUM 1000     //×î´ó¶¥µã£¨×´Ì¬£©Êý
+#define MAX_VERTEX_NUM 60000     //ï¿½ï¿½ó¶¥µã£¨×´Ì¬ï¿½ï¿½ï¿½ï¿½
 #define Nofind -1
 
 class SBA;
@@ -13,41 +13,41 @@ void fullfill_info(set<string> transcondi, string &info);
 /*********************************************************************/
 typedef struct VertexType
 {
-	int name=-1;                  //¸Ã¶¥µãµÄÃû×Ö
-	int num=-1;                    //¸Ã¶¥µãµÄ±àºÅ0~r£¬r±íÊ¾U×ÓÊ½µÄ¸öÊý
-} VertexType;                //ÓÃstringÀàÐÍÀ´±íÊ¾¶¥µã£¨×´Ì¬£©
+	int name=-1;                  //ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int num=-1;                    //ï¿½Ã¶ï¿½ï¿½ï¿½Ä±ï¿½ï¿½0~rï¿½ï¿½rï¿½ï¿½Ê¾Uï¿½ï¿½Ê½ï¿½Ä¸ï¿½ï¿½ï¿½
+} VertexType;                //ï¿½ï¿½stringï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ã£¨×´Ì¬ï¿½ï¿½
 typedef struct ArcNode
 {
 	int adjvex;
-	ArcNode *nextarc = NULL;                 //ÏÂÒ»¸ö×´Ì¬
-	string info;                             //´æ·Å±äÇ¨
+	ArcNode *nextarc = NULL;                 //ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬
+	string info;                             //ï¿½ï¿½Å±ï¿½Ç¨
 	set<string> transi_condi;
 	int sstateloc = -1;
 }ArcNode;
 typedef struct VNode
 {
-	VertexType data;		 //¶¥µã£¨×´Ì¬£©
-	bool isexplored = false;        //¸Ã½ÚµãÊÇ·ñÍØÕ¹¹ý
-	bool isAccept;           //¸Ã×´Ì¬ÊÇ·ñÎª¿É½ÓÊÜ×´Ì¬
-	int outdegree;           //¸Ã½ÚµãµÄ±äÇ¨ÊýÁ¿
-	set<int> incoming;      //¸Ã×´Ì¬µÄÇ°¼¯
-	ArcNode *firstarc = NULL;     //ÏÂÒ»¸ö×´Ì¬
+	VertexType data;		 //ï¿½ï¿½ï¿½ã£¨×´Ì¬ï¿½ï¿½
+	bool isexplored = false;        //ï¿½Ã½Úµï¿½ï¿½Ç·ï¿½ï¿½ï¿½Õ¹ï¿½ï¿½
+	bool isAccept;           //ï¿½ï¿½×´Ì¬ï¿½Ç·ï¿½Îªï¿½É½ï¿½ï¿½ï¿½×´Ì¬
+	int outdegree;           //ï¿½Ã½Úµï¿½Ä±ï¿½Ç¨ï¿½ï¿½ï¿½ï¿½
+	set<int> incoming;      //ï¿½ï¿½×´Ì¬ï¿½ï¿½Ç°ï¿½ï¿½
+	ArcNode *firstarc = NULL;     //ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬
 }VNode;
 
 class TBA
 {
 private:
-	int vex_num;       //¶¥µã¸öÊý
-	int arc_num;       //±äÇ¨¸öÊý
-	VNode vertics[MAX_VERTEX_NUM];    //ÁÚ½Ó±í
-	int visit[MAX_VERTEX_NUM];               //·ÃÎÊÊý×é
+	int vex_num;       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	int arc_num;       //ï¿½ï¿½Ç¨ï¿½ï¿½ï¿½ï¿½
+	VNode vertics[MAX_VERTEX_NUM];    //ï¿½Ú½Ó±ï¿½
+	int visit[MAX_VERTEX_NUM];               //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 public:
 	TBA();
 	void CreatTBA(TGBA tgba, formula_stack Ustack);
 	void CreatTBAsub(TGBA tgba, formula_stack Ustack);
-	void AddArc(int vexloc, ArcNode *&arcloc);     //Ôö¼ÓÒ»¸ö±äÇ¨
-	bool fetchvirgin(int &adj);         //´Ó¶¥µãÁÐ±íÖÐÈ¡³öÒ»¸ö»¹Î´ÍØÕ¹µÄ½Úµã
-	int LocateVex(VertexType v);    //¶¨Î»¶¥µã±àºÅ
+	void AddArc(int vexloc, ArcNode *&arcloc);     //ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ç¨
+	bool fetchvirgin(int &adj);         //ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½Õ¹ï¿½Ä½Úµï¿½
+	int LocateVex(VertexType v);    //ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	void PrintBuchi(string filename);
 	friend class SBA;
 };

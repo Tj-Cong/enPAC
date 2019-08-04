@@ -66,7 +66,7 @@ unsigned int stringToNum(const string& str)
 /*构造函数
  * */
 Petri::Petri() {
-    Directory;
+    Directory = NULL;
     place = NULL;
     transition = NULL;
     arc = NULL;
@@ -90,13 +90,6 @@ Petri::~Petri() {
         delete [] unittable;
 }
 
-/*void getSize();
- * function:this function is the first scan of PNML file.
- * After the first scan, we should get the size of Petri
- * net and store it in argument 'size';
- * in:
- * out: ‘PT_Size &size’;
- * */
 void Petri::getSize(char *filename) {
     //读取文档
     TiXmlDocument *mydoc = new TiXmlDocument(filename);
@@ -154,7 +147,7 @@ void Petri::getSize(char *filename) {
                 TiXmlAttribute *usize = structure->FirstAttribute();
                 unitcount = stringToNum(usize->Value());
 
-                allocHashTable();
+                allocHashTable();    //申请空间
 
                 preNUPN(structure);
                 delete mydoc;
@@ -251,11 +244,7 @@ void Petri::allocHashTable() {
     }
 }
 
-/*int Petri::arrange(Place p)
- * function: Given a place, put it into place hashtable
- * in:Place p, a place need putting into hashtable
- * out:its index in hashtable
- * */
+//function:将当前元素放入哈希表中，返回在哈希表中的位置
 index_t Petri::arrange(string id, bool isPlace) {
 
     //compute hashvalue and initial index
@@ -549,6 +538,7 @@ void Petri::readPNML(char *filename) {
                         p.initialMarking = stringToNum(marking);
                     }
                 }
+
                 //将库所放入库所表中，并维护Directory
                 index_t D_pidx = arrange(p.id,true);
                 Directory[D_pidx].position = pptr;
@@ -561,6 +551,7 @@ void Petri::readPNML(char *filename) {
                 Transition t;
                 TiXmlAttribute *id = pageElement->FirstAttribute();
                 t.id = id->Value();
+
                 //将变迁放入变迁表中，并维护Directory
                 index_t D_tidx = arrange(t.id,false);
                 Directory[D_tidx].position = tptr;
@@ -635,7 +626,7 @@ void Petri::readPNML(char *filename) {
     delete mydoc;
 }
 
-
+//计算每一个单元的marking长度
 void Petri::computeUnitMarkLen() {
     index_t i = 0;
     index_t temp_len = 0;
@@ -652,12 +643,21 @@ void Petri::computeUnitMarkLen() {
     }
 }
 
+
+//判断当前网是否为SAFE网
 void Petri::judgeSAFE() {
     if(NUPN){
         SAFE = false;
         return;
     }
     char filename[] = "GenericPropertiesVerdict.xml";
+
+    ifstream infile(filename,ios::in);
+    if (!infile) {
+        SAFE = false;
+        return;
+    }
+
     TiXmlDocument *mydoc = new TiXmlDocument(filename);
     if(!mydoc->LoadFile()) {
         cerr << mydoc->ErrorDesc() <<endl;
