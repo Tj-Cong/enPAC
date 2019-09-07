@@ -14,50 +14,15 @@ NUM_t MARKLEN;
 bool NUPN = false;
 bool SAFE = false;
 
-MemPool::CMemoryPool *g_ptrMemPool = NULL  ; //!< Global MemoryPool (Testing purpose)
-void print_info()
-{
-    struct mallinfo mi = mallinfo();
-    printf("count by mallinfo:\n");
-    printf("\theap_malloc_total=%lu heap_free_total=%lu heap_in_use=%lu\n\tmmap_total=%lu mmap_count=%lu\n",
-           mi.arena, mi.fordblks, mi.uordblks,
-           mi.hblkhd, mi.hblks);
-    printf("from malloc_stats:\n");
-    malloc_stats();
-}
-
 double get_time() {
     struct timeval t;
     gettimeofday(&t, NULL);
     return t.tv_sec + t.tv_usec / 1000000.0;
 }
-/**************************内存池***********************/
-/******************
-CreateGlobalMemPool
-******************/
-void CreateGlobalMemPool()
-{
-    std::cerr << "Creating MemoryPool...." ;
-    g_ptrMemPool = new MemPool::CMemoryPool() ;
-    std::cerr << "OK" << std::endl ;
-}
-
-/******************
-DestroyGlobalMemPool
-******************/
-void DestroyGlobalMemPool()
-{
-    std::cerr << "Deleting MemPool...." ;
-    if(g_ptrMemPool) ::delete g_ptrMemPool ;
-    std::cerr << "OK" << std::endl ;
-}
-/*/////////////////////内存池/////////////////////////*/
-
 
 
 int main() {
 
-//    CreateGlobalMemPool() ;
 //    string category = argv[1];
 //    if(category!="LTLFireability" && category!="LTLCardinality")
 //    {
@@ -106,6 +71,7 @@ int main() {
         ptnet->readPNML(filename);
     }
 
+    ptnet->printTransition();
     setGlobalValue(ptnet);
     BitRG *bitgraph;
     RG *graph;
@@ -133,17 +99,19 @@ int main() {
             timeleft = totalruntime / formula_num;
             int timetemp = timeleft;
 
-            cout << propertyid << ':';
+            //cout << propertyid << ':';
             getline(read, S);
-            strcpy(form, S.c_str());
-            //cout << form << endl;
-            cout << endl;
+
             int len = S.length();
-            if (len > 10000) {
+            if (len >= 20000) {
                 outresult << '?';
                 cout << "FORMULA " + propertyid + " " + "CANNOT_COMPUTE" << endl;
                 continue;
             }
+
+            strcpy(form, S.c_str());
+            //cout << form << endl;
+            //cout << endl;
 //        starttime = get_time();
 
             //lexer
@@ -235,7 +203,7 @@ int main() {
             MallocExtension::instance()->ReleaseFreeMemory();
         }
     //}
-
+    outresult<<endl;
     //if(category == "LTLFireability") {
         ifstream readF("LTLFireability.txt", ios::in);
         if (!readF) {
@@ -245,7 +213,7 @@ int main() {
         }
 
         //cout<<"timeleft:"<<timeleft*16<<endl;
-        outresult << endl;
+
         while (getline(readF, propertyid, ':')) {
 
             if (NUPN || SAFE) {
@@ -257,17 +225,19 @@ int main() {
             timeleft = totalruntime / formula_num;
             int timetemp;
 
-            cout << propertyid << ':';
+            //cout << propertyid << ':';
             getline(readF, S);
-            strcpy(form, S.c_str());
-            //cout << form << endl;
-            cout << endl;
+
             int len = S.length();
-            if (len > 10000) {
+            if (len >= 20000) {
                 outresult << '?';
                 cout << "FORMULA " + propertyid + " " + "CANNOT_COMPUTE" << endl;
                 continue;
             }
+
+            strcpy(form, S.c_str());
+            //cout << form << endl;
+            //cout << endl;
             //lexer
 //        starttime = get_time();
 
@@ -404,7 +374,7 @@ int main0()
         cout<<"RUNTIME:"<<endtime-starttime<<endl;
         cout<<endl;
         cout<<endl;
-        print_info();
+        malloc_stats();
         delete graph;
     }
     else {
@@ -416,12 +386,12 @@ int main0()
         cout<<"RUNTIME:"<<endtime-starttime<<endl;
         cout<<endl;
         cout<<endl;
-        print_info();
+        malloc_stats();
         delete graph;
     }
 
     delete ptnet;
-    print_info();
+    malloc_stats();
     //DestroyGlobalMemPool();
     return 0;
 }

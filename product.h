@@ -21,7 +21,7 @@
 #define max_to_string 30
 #define max_array_num 10000
 #define hash_table_num 100000
-#define each_ltl_time 60
+#define each_ltl_time 30
 using namespace std;
 
 extern bool timeflag;    //超时标志

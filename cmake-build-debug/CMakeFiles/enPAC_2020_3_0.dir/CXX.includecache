@@ -6,26 +6,6 @@
 
 #IncludeRegexTransform: 
 
-/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
-stdlib.h
--
-stdio.h
--
-math.h
--
-assert.h
--
-iostream
--
-fstream
--
-
-/home/hecong/文档/enPAC_2020_3.0/CMemoryPool.h
-IMemoryBlock.h
-/home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
-SMemoryChunk.h
-/home/hecong/文档/enPAC_2020_3.0/SMemoryChunk.h
-
 /home/hecong/文档/enPAC_2020_3.0/Data_Structures.h
 iostream
 -
@@ -41,10 +21,6 @@ Lexer.h
 /home/hecong/文档/enPAC_2020_3.0/Lexer.h
 gperftools/tcmalloc.h
 -
-
-/home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
-BasicIncludes.h
-/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
 
 /home/hecong/文档/enPAC_2020_3.0/Lexer.h
 iostream
@@ -79,32 +55,16 @@ bitset
 -
 malloc.h
 -
-BasicIncludes.h
-/home/hecong/文档/enPAC_2020_3.0/BasicIncludes.h
-CMemoryPool.h
-/home/hecong/文档/enPAC_2020_3.0/CMemoryPool.h
 gperftools/malloc_extension.h
 -
-
-/home/hecong/文档/enPAC_2020_3.0/SBA.cpp
-SBA.h
-/home/hecong/文档/enPAC_2020_3.0/SBA.h
 
 /home/hecong/文档/enPAC_2020_3.0/SBA.h
 TBA.h
 /home/hecong/文档/enPAC_2020_3.0/TBA.h
-
-/home/hecong/文档/enPAC_2020_3.0/SMemoryChunk.h
-IMemoryBlock.h
-/home/hecong/文档/enPAC_2020_3.0/IMemoryBlock.h
 
 /home/hecong/文档/enPAC_2020_3.0/Syntax_Tree.h
 Data_Structures.h
 /home/hecong/文档/enPAC_2020_3.0/Data_Structures.h
-
-/home/hecong/文档/enPAC_2020_3.0/TBA.cpp
-TBA.h
-/home/hecong/文档/enPAC_2020_3.0/TBA.h
 
 /home/hecong/文档/enPAC_2020_3.0/TBA.h
 TGBA.h

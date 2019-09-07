@@ -3,7 +3,7 @@
 #include<fstream>
 #include<iomanip>
 #include<cstring>
-#define MAX_VERTEX_NUM 60000     //��󶥵㣨״̬����
+#define MAX_VERTEX_NUM 90000     //��󶥵㣨״̬����
 #define Nofind -1
 
 class SBA;

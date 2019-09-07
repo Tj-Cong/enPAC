@@ -8,8 +8,6 @@
 #include "Petri_Net.h"
 #include <bitset>
 #include <malloc.h>
-#include "BasicIncludes.h"
-#include "CMemoryPool.h"
 #include <gperftools/malloc_extension.h>
 
 using namespace std;
@@ -17,7 +15,6 @@ using namespace std;
 #define RGTABLE_SIZE 100000
 
 
-extern MemPool::CMemoryPool *g_ptrMemPool;
 extern NUM_t FIELDCOUNT;   //占用bitfield个数，仅仅用于NUPN和SAFE网
 extern NUM_t MARKLEN;      //Petri网
 extern NUM_t placecount;   //Petri网库所个数

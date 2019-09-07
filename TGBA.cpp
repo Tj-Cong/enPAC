@@ -100,7 +100,7 @@ bool isAincludeB(set<int> A, set<int> B)
 	{
 		set<int>::iterator iterA;
 		iterA = find(A.begin(), A.end(), *iterB);
-		if (iterA == A.end())   //ÕÒ²»µ½
+		if (iterA == A.end())   //ï¿½Ò²ï¿½ï¿½ï¿½
 			return false;
 	}
 	return true;
@@ -171,7 +171,7 @@ void TGBA::AssignID(TGBA_vex &ss)
  * */
 void TGBA::AddState(TGBA_vex ss, vector<TGBA_vex>::iterator &addposi)
 {
-	//²éÖØ
+	//ï¿½ï¿½ï¿½ï¿½
 	bool isExist = false;
 	vector<TGBA_vex>::iterator iters;
 	for (iters = states.begin(); iters != states.end(); iters++)
@@ -183,7 +183,7 @@ void TGBA::AddState(TGBA_vex ss, vector<TGBA_vex>::iterator &addposi)
 			break;
 		}
 	}
-	//Ã»ÓÐÖØ¸´½Úµã
+	//Ã»ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½Úµï¿½
 	if (!isExist)
 	{
 		this->states.push_back(ss);
@@ -195,19 +195,19 @@ bool TGBA::isFindUnexpState(vector<TGBA_vex>::iterator &iter)
 	for (iter = states.begin(); iter != states.end(); iter++)
 	{
 		if (iter->explored == false)
-			return true;            //ÕÒµ½Ò»¸öÎ´ÍØÕ¹µÄ½Úµã
+			return true;            //ï¿½Òµï¿½Ò»ï¿½ï¿½Î´ï¿½ï¿½Õ¹ï¿½Ä½Úµï¿½
 	}
 	return false;
 }
 bool TGBA::isStateEqu(TGBA_vex A, TGBA_vex B)
 {
-	//A£¬BÁ½¸ö×´Ì¬µÈ¼Û
-	//1.ABµÄºó¼ÌÒ»Ñù
-	//2.µ½Ã¿Ò»¸öºó¼ÌµÄÇ¨ÒÆÌõ¼þºÍ±êÇ©ÊÇÒ»ÑùµÄ``
-	if (!isAequB(A.nextvexset, B.nextvexset))   //ÅÐ¶Ïºó¼ÌÊÇ·ñÒ»Ñù
+	//Aï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½È¼ï¿½
+	//1.ABï¿½Äºï¿½ï¿½Ò»ï¿½ï¿½
+	//2.ï¿½ï¿½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ç¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í±ï¿½Ç©ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½``
+	if (!isAequB(A.nextvexset, B.nextvexset))   //ï¿½Ð¶Ïºï¿½ï¿½ï¿½Ç·ï¿½Ò»ï¿½ï¿½
 		return false;
 	set<int>::iterator iterint;
-	for (iterint = A.nextvexset.begin(); iterint != A.nextvexset.end(); iterint++)   //¼ì²éµ½Ã¿Ò»¸öºó¼ÌµÄÇ¨ÒÆÌõ¼þºÍ±êÇ©
+	for (iterint = A.nextvexset.begin(); iterint != A.nextvexset.end(); iterint++)   //ï¿½ï¿½éµ½Ã¿Ò»ï¿½ï¿½ï¿½ï¿½Ìµï¿½Ç¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í±ï¿½Ç©
 	{
 		int next = *iterint;
 		vector<TGBA_arc>::iterator Aloc;
@@ -277,7 +277,7 @@ void TGBA::CreatTransition(vector<TGBA_vex>::iterator &front, vector<TGBA_vex>::
 	tt.succeed = rear->num;
 	tt.transcondi = transcond;
 	int i = 0;
-	for (i; i < Ustack.size(); i++)           //Ìí¼Ó±êÇ©
+	for (i; i < Ustack.size(); i++)           //ï¿½ï¿½Ó±ï¿½Ç©
 	{
 		bool ishave = false;
 		STNode p = Ustack.loc[i];
@@ -289,11 +289,11 @@ void TGBA::CreatTransition(vector<TGBA_vex>::iterator &front, vector<TGBA_vex>::
         }
 	}
 
-	bool isttunnecessary = false;       //ttÊÇ¶àÓàµÄÂð
+	bool isttunnecessary = false;       //ttï¿½Ç¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	vector<TGBA_arc>::iterator itertran;
 	for (itertran = transition.begin(); itertran != transition.end(); )
 	{
-		if ((*itertran).pioneer == tt.pioneer && (*itertran).succeed == tt.succeed)   //Ç°Çýºó¼Ì¶¼Ò»Ñù
+		if ((*itertran).pioneer == tt.pioneer && (*itertran).succeed == tt.succeed)   //Ç°ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½Ò»ï¿½ï¿½
 		{
 			if (isAincludeB((*itertran).transcondi, tt.transcondi) && isAincludeB(tt.label,(*itertran).label))
 			{
@@ -315,7 +315,7 @@ void TGBA::CreatTransition(vector<TGBA_vex>::iterator &front, vector<TGBA_vex>::
 	if (isttunnecessary == false)
 	{
 		this->transition.push_back(tt);
-		front->nextvexset.insert(rear->num);     //¸øÇ°ÇýÌí¼Óºó¼Ì
+		front->nextvexset.insert(rear->num);     //ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½Óºï¿½ï¿½
 	}
 }
 void TGBA::CreatTGBA(formula_stack Ustack, ST_Node *root)
@@ -325,14 +325,14 @@ void TGBA::CreatTGBA(formula_stack Ustack, ST_Node *root)
 	init.form.insert(root);
 	this->states.push_back(init);
 	vector<TGBA_vex>::iterator iter;
-	while (isFindUnexpState(iter))                     //´Ó¶¥µãÁÐ±íÖÐÕÒµ½Ò»¸öÎ´ÍØÕ¹µÄ½Úµã¿ªÊ¼ÍØÕ¹
+	while (isFindUnexpState(iter))                     //ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Òµï¿½Ò»ï¿½ï¿½Î´ï¿½ï¿½Õ¹ï¿½Ä½Úµã¿ªÊ¼ï¿½ï¿½Õ¹
 	{
-		int formnum = iter->form.size();            //¸Ã×´Ì¬ÓÐ¶àÉÙ¸ö×ÓÊ½×é³É
+		int formnum = iter->form.size();            //ï¿½ï¿½×´Ì¬ï¿½Ð¶ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½
 		state_stack *nextsates;
-		nextsates = new state_stack[formnum];       //Ã¿¸ö×ÓÊ½Ëù´ú±íµÄCF·¶Ê½
-		for (int i = 0; i < formnum; i++)                    //ÇóÃ¿¸ö×ÓÊ½µÄCF·¶Ê½
+		nextsates = new state_stack[formnum];       //Ã¿ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½CFï¿½ï¿½Ê½
+		for (int i = 0; i < formnum; i++)                    //ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½CFï¿½ï¿½Ê½
 		{
-			if (iter->form.loc[i]->isGetCF == false)      //µ±Ç°×ÓÊ½»¹Î´µÃµ½CF·¶Ê½
+			if (iter->form.loc[i]->isGetCF == false)      //ï¿½ï¿½Ç°ï¿½ï¿½Ê½ï¿½ï¿½Î´ï¿½Ãµï¿½CFï¿½ï¿½Ê½
 			{
 				CF_Tree CFT;
 				CFT.CFBuilder(iter->form.loc[i]);
@@ -348,25 +348,25 @@ void TGBA::CreatTGBA(formula_stack Ustack, ST_Node *root)
 					nextsates[i].insert(*CFT.root->lleft);
 				}
 			}
-			else                                                           //µ±Ç°×ÓÊ½ÒÑµÃµ½CF·¶Ê½
+			else                                                           //ï¿½ï¿½Ç°ï¿½ï¿½Ê½ï¿½ÑµÃµï¿½CFï¿½ï¿½Ê½
 			{
 				nextsates[i] = *(iter->form.loc[i]->cfnormal);
 			}
-		}//ÒÑµÃµ½Ã¿¸ö×ÓÊ½µÄCF·¶Ê½
-		for (int j = 1; j < formnum; j++)                     //ÇóËùÓÐ×ÓÊ½·¶Ê½µÄ½»
+		}//ï¿½ÑµÃµï¿½Ã¿ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½CFï¿½ï¿½Ê½
+		for (int j = 1; j < formnum; j++)                     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½Ê½ï¿½Ä½ï¿½
 		{
 			constatestack(nextsates[0], nextsates[j]);
-		}//µ±Ç°½ÚµãµÄCF·¶Ê½£¨×ªÒÆÌõ¼þ->ÏÂÒ»¸ö×´Ì¬£©
+		}//ï¿½ï¿½Ç°ï¿½Úµï¿½ï¿½CFï¿½ï¿½Ê½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½->ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½ï¿½
 
 		iter->explored = true;
 
-		int xstatenum = nextsates[0].size();    //ÏÂÒ»¸ö×´Ì¬µÄ¸öÊý
+		int xstatenum = nextsates[0].size();    //ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬ï¿½Ä¸ï¿½ï¿½ï¿½
 		TGBA_vex *xstates;
 		xstates = new TGBA_vex[xstatenum];
 		int pioneernum = iter->num;
 		for (int k = 0; k < xstatenum; k++)
 		{
-			vector<TGBA_vex>::iterator newaddposi;        //ÐÂ¼ÓÈëµÄ×´Ì¬Î»ÖÃ£¬ÓÃÓÚÌí¼Ó±äÇ¨
+			vector<TGBA_vex>::iterator newaddposi;        //ï¿½Â¼ï¿½ï¿½ï¿½ï¿½×´Ì¬Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó±ï¿½Ç¨
 			set<string> transcond;
 			CreatState(nextsates[0].states[k], xstates[k], transcond);
 			AddState(xstates[k], newaddposi);
@@ -374,6 +374,7 @@ void TGBA::CreatTGBA(formula_stack Ustack, ST_Node *root)
 			findstatesbynum(pioneernum, frontposi);
 			CreatTransition(frontposi, newaddposi, transcond, Ustack);
 		}
+        delete []xstates;
 	}
 }
 void TGBA::SimplifyStates()
@@ -388,13 +389,13 @@ void TGBA::SimplifyStates()
 		{
 			if (isStateEqu(*iteri, *iterj))
 			{
-				//Èç¹ûÁ½¸ö×´Ì¬i£¬jµÈ¼Û£¬É¾³ýÆäÖÐÒ»¸ö×´Ì¬jºÍjËù·¢³öµÄËùÓÐÇ¨ÒÆ£¬
-				//²¢°ÑÖ¸ÏòjµÄËùÓÐÇ¨ÒÆ£¬Ö¸ÏòÆäµÈ¼Û×´Ì¬
-				//1.É¾³ý×´Ì¬jËù·¢³öµÄËùÓÐÇ¨ÒÆ
+				//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬iï¿½ï¿½jï¿½È¼Û£ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×´Ì¬jï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½Æ£ï¿½
+				//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½Æ£ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½È¼ï¿½×´Ì¬
+				//1.É¾ï¿½ï¿½×´Ì¬jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½ï¿½
 				deltransbypri(iterj->num);
-				//2.°ÑÖ¸ÏòjµÄËùÓÐÇ¨ÒÆ£¬Ö¸ÏòÆäµÈ¼Û×´Ì¬
+				//2.ï¿½ï¿½Ö¸ï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½Æ£ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½È¼ï¿½×´Ì¬
 				modifytransbysuc(iterj->num, iteri->num);
-				//3.É¾³ý×´Ì¬j	
+				//3.É¾ï¿½ï¿½×´Ì¬j	
 				iterj = states.erase(iterj);
 			}
 			else
@@ -402,7 +403,7 @@ void TGBA::SimplifyStates()
 		}
 	}
 }
-void TGBA::deltransbypri(int pri)                //É¾³ýpri·¢³öµÄËùÓÐ±äÇ¨
+void TGBA::deltransbypri(int pri)                //É¾ï¿½ï¿½priï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½Ç¨
 {
 	vector<TGBA_arc>::iterator itertrans;
 	for (itertrans = transition.begin(); itertrans != transition.end();)
@@ -420,10 +421,10 @@ void TGBA::modifytransbysuc(int oldsuc, int newsuc)
 	vector<TGBA_arc>::iterator itertrans;
 	while(findtransitionbysuc(oldsuc, itertrans))
 	{
-		//¼ì²éÖØÐÂÖ¸ÏònewsucÊÇ·ñ»áÔì³É±äÇ¨ÈßÓà
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½newsucï¿½Ç·ï¿½ï¿½ï¿½ï¿½É±ï¿½Ç¨ï¿½ï¿½ï¿½ï¿½
 		vector<TGBA_arc>::iterator oldtrans;
 		findtransitionbyps(itertrans->pioneer, newsuc, oldtrans);
-		if (oldtrans == transition.end())  //±íÊ¾Ã»ÓÐÇ¨ÒÆ£¨oldsuc->pri, newsuc£©
+		if (oldtrans == transition.end())  //ï¿½ï¿½Ê¾Ã»ï¿½ï¿½Ç¨ï¿½Æ£ï¿½oldsuc->pri, newsucï¿½ï¿½
 		{
 			itertrans->succeed = newsuc;
 			vector<TGBA_vex>::iterator pri;
@@ -431,9 +432,9 @@ void TGBA::modifytransbysuc(int oldsuc, int newsuc)
 			pri->nextvexset.erase(oldsuc);
 			pri->nextvexset.insert(newsuc);
 		}
-		else     //±íÊ¾ÒÑÓÐÇ¨ÒÆoldtrans£¨oldsuc->pri, newsuc£©£¬ÐèÒªÅÐ¶ÏÈßÓà
+		else     //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Ç¨ï¿½ï¿½oldtransï¿½ï¿½oldsuc->pri, newsucï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
-			if (isAincludeB(oldtrans->transcondi, itertrans->transcondi) && isAincludeB(itertrans->label, oldtrans->label))     //¾ÉÇ¨ÒÆÊÇÈßÓàµÄ
+			if (isAincludeB(oldtrans->transcondi, itertrans->transcondi) && isAincludeB(itertrans->label, oldtrans->label))     //ï¿½ï¿½Ç¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			{
 				itertrans->succeed = newsuc;
 				vector<TGBA_vex>::iterator pri;

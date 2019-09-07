@@ -122,7 +122,7 @@ int Lexer::GetWord(word &w)
 		return $End;
 	}
 	case '{': {
-		char p[10000];
+		char p[MAXFORMLEN];
 		int i = 0;
 		while (formula[pointer-1]!='}')
 		{
