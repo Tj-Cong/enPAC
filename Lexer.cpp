@@ -102,6 +102,7 @@ int Lexer::GetWord(word &w)
 		break; 
 	}
 	case 'X': {
+	    STUBBORN = false;
 		w.character = "X";
 		w.typenum = $Next;
 		break; 

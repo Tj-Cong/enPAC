@@ -35,7 +35,6 @@ add_executable(enPAC_2020_3_0
         tinyxmlparser.cpp
         xml2ltl.cpp
         xml2ltl.h
-        SMemoryChunk.h
         main.cpp)
 
 

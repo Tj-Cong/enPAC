@@ -116,9 +116,6 @@
 		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/SBA.h">
 			<Option target="enPAC_2020_3_0"/>
 		</Unit>
-		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/SMemoryChunk.h">
-			<Option target="enPAC_2020_3_0"/>
-		</Unit>
 		<Unit filename="/home/hecong/文档/enPAC_2020_3.0/Syntax_Tree.cpp">
 			<Option target="enPAC_2020_3_0"/>
 		</Unit>

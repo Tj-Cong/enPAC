@@ -197,6 +197,177 @@ void conAPstack(AP_stack prop1, AP_stack prop2, AP_stack *prop3)
         prop3->insert(*iter2);
     }
 }
+
+
+bool judgeC(string s) {
+    int pos = s.find("<=");
+    if (pos == string::npos)
+    {
+        return false;            //LTLC
+    }
+    else return true;          //LTLF
+}
+
+void getFV(string apstr, set<int> &vs)
+{
+    if(apstr[0] == '!') {
+        apstr = apstr.substr(2,apstr.length()-2);  //去掉"!{"
+    }
+    else {
+        apstr = apstr.substr(1,apstr.length()-1);  //去掉"{"
+    }
+
+    string subs;
+
+    for(;;)            //取出每一个变迁
+    {
+        int pos = apstr.find_first_of(",");
+        if(pos<0)
+            break;
+        subs = apstr.substr(0,pos);
+
+        int idex = petri->getTPosition(subs);
+
+        Transition trans = petri->transition[idex];
+        //遍历他的所有前继库所
+        vector<SArc>::iterator tpre;
+        vector<SArc>::iterator ppre;
+        vector<SArc>::iterator ppost;
+        for(tpre=trans.producer.begin();tpre!=trans.producer.end();++tpre)
+        {
+            //得到一个前继库所
+            Place pp = petri->place[(*tpre).idx];
+            //遍历和pp所有相关联的变迁t，使得w(pp,t)!=w(t,pp)
+            //先遍历前继；ppre代表pp的一个前继变迁t(t->pp)
+            for(ppre=pp.producer.begin();ppre!=pp.producer.end();++ppre)
+            {
+                SArc ss = *ppre;
+                vector<SArc>::iterator at = find(pp.consumer.begin(),pp.consumer.end(),ss);
+                if(at == pp.consumer.end())  //说明没找到相等的
+                {
+                    vs.insert((*ppre).idx);
+                }
+            }
+            //再遍历后继；
+            for(ppost=pp.consumer.begin();ppost!=pp.consumer.end();++ppost)
+            {
+                SArc ss = *ppost;
+                vector<SArc>::iterator at = find(pp.producer.begin(),pp.producer.end(),ss);
+                if(at==pp.producer.end())
+                {
+                    vs.insert((*ppost).idx);
+                }
+            }
+        }
+        apstr = apstr.substr(pos + 1);
+    }
+}
+
+void getCV(string apstr, set<int> &vs)
+{
+    //{token-count(p1,p3,...)<=token-count(p,p,...)}
+    if(apstr[0] == '!')
+    {
+        apstr = apstr.substr(2,apstr.length()-3);   //去掉"!{"和"}"
+    } else{
+        apstr = apstr.substr(1,apstr.length()-2);   //去掉"{"和"}"
+    }
+
+    //token-count(p1,p3,...)<=token-count(p,p,...)
+    int midpos = apstr.find_first_of("<=");
+    string fsthalf = apstr.substr(0,midpos);
+    string sechalf = apstr.substr(midpos+2);
+
+
+    //先处理前半部分
+    if(fsthalf[0]=='t')  //token-count的形式
+    {
+        fsthalf=fsthalf.substr(12,fsthalf.length()-13);  //去掉"token-count("和")"
+        //p1,p3,...,
+        int pos;
+        string subs;
+
+        //遍历每一个库所，找到影响该库所token取值的变迁
+        for(;;)
+        {
+            pos = fsthalf.find_first_of(",");
+            if(pos<0)
+                break;
+
+            subs = fsthalf.substr(0,pos);
+            int idex = petri->getPPosition(subs);
+            Place pls = petri->place[idex];  //得到一个库所
+
+            vector<SArc>::iterator ppre;
+            vector<SArc>::iterator ppost;
+            //先遍历该库所的前继变迁
+            for(ppre=pls.producer.begin();ppre!=pls.producer.end();++ppre)
+            {
+                SArc ss = *ppre;
+                vector<SArc>::iterator at = find(pls.consumer.begin(),pls.consumer.end(),ss);
+                if(at==pls.consumer.end())
+                {
+                    vs.insert((*ppre).idx);
+                }
+            }
+            //再遍历该库所的后继变迁
+            for(ppost=pls.consumer.begin();ppost!=pls.consumer.end();++ppost)
+            {
+                SArc ss = *ppost;
+                vector<SArc>::iterator at = find(pls.producer.begin(),pls.producer.end(),ss);
+                if(at==pls.producer.end())
+                {
+                    vs.insert((*ppost).idx);
+                }
+            }
+            fsthalf = fsthalf.substr(pos+1);
+        }
+    }
+    //再处理后半部分
+    if(sechalf[0] == 't')
+    {
+        sechalf=sechalf.substr(12,sechalf.length()-13);  //去掉"token-count("和")"
+        //p1,p3,...,
+        int pos;
+        string subs;
+
+        //遍历每一个库所，找到影响该库所token取值的变迁
+        for(;;)
+        {
+            pos = sechalf.find_first_of(",");
+            if(pos<0)
+                break;
+
+            subs = sechalf.substr(0,pos);
+            int idex = petri->getPPosition(subs);
+            Place pls = petri->place[idex];  //得到一个库所
+
+            vector<SArc>::iterator ppre;
+            vector<SArc>::iterator ppost;
+            //先遍历该库所的前继变迁,ppre=(tt->pls);
+            for(ppre=pls.producer.begin();ppre!=pls.producer.end();++ppre)
+            {
+                SArc ss = *ppre;
+                vector<SArc>::iterator at = find(pls.consumer.begin(),pls.consumer.end(),ss);
+                if(at==pls.consumer.end())
+                {
+                    vs.insert((*ppre).idx);
+                }
+            }
+            //再遍历该库所的后继变迁
+            for(ppost=pls.consumer.begin();ppost!=pls.consumer.end();++ppost)
+            {
+                SArc ss = *ppost;
+                vector<SArc>::iterator at = find(pls.producer.begin(),pls.producer.end(),ss);
+                if(at==pls.producer.end())
+                {
+                    vs.insert((*ppost).idx);
+                }
+            }
+            sechalf = sechalf.substr(pos+1);
+        }
+    }
+}
 /*******************************************************/
 
 /*******************Syntan_Tree's**********************/
@@ -1056,6 +1227,310 @@ void Syntax_Tree::DelSynTree(ST_Node *T) {
 
 Syntax_Tree::~Syntax_Tree() {
     DelSynTree(root);
+}
+
+void Syntax_Tree::directemporal(ST_Node *T,bool &exchanged) {
+
+     exchanged = false;
+
+     if(T->ctype == AP) {
+         return;
+     }
+     else if(T->ctype == binary_op) {
+
+         directemporal(T->left,exchanged);
+         directemporal(T->right,exchanged);
+
+         if(T->character == "U"){
+             ST_Node *Tl = T->left;
+             ST_Node *Tr = T->right;
+             if(Tl->character == "&&") {
+                T->character = "&&";
+                STNode copy_right;
+                T->left->character = "U";
+
+                STNode rightU = new ST_Node;
+                rightU->character = "U";
+                rightU->ctype=binary_op;
+
+                rightU->left = T->left->right;
+                T->left->right->parent = rightU;
+                CopyTree(T->right,copy_right,T->left);
+                T->left->right = copy_right;
+                rightU->right = T->right;
+                T->right->parent = rightU;
+                T->right = rightU;
+                rightU->parent = T;
+
+                exchanged = true;
+             }
+             else if(Tr->character == "||") {
+                 T->character = "||";
+                 T->right->character="U";
+                 STNode leftU = new ST_Node;
+
+                 leftU->character="U";
+                 leftU->ctype=binary_op;
+                 leftU->right=T->right->left;
+                 T->right->left->parent=leftU;
+                 STNode copyleft;
+                 CopyTree(T->left,copyleft,T->right);
+                 T->right->left=copyleft;
+                 leftU->left=T->left;
+                 T->left->parent = leftU;
+                 T->left=leftU;
+                 leftU->parent = T;
+
+                 exchanged = true;
+             }
+         }
+
+//         directemporal(T->left,exchanged);
+//         directemporal(T->right,exchanged);
+     }
+     else if(T->ctype == unary_op) {
+
+         directemporal(T->left,exchanged);
+
+         if(T->character=="[]"){
+             if(T->left->character=="<>"){
+                 STNode tl = T->left;
+                 if(tl->left->character=="||") {      //GF(a||b)=GFa||GFb
+                     STNode vee = new ST_Node;
+                     vee->character="||";
+                     vee->ctype=binary_op;
+                     STNode G=new ST_Node;
+                     G->character="[]";
+                     G->ctype=unary_op;
+                     STNode F=new ST_Node;
+                     F->character="<>";
+                     F->ctype=unary_op;
+                     if(T->parent->left == T) {
+                         T->parent->left=vee;
+                     }
+                     else if(T->parent->right == T) {
+                         T->parent->right = vee;
+                     }
+                     vee->parent = T->parent;
+                     T->parent=vee;
+                     vee->left=T;
+
+                     STNode tll=tl->left;
+
+                     vee->right = G;
+                     G->parent = vee;
+                     G->left = F;
+                     F->parent=G;
+                     F->left = tll->right;
+                     tll->right->parent = F;
+                     tl->left=tll->left;
+                     tll->left->parent = tl;
+                     delete tll;
+//                     directemporal(vee->left);
+//                     directemporal(vee->right);
+                     exchanged = true;
+                 }
+             }
+             else
+             {
+                 if(T->left->character == "&&")   //G(a&&b)=Ga&&Gb
+                 {
+                     STNode tl = T->left;
+                     STNode wedge = new ST_Node;
+                     wedge->character="&&";
+                     wedge->ctype=binary_op;
+
+                     STNode G = new ST_Node;
+                     G->character="[]";
+                     G->ctype=unary_op;
+
+                     if(T->parent->left == T) {
+                         T->parent->left = wedge;
+                     }
+                     else if(T->parent->right == T) {
+                         T->parent->right = wedge;
+                     }
+                     wedge->parent = T->parent;
+                     wedge->left=T;
+                     T->parent = wedge;
+
+                     wedge->right = G;
+                     G->parent=wedge;
+                     G->left = tl->right;
+                     tl->right->parent = G;
+                     T->left=tl->left;
+                     tl->left->parent=T;
+                     delete tl;
+//                     directemporal(wedge->left);
+//                     directemporal(wedge->right);
+                     exchanged = true;
+                 }
+             }
+         }
+         else if(T->character=="<>") {
+             if(T->left->character=="[]") {
+                 STNode tl = T->left;
+                 STNode tll = T->left->left;
+                 if(tll->character=="&&") {  //FG(a&&b)=FGa&&FGb
+                     STNode wedge = new ST_Node;
+                     wedge->character = "&&";
+                     wedge->ctype = binary_op;
+
+                     if(T->parent->left == T){
+                         T->parent->left = wedge;
+                     }
+                     else if(T->parent->right ==T)
+                     {
+                         T->parent->right =wedge;
+                     }
+                     wedge->parent = T->parent;
+                     wedge->left=T;
+                     T->parent = wedge;
+
+                     STNode G =new ST_Node;
+                     G->character="[]";
+                     G->ctype=unary_op;
+                     STNode F = new ST_Node;
+                     F->ctype = unary_op;
+                     F->character = "<>";
+
+                     wedge->right=F;
+                     F->parent=wedge;
+                     F->left=G;
+                     G->parent=F;
+                     G->left=tll->right;
+                     tll->right->parent=G;
+                     tl->left = tll->left;
+                     tll->parent = tl;
+                     delete tll;
+//                     directemporal(wedge->left);
+//                     directemporal(wedge->right);
+                     exchanged = true;
+                 }
+             }
+             else
+             {
+                 STNode tl = T->left;
+                 if(tl->character == "||")   //F(a||b)=Fa||Fb
+                 {
+                     STNode vee = new ST_Node;
+                     vee->character = "||";
+                     vee->ctype = binary_op;
+
+                     if(T->parent->left == T)
+                     {
+                         T->parent->left = vee;
+                     }
+                     else if(T->parent->right == T)
+                     {
+                         T->parent->right = vee;
+                     }
+                     vee->parent = T->parent;
+                     vee->left = T;
+                     T->parent = vee;
+
+                     STNode F = new ST_Node;
+                     F->character = "<>";
+                     F->ctype = unary_op;
+                     vee->right = F;
+                     F->parent = vee;
+                     F->left = tl->right;
+                     tl->right->parent = F;
+                     T->left = tl->left;
+                     tl->left->parent = T;
+                     delete tl;
+//                     directemporal(vee->left);
+//                     directemporal(vee->right);
+                     exchanged = true;
+                 }
+
+             }
+         }
+//         else
+//            directemporal(T->left);
+     }
+}
+
+void Syntax_Tree::getAPVisible(ST_Node *node) {
+    if(node->ctype!=AP)
+        return;
+    string apstr = node->character;
+
+    if(judgeC(apstr))   //C类型公式
+    {
+        getCV(apstr,visibles);
+    } else{
+        getFV(apstr,visibles);
+    }
+}
+
+//void Syntax_Tree::getVisibleTrans(ST_Node *node) {
+//    if(node->character == "&&" || node->character == "||")
+//    {
+//        getVisibleTrans(node->left);
+//        getVisibleTrans(node->right);
+//        node->VTS = new DoubleSet;
+//        vector<set<int>>::iterator ll;
+//        for(ll=node->left->VTS->myelems.begin();ll!=node->left->VTS->myelems.end();++ll)
+//        {
+//            node->VTS->myelems.push_back(*ll);
+//        }
+//        vector<set<int>>::iterator rr;
+//        for(rr=node->right->VTS->myelems.begin();rr!=node->right->VTS->myelems.end();++rr)
+//        {
+//            node->VTS->myelems.push_back(*rr);
+//        }
+//    }
+//    else if(node->ctype == binary_op)
+//    {
+//        getVisibleTrans(node->left);
+//        getVisibleTrans(node->right);
+//        node->VTS = new DoubleSet;
+//        if(node->left->VTS->myelems.size()!=1
+//            || node->right->VTS->myelems.size()!=1)
+//        {
+//            cerr<<"Error! It Is Not a Directly Temporary LTL Formula!"<<endl;
+//            exit(-1);
+//        }
+//        else
+//        {
+//            node->VTS->myelems = node->left->VTS->myelems;
+//            vector<set<int>>::iterator it = node->right->VTS->myelems.begin();
+//            node->VTS->myelems[0].insert((*it).begin(),(*it).end());
+//        }
+//    }
+//    else if(node->ctype == unary_op)
+//    {
+//        getVisibleTrans(node->left);
+//        node->VTS = new DoubleSet;
+//        if(node->left->VTS->myelems.size()!=1)
+//        {
+//            cerr<<"Error! It Is Not a Directly Temporary LTL Formula!"<<endl;
+//            exit(-1);
+//        }
+//        else
+//            node->VTS->myelems = node->left->VTS->myelems;
+//    }
+//    else if(node->ctype == AP)
+//    {
+//        getAPVisible(node);
+//    }
+//}
+
+void Syntax_Tree::getSingleVTS(ST_Node *node) {
+    if(node->ctype == binary_op)
+    {
+        getSingleVTS(node->left);
+        getSingleVTS(node->right);
+    }
+    else if(node->ctype == unary_op)
+    {
+        getSingleVTS(node->left);
+    }
+    else if(node->ctype == AP)
+    {
+        getAPVisible(node);
+    }
 }
 /****************************CF_Tree******************************/
 CF_Tree::CF_Tree()

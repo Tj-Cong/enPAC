@@ -14,14 +14,15 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <signal.h>
+#include <fstream>
 #include "RG.h"
 #include "SBA.h"
 
 #define TIME_LEFT 112
 #define max_to_string 30
 #define max_array_num 10000
-#define hash_table_num 100000
-#define each_ltl_time 30
+#define hash_table_num 16384    //2^14
+#define each_ltl_time 60
 using namespace std;
 
 extern bool timeflag;    //超时标志
@@ -32,6 +33,7 @@ extern NUM_t MARKLEN;
 extern NUM_t placecount;
 extern bool NUPN;
 extern bool SAFE;
+extern bool STUBBORN;
 
 /*******************************************/
 
@@ -88,12 +90,14 @@ private:
     bool result;
     int ret;
     vector<int> negpath;
+    ofstream outcurdepth;
 public:
     Product_Automata(Petri *pt, rg_T* r, SBA *sba);
     void getProduct();         //合成交自动机
     void addinitial_status(rgnode *initnode);  //生成交自动机的初始状态
     void ModelChecker(string propertyid, int &timeleft);  //最外层的函数
     void simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid);          //CBANid: current biggest accepted node id
+    void stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid,int CBRNid);
     bool isLabel(rgnode *state, int sj);  //判断能否合成交状态
     bool judgeF(string s);         //判断该公式是否为F类型的公式
     NUM_t sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
@@ -105,16 +109,6 @@ public:
     int getNodecount();
     void printNegapth(ofstream &outpath);
     ~Product_Automata();
-
-//    void *operator new(std::size_t ObjectSize)
-//    {
-//        return g_ptrMemPool->GetMemory(ObjectSize) ;
-//    }
-//
-//    void operator delete(void *ptrObject, std::size_t ObjectSize)
-//    {
-//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-//    }
 };
 
 template <class rgnode>
@@ -180,11 +174,12 @@ template <class rgnode>
 index_t hashtable<rgnode>::hashfunction(Product<rgnode> *q)
 {
     index_t RGhashvalue;
+    index_t size = hash_table_num-1;
     RGhashvalue = q->RGname_ptr->Hash();
-    RGhashvalue = RGhashvalue % hash_table_num;
+    RGhashvalue = RGhashvalue & size;
 
     index_t Prohashvalue = RGhashvalue + q->BAname_id;
-    Prohashvalue = Prohashvalue % hash_table_num;
+    Prohashvalue = Prohashvalue & size;
     return Prohashvalue;
 }
 
@@ -235,6 +230,8 @@ Product_Automata<rgnode,rg_T>::Product_Automata(Petri *pt, rg_T* r, SBA *sba) {
     rg = r;
     ba = sba;
     result = true;
+
+    outcurdepth.open("curdepth.txt",ios::out);
 }
 
 /*bool Product_Automata::judgeF(string s)
@@ -321,8 +318,10 @@ void Product_Automata<rgnode,rg_T>::getProduct() {
         init->RGname_ptr = initial_status[i].RGname_ptr;
         init->BAname_id = initial_status[i].BAname_id;
         init->hashnext = NULL;
-//        dfs1(init);
-        simplified_dfs(init,0,-1);
+        if(STUBBORN)
+            stubborn_dfs(init,0,-1,-1);
+        else
+            simplified_dfs(init,0,-1);
         delete init;
         if(!result || !timeflag)  //如果已经出结果或超时，则退出
             break;
@@ -331,11 +330,13 @@ void Product_Automata<rgnode,rg_T>::getProduct() {
 
 template <class rgnode, class rg_T>
 void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid) {
+
+//    outcurdepth<<recurdepth<<endl;
     if(!result || !timeflag){
         return ;
     }
 
-    int cban;
+    int cban;    //current biggest accepted node
     if((ba->svertics[q->BAname_id].isAccept == true) && (q->id > CBANid))
         cban = q->id;
     else
@@ -429,6 +430,161 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
         }
         if(firecount>0)
             delete [] isFirable;
+        pba = pba->nextarc;
+    }
+    dfs_stack.pop(q);
+    MallocExtension::instance()->ReleaseFreeMemory();
+}
+
+template <class rgnode, class rg_T>
+void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid, int CBGNid) {
+
+//    outcurdepth<<recurdepth<<endl;
+    if(!result || !timeflag){
+        return ;
+    }
+
+    int cban, cbgn;
+
+    if((ba->svertics[q->BAname_id].isAccept == true) && (q->id > CBANid))
+        cban = q->id;
+    else
+        cban = CBANid;
+
+    h.insert(q);
+    dfs_stack.insert(q);
+    SArcNode *pba = ba->svertics[q->BAname_id].firstarc;
+
+    //遍历BA的后继结点
+    while(pba != NULL) {
+
+        if(!result || !timeflag){
+            return ;
+        }
+
+        //index_t *isFirable;
+        //unsigned short firecount;
+        //rg->getFireableTranx(q->RGname_ptr,&isFirable,firecount);
+
+        //计算顽固集合
+        vector<int> stbset;
+        bool red;
+        rg->genStbnSet(q->RGname_ptr,stbset,red);
+
+        if(stbset.size() == 0)                //如果约减后的可达图终止，那么原可达图也会终止
+        {
+            red = false;
+            cbgn = recurdepth;
+            if(!result || !timeflag){
+                return ;
+            }
+
+            rgnode *rgseed = q->RGname_ptr;
+            if(isLabel(rgseed, pba->adjvex))
+            {
+                Product<rgnode> *qs = new Product<rgnode>;
+                qs->id = recurdepth + 1;
+                qs->BAname_id = pba->adjvex;
+                qs->RGname_ptr = rgseed;
+
+                Product<rgnode> *existpos = dfs_stack.search(qs);
+                if(existpos != NULL)          //找到了环
+                {
+                    if(existpos->id <= cban)
+                    {
+                        result = false;
+                        delete qs;
+                        return;
+                    }
+                }
+                if(h.search(qs) == NULL)
+                {
+                    stubborn_dfs(qs,recurdepth+1,cban,cbgn);
+                }
+                delete qs;
+            }
+        }
+        vector<int>::iterator rg_i = stbset.begin();
+        bool reexpand = false;
+        for(rg_i; rg_i!=stbset.end(); ++rg_i)
+        {
+            if(!result || !timeflag){
+                return ;
+            }
+
+            if(!red)
+                cbgn = recurdepth;
+            else
+                cbgn = CBGNid;
+
+            bool exist;
+            rgnode *rgseed = rg->RGcreatenode(q->RGname_ptr,*rg_i,exist);
+            if(isLabel(rgseed, pba->adjvex))
+            {
+                Product<rgnode> *qs = new Product<rgnode>;
+                qs->id = recurdepth + 1;
+                qs->BAname_id = pba->adjvex;
+                qs->RGname_ptr = rgseed;
+
+                Product<rgnode> *existpos = dfs_stack.search(qs);
+                if(existpos != NULL)             //找到了环
+                {
+                    if(existpos->id <= cban)
+                    {
+                        result = false;
+                        delete qs;
+                        return;
+                    }
+                    if(existpos->id > cbgn)      //这是一个全是red的环
+                    {
+                        //re-expand
+                        reexpand = true;
+                        cbgn = recurdepth;
+                    }
+                }
+                if(h.search(qs) == NULL)
+                {
+                    stubborn_dfs(qs,recurdepth+1,cban,cbgn);
+                }
+                delete qs;
+            }
+        }
+
+        if(reexpand && !result)   //需要重新扩展，用algorithm2中的step2
+        {
+            vector<int> newstbset;
+            rg->re_expand(q->RGname_ptr,stbset,newstbset);
+            cbgn = recurdepth;
+            vector<int>::iterator it;
+            for(it=newstbset.begin();it!=newstbset.end();++it)
+            {
+                bool exist;
+                rgnode *rgseed = rg->RGcreatenode(q->RGname_ptr,*it,exist);
+                if(isLabel(rgseed, pba->adjvex))
+                {
+                    Product<rgnode> *qs = new Product<rgnode>;
+                    qs->id = recurdepth + 1;
+                    qs->BAname_id = pba->adjvex;
+                    qs->RGname_ptr = rgseed;
+
+                    Product<rgnode> *existpos = dfs_stack.search(qs);
+                    if(existpos != NULL)             //找到了环
+                    {
+                        if(existpos->id <= cban)
+                        {
+                            result = false;
+                            delete qs;
+                            return;
+                        }
+                    }
+                    if(h.search(qs) == NULL)
+                    {
+                        stubborn_dfs(qs,recurdepth+1,cban,cbgn);
+                    }
+                    delete qs;
+                }
+            }
+        }
         pba = pba->nextarc;
     }
     dfs_stack.pop(q);

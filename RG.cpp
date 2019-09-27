@@ -834,6 +834,19 @@ index_t RGNode::Hash() {
     return hash;
 }
 
+bool RGNode::isFirable(const Transition &t) const {
+    bool isfirable = true;
+    vector<SArc>::const_iterator tpre = t.producer.begin();
+    for(tpre;tpre!=t.producer.end();++tpre)
+    {
+        if(marking[tpre->idx] < tpre->weight) {
+            isfirable = false;
+            break;
+        }
+    }
+    return isfirable;
+}
+
 /*RGNode::~RGNode()
  * function： 析构函数，释放空间
  * */
@@ -887,6 +900,75 @@ index_t BitRGNode::Hash() {
     return hash;
 }
 
+bool BitRGNode::isFirable(const Transition &t) const {
+
+    if(SAFE)
+    {
+        bool isfirable = true;
+        vector<SArc>::const_iterator tpre = t.producer.begin();
+        for(tpre;tpre!=t.producer.end();++tpre)
+        {
+            int unit = tpre->idx / (sizeof(myuint)*8);
+            int offset = tpre->idx % (sizeof(myuint)*8);
+            if(this->marking[unit].test0(offset)) {
+                isfirable = false;
+                break;
+            }
+        }
+        return isfirable;
+    }
+
+    Mark *equmark = new Mark[petri->placecount];
+    memset(equmark,0, sizeof(short)*petri->placecount);
+
+    //遍历每一个unit
+    for(int i = 0;i<petri->unitcount;i++)
+    {
+        index_t msp = petri->unittable[i].mark_sp;
+        NUM_t marklen = petri->unittable[i].mark_length;
+        index_t mend = msp + marklen;
+        int mi = 0;
+        unsigned short *Binarystr = new unsigned short[marklen];
+        int unit,offset;
+        for(mi,msp;msp<mend;mi++,msp++)
+        {
+            unit = msp / (sizeof(myuint)*8);
+            offset = msp % (sizeof(myuint)*8);
+            if(this->marking[unit].test1(offset))  //1
+            {
+                Binarystr[mi] = 1;
+            }
+            else{   //0
+                Binarystr[mi] = 0;
+            }
+
+        }
+
+        index_t place_offset;
+        BinaryToDec(place_offset,Binarystr,marklen);
+
+        delete [] Binarystr;
+
+        if(place_offset > 0)
+        {
+            index_t pos = petri->unittable[i].startpos + place_offset-1;
+            equmark[pos] = 1;
+        }
+    }
+
+    bool isfirable = true;
+    vector<SArc>::const_iterator tpre = t.producer.begin();
+    for(tpre;tpre!=t.producer.end();++tpre)
+    {
+        if(equmark[tpre->idx] < tpre->weight) {
+            isfirable = false;
+            break;
+        }
+    }
+    delete [] equmark;
+    return isfirable;
+}
+
 /*RGNode::~RGNode()
  * function： 析构函数，释放空间
  * */
@@ -909,7 +991,155 @@ RG::RG(Petri *pt) {
 
     RGNodelength = ptnet->placecount;
 
+    int transcount = ptnet->transitioncount;
+    //如果要用到顽固集，申请邻接表和tarjan要用到的DFN和Low数组
+    if(STUBBORN)
+    {
+        TGraph = new bool*[transcount];
+        successor = new bool[transcount];
+        hasenvis = new bool[transcount];
+        for(int j=0;j<transcount;++j)
+        {
+            TGraph[j] = new bool[transcount];
+        }
+
+        DFN = new int[transcount];
+        Low = new int[transcount];
+        visited = new int[transcount];
+        stgcmponts = new vector<int>[transcount];
+        isEnVis = new int[transcount];
+        isEnInVis = new int[transcount];
+        myroot = new int[transcount];
+        fire = new index_t[transcount];
+    }
+    else
+        TGraph = NULL;
     outRG.open("ReachabilityGraph.txt",ios::out);
+}
+
+//初始化邻接矩阵，全部初始化为false
+void RG::initTGraph() {
+    reachset.clear();
+    memset(isEnVis,0, sizeof(int)*ptnet->transitioncount);
+    memset(isEnInVis,0, sizeof(int)*ptnet->transitioncount);
+    memset(myroot,-1, sizeof(int)*ptnet->transitioncount);
+    memset(fire,0, sizeof(index_t)*ptnet->transitioncount);
+    for(int j=0;j<ptnet->transitioncount;++j)
+    {
+        successor[j] = false;
+        hasenvis[j] = false;
+        stgcmponts[j].clear();
+        for(int k=0;k<ptnet->transitioncount;++k)
+        {
+            TGraph[j][k] = false;
+        }
+    }
+}
+
+/*在进行Tarjan算法之前进行的预备工作：
+* 重置DFN数组，Low数组，visited数组，C集合，timepoint，tarstack*/
+void RG::initTarjan() {
+    timepoint = 0;
+    tarstack.clear();
+    memset(DFN,0, sizeof(int)*ptnet->transitioncount);
+    memset(Low,0, sizeof(int)*ptnet->transitioncount);
+    memset(visited,0, sizeof(int)*ptnet->transitioncount);
+}
+
+/*在状态curnode下得到变迁transition[tidx]的后继结点，
+ * 在TGraph中把相应的值设为true,并把successor[tidx]设为true
+ * 对于使能变迁，他的后继为和它non-accordwith的变迁
+ * 对于非使能变迁来说，他的后继为他的wrup
+ * */
+void RG::parturient(int tidx) {
+    Transition trans = ptnet->transition[tidx];
+    if(fire[tidx])  //当前状态变迁可发生
+    {
+        set<int>::iterator it;
+        for(it=trans.nonaccordwith.begin();it!=trans.nonaccordwith.end();++it)
+        {
+            TGraph[tidx][*it] = true;
+        }
+    } else{                        //当前状态变迁不可发生
+        set<int>::iterator it;
+        for(it=trans.wrup.begin();it!=trans.wrup.end();++it)
+        {
+            TGraph[tidx][*it] = true;
+        }
+    }
+    successor[tidx] = true;
+}
+
+void RG::Tarjan(int tidx) {
+    DFN[tidx] = Low[tidx] = ++timepoint;
+    tarstack.push(tidx);
+    visited[tidx] = 1;    //表示tidx已经入栈
+
+    if(!successor[tidx])
+        parturient(tidx);
+
+    int i = 0;
+    for(i;i<ptnet->transitioncount;++i)
+    {
+        if(TGraph[tidx][i])   //如果transition[i]是transition[tidx]的后继
+        {
+            if(!DFN[i])  //transition[i]还未被访问过
+            {
+                Tarjan(i);
+                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+            }
+            else if(visited[i])  //如果u还在栈内
+            {
+                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+            }
+        }
+    }
+
+    if(DFN[tidx] == Low[tidx])         //这是强连通分量的根节点
+    {
+        int popitem;
+        do {
+            popitem = tarstack.pop();   //从栈中弹出一个节点
+            visited[popitem] = 0;       //表示popitem已经出栈
+            if(isEnVis[popitem])
+            {
+                hasenvis[tidx] = true;
+            }
+            stgcmponts[tidx].push_back(popitem);
+            myroot[popitem] = tidx;
+        } while(popitem != tidx);
+    }
+
+}
+
+/*得到以source集合中变迁为起始节点在TGraph中所能
+* 到达的节点的集合，放到reachset中
+* 注意：在每次调用这个函数前必须初始化visited数组
+* (内部递归调用不用)*/
+void RG::getReachable(const set<int> &source) {
+    if(source.size() == 0)
+        return;
+    set<int> nextsource;
+    set<int>::const_iterator it=source.begin();
+    for(it;it!=source.end();++it)
+    {
+        if(visited[*it]==false)
+        {
+            if(!successor[*it])
+                parturient(*it);
+            for(int i=0;i<ptnet->transitioncount;i++)
+            {
+                if(TGraph[*it][i])
+                {
+                    //如果i是*it的后继
+                    TGraph[*it][i] = false;
+                    reachset.insert(i);
+                    nextsource.insert(i);
+                }
+            }
+        }
+    }
+    getReachable(nextsource);
 }
 
 /*void RG::push(RGNode *mark)
@@ -1112,6 +1342,24 @@ RG::~RG() {
         }
     }
     delete rgnode;
+
+    if(STUBBORN)
+    {
+        for(int i=0;i<ptnet->transitioncount;i++)
+        {
+            delete [] TGraph[i];
+        }
+        delete [] DFN;
+        delete [] Low;
+        delete [] visited;
+        delete [] successor;
+        delete [] hasenvis;
+        delete [] stgcmponts;
+        delete [] myroot;
+        delete [] isEnInVis;
+        delete [] isEnVis;
+        delete [] fire;
+    }
     MallocExtension::instance()->ReleaseFreeMemory();
 }
 
@@ -1123,6 +1371,184 @@ void RG::deCoder(unsigned short *equmark, RGNode *curnode) {
 
 }
 
+void RG::isFirable() {
+    //计算当前状态的可发生变迁；
+    bool firable;
+    NUM_t tlength = ptnet->transitioncount;
+    Transition *tranx;
+
+    //遍历每一个变迁
+    for(unsigned int j = 0;j<tlength;j++)
+    {
+        //对于第j个变迁
+        tranx = &ptnet->transition[j];
+        firable = true;
+
+        //遍历第j个变迁的所有前继库所
+        vector<SArc>::iterator iterpre = tranx->producer.begin();
+        vector<SArc>::iterator preend = tranx->producer.end();
+
+        //遍历ptnet.transition[j]的所有前继库所，看其token值是否大于weight
+        for(iterpre; iterpre!=preend; iterpre++)
+        {
+            if(cur->marking[iterpre->idx] < iterpre->weight)
+            {
+                firable = false;
+                break;
+            }
+        }
+
+        //判断是否能发生，若能发生，加入当前状态的可发生数组中
+        if(firable)
+            fire[j] = 1;
+        else
+            fire[j] = 0;
+    }
+}
+
+void RG::genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red) {
+    cur = curnode;
+    initTGraph();
+    getEn_visible();
+    isFirable();
+
+    //进行第一步
+    for(int i=0;i<ptnet->transitioncount;++i)
+    {
+        if(isEnInVis[i]) //如果是使能的非可见变迁
+        {
+            if(myroot[i]!=-1)   //该节点已经在一个强连通分量中
+            {
+                if(!hasenvis[myroot[i]])
+                {
+                    vector<int>::iterator it;
+                    for(it=stgcmponts[myroot[i]].begin();it!=stgcmponts[myroot[i]].end();++it)
+                    {
+                        if(fire[*it])
+                            stbset.push_back(*it);
+                    }
+                    red = true;
+                    //stbset = stgcmponts[myroot[i]];
+                    return;
+                }
+            }
+            else
+            {
+                initTarjan();
+                Tarjan(i);
+                if(!hasenvis[i])
+                {
+                    vector<int>::iterator it;
+                    for(it=stgcmponts[i].begin();it!=stgcmponts[i].end();++it)
+                    {
+                        if(fire[*it])
+                            stbset.push_back(*it);
+                    }
+                    red = true;
+                    //stbset = stgcmponts[i];
+                    return;
+                }
+            }
+        }
+    }
+
+    //进行第二步
+    memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    getReachable(visibleset);
+
+    //得到Tu后检查是否包含一个使能的非可见变迁
+    set<int>::iterator rit;
+    bool contain = false;
+    for(rit=reachset.begin();rit!=reachset.end();++rit)
+    {
+        if(fire[*rit])
+            stbset.push_back(*rit);
+        if(isEnInVis[*rit])
+        {
+            contain = true;
+        }
+    }
+    if(contain)
+    {
+        red = false;
+        return;
+    }
+
+
+    bool noeninvis = true;
+    int j=0;
+    for(j=0;j<ptnet->transitioncount;++j)
+    {
+        if(isEnInVis[j])
+        {
+            noeninvis = false;
+            break;
+        }
+    }
+    if(noeninvis)
+    {
+        red = false;
+        return;
+    }
+
+    //进行第三步
+    initTarjan();
+    int eeii = j;
+    Tarjan(eeii);
+
+    vector<int>::iterator ii;
+    for(ii=stgcmponts[eeii].begin();ii!=stgcmponts[eeii].end();++ii)
+    {
+        if(fire[*ii])
+            stbset.push_back(*ii);
+    }
+    red = false;
+    return;
+}
+
+void RG::getEn_visible() {
+
+    vector<int>::iterator it;
+    for(it=invisibleset.begin();it!=invisibleset.end();++it)
+    {
+        //遍历所有的非可视变迁
+        //检查其是否是使能的
+        if(fire[*it])
+        {
+            //使能
+            isEnInVis[*it] = 1;
+        }
+    }
+
+    set<int>::iterator vis;
+    for(vis=visibleset.begin();vis!=visibleset.end();++vis)
+    {
+        if(fire[*vis])
+            isEnVis[*vis] = 1;
+    }
+}
+
+void RG::re_expand(RGNode *curnode, const vector<int> &oldstbset, vector<int> &newstbset) {
+    cur = curnode;
+    initTGraph();
+    getEn_visible();
+    isFirable();
+
+    //进行第二步
+    memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    getReachable(visibleset);
+
+    set<int>::iterator rit;
+    for(rit=reachset.begin();rit!=reachset.end();++rit)
+    {
+        if(fire[*rit])
+        {
+            vector<int>::const_iterator oid = find(oldstbset.begin(),oldstbset.end(),*rit);
+            if(oid == oldstbset.end())
+                newstbset.push_back(*rit);
+        }
+    }
+}
 /****************************BitRG*****************************/
 /*构造函数*/
 BitRG::BitRG(Petri *pt) {
@@ -1143,9 +1569,318 @@ BitRG::BitRG(Petri *pt) {
     } else{
         RGNodelength = pt->placecount;
     }
+
+    int transcount = ptnet->transitioncount;
+    if(STUBBORN)
+    {
+        TGraph = new bool*[transcount];
+        successor = new bool[transcount];
+        hasenvis = new bool[transcount];
+        for(int i=0;i<transcount;++i)
+        {
+            TGraph[i] = new bool[transcount];
+        }
+
+        DFN = new int[transcount];
+        Low = new int[transcount];
+        visited = new int[transcount];
+        stgcmponts = new vector<int>[transcount];
+        isEnVis = new int[transcount];
+        isEnInVis = new int[transcount];
+        myroot = new int[transcount];
+        fire = new index_t[transcount];
+    }
+    else
+        TGraph = NULL;
     outRG.open("ReachabilityGraph.txt",ios::out);
 }
 
+//每个getstbnset时进行的初始化
+void BitRG::initTGraph() {
+    reachset.clear();
+    memset(isEnVis,0, sizeof(int)*ptnet->transitioncount);
+    memset(isEnInVis,0, sizeof(int)*ptnet->transitioncount);
+    memset(myroot,-1, sizeof(int)*ptnet->transitioncount);
+    memset(fire,0, sizeof(index_t)*ptnet->transitioncount);
+    for(int i=0;i<ptnet->transitioncount;++i)
+    {
+        successor[i] = false;
+        hasenvis[i] = false;
+        stgcmponts[i].clear();
+        for(int j=0;j<ptnet->transitioncount;++j)
+        {
+            TGraph[i][j] = false;
+        }
+    }
+}
+
+void BitRG::initTarjan() {
+    timepoint = 0;
+    tarstack.clear();
+    memset(DFN,0, sizeof(int)*ptnet->transitioncount);
+    memset(Low,0, sizeof(int)*ptnet->transitioncount);
+    memset(visited,0, sizeof(int)*ptnet->transitioncount);
+}
+
+/*在状态curnode下得到变迁transition[tidx]的后继结点，
+ * 在TGraph中把相应的值设为true,并把successor[tidx]设为true
+ * 对于使能变迁，他的后继为和它non-accordwith的变迁
+ * 对于非使能变迁来说，他的后继为他的wrup
+ * */
+void BitRG::parturient(int tidx) {
+    Transition trans = ptnet->transition[tidx];
+    if(fire[tidx])
+    {
+        set<int>::iterator it;
+        for(it=trans.nonaccordwith.begin();it!=trans.nonaccordwith.end();++it)
+        {
+            TGraph[tidx][*it] = true;
+        }
+    }
+    else
+    {
+        set<int>::iterator it;
+        for(it=trans.wrup.begin();it!=trans.wrup.end();++it)
+        {
+            TGraph[tidx][*it] = true;
+        }
+    }
+    successor[tidx] = true;
+}
+
+/*得到以source集合中变迁为起始节点在TGraph中所能
+* 到达的节点的集合，放到reachset中
+* 注意：在每次调用这个函数前必须初始化visited数组
+* (内部递归调用不用)*/
+void BitRG::getReachable(const set<int> &source) {
+    if(source.size() == 0)
+        return;
+    set<int> nextsource;
+    set<int>::const_iterator it=source.begin();
+    for(it;it!=source.end();++it)
+    {
+        if(visited[*it]==false)
+        {
+            if(!successor[*it])
+                parturient(*it);
+            for(int i=0;i<ptnet->transitioncount;i++)
+            {
+                if(TGraph[*it][i])
+                {
+                    //如果i是*it的后继
+                    TGraph[*it][i] = false;
+                    reachset.insert(i);
+                    nextsource.insert(i);
+                }
+            }
+        }
+    }
+    getReachable(nextsource);
+}
+
+/*一个递归函数，寻找以变迁transition[root]为根节点的强连通分量*/
+void BitRG::Tarjan(int tidx) {
+    DFN[tidx] = Low[tidx] = ++timepoint;
+    tarstack.push(tidx);
+    visited[tidx] = 1;
+
+    if(!successor[tidx])
+        parturient(tidx);
+
+    int i=0;
+    for(i;i<ptnet->transitioncount;++i)
+    {
+        if(TGraph[tidx][i])   //如果transition[i]是transition[tidx]的后继
+        {
+            if(!DFN[i])  //transition[i]还未被访问过
+            {
+                Tarjan(i);
+                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+            }
+            else if(visited[i])
+            {
+                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+            }
+        }
+    }
+
+    if(DFN[tidx] == Low[tidx])
+    {
+        int popitem;
+        do {
+            popitem = tarstack.pop();
+            visited[popitem] = 0;
+            myroot[popitem] = tidx;
+
+            if(isEnVis[popitem])
+                hasenvis[tidx] = true;
+            stgcmponts[tidx].push_back(popitem);
+        }while (popitem!=tidx);
+    }
+}
+
+void BitRG::getEn_visible() {
+    vector<int>::iterator it;
+    for(it=invisibleset.begin();it!=invisibleset.end();++it)
+    {
+        //遍历所有的非可视变迁
+        //检查其是否是使能的
+        if(fire[*it])
+        {
+            //使能
+            isEnInVis[*it] = 1;
+        }
+    }
+
+    set<int>::iterator vis;
+    for(vis=visibleset.begin();vis!=visibleset.end();++vis)
+    {
+        if(fire[*vis])
+            isEnVis[*vis] = 1;
+    }
+}
+
+//判断变迁tidx在当前状态下是否可发生
+void BitRG::isFirable() {
+    unsigned short *mark = NULL;
+    if(NUPN){
+        mark = new unsigned short[placecount];
+        deCoder(mark,cur);
+    }
+
+    //计算当前状态的可发生变迁；
+    bool firable;
+    NUM_t tlength = ptnet->transitioncount;
+    Transition *tranx;
+
+    //遍历每一个变迁
+    for(unsigned int j = 0;j<tlength;j++)
+    {
+        //对于第j个变迁
+        tranx = &ptnet->transition[j];
+        firable = true;
+
+        //遍历第j个变迁的所有前继库所
+        vector<SArc>::iterator iterpre = tranx->producer.begin();
+        vector<SArc>::iterator preend = tranx->producer.end();
+
+        //遍历ptnet.transition[j]的所有前继库所，看其token值是否大于weight
+        for(iterpre; iterpre!=preend; iterpre++)
+        {
+            if(NUPN){
+                if(mark[iterpre->idx] == 0){
+                    firable = false;
+                    break;
+                }
+            }
+            else if(SAFE){
+                int unit = iterpre->idx / (sizeof(myuint)*8);
+                int offset = iterpre->idx % (sizeof(myuint)*8);
+                if(cur->marking[unit].test0(offset)){
+                    firable = false;
+                    break;
+                }
+            }
+        }
+        if(firable)
+            fire[j] = 1;
+        else
+            fire[j] = 0;
+    }
+    if(NUPN) {
+        delete [] mark;
+    }
+}
+
+void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset,bool &red) {
+    cur = curnode;
+    initTGraph();
+    isFirable();
+    getEn_visible();
+
+    //进行第一步
+    for(int i=0;i<ptnet->transitioncount;++i)
+    {
+        if(isEnInVis[i]) //如果是使能的非可见变迁
+        {
+            if(myroot[i]!=-1)   //该节点已经在一个强连通分量中
+            {
+                if(!hasenvis[myroot[i]])
+                {
+                    vector<int>::iterator it;
+                    for(it=stgcmponts[myroot[i]].begin();it!=stgcmponts[myroot[i]].end();++it)
+                    {
+                        if(fire[*it])
+                            stbset.push_back(*it);
+                    }
+                    //stbset = stgcmponts[myroot[i]];
+                    return;
+                }
+            }
+            else
+            {
+                initTarjan();
+                Tarjan(i);
+                if(!hasenvis[i])
+                {
+                    vector<int>::iterator it;
+                    for(it=stgcmponts[i].begin();it!=stgcmponts[i].end();++it)
+                    {
+                        if(fire[*it])
+                            stbset.push_back(*it);
+                    }
+                    //stbset = stgcmponts[i];
+                    return;
+                }
+            }
+        }
+    }
+
+    //进行第二步
+    memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    getReachable(visibleset);
+
+    //得到Tu后检查是否包含一个使能的非可见变迁
+    set<int>::iterator rit;
+    bool contain = false;
+    for(rit=reachset.begin();rit!=reachset.end();++rit)
+    {
+        if(fire[*rit])
+            stbset.push_back(*rit);
+        if(isEnInVis[*rit])
+        {
+            contain = true;
+        }
+    }
+    if(contain)
+        return;
+
+    bool noeninvis = true;
+    int j=0;
+    for(j=0;j<ptnet->transitioncount;++j)
+    {
+        if(isEnInVis[j])
+        {
+            noeninvis = false;
+            break;
+        }
+    }
+    if(noeninvis)
+        return;
+
+    //进行第三步
+    initTarjan();
+    int eeii = j;
+    Tarjan(eeii);
+
+    vector<int>::iterator ii;
+    for(ii=stgcmponts[eeii].begin();ii!=stgcmponts[eeii].end();++ii)
+    {
+        if(fire[*ii])
+            stbset.push_back(*ii);
+    }
+    return;
+}
 /*void RG::push(RGNode *mark)
  * function: 根据mark的哈希值将mark放进rgnode哈希表中
  * in: mark，待加入的状态节点
@@ -1477,6 +2212,22 @@ BitRG::~BitRG() {
         }
     }
     delete rgnode;
+
+    if(STUBBORN)
+    {
+        delete [] DFN;
+        delete [] Low;
+        delete [] visited;
+        delete [] successor;
+        delete [] hasenvis;
+        delete [] stgcmponts;
+        delete [] myroot;
+        delete [] isEnInVis;
+        delete [] isEnVis;
+        delete [] fire;
+        for(int i=0;i<ptnet->transitioncount;++i)
+            delete [] TGraph[i];
+    }
     MallocExtension::instance()->ReleaseFreeMemory();
 }
 
@@ -1585,4 +2336,25 @@ void BitRG::deCoder(unsigned short *equmark, BitRGNode *curnode) {
         }
     }
     MallocExtension::instance()->ReleaseFreeMemory();
+}
+
+void BitRG::re_expand(BitRGNode *curnode, const vector<int> &oldstbset, vector<int> &newstbset) {
+    cur = curnode;
+    initTGraph();
+    isFirable();
+    getEn_visible();
+    //进行第二步
+    memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    getReachable(visibleset);
+
+    set<int>::iterator rit;
+    for(rit=reachset.begin();rit!=reachset.end();++rit)
+    {
+        if(fire[*rit])
+        {
+            vector<int>::const_iterator oid = find(oldstbset.begin(),oldstbset.end(),*rit);
+            if(oid == oldstbset.end())
+                newstbset.push_back(*rit);
+        }
+    }
 }

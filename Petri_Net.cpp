@@ -29,6 +29,21 @@ unsigned int BKDRHash(string str)
     return hash;
 }
 
+void intersection(const vector<Small_Arc> &t1pre,const vector<Small_Arc> &t2pre,vector<int> &secidx)
+{
+    secidx.clear();
+    vector<Small_Arc>::const_iterator it1;
+    vector<Small_Arc>::const_iterator it2;
+    for(it1=t1pre.begin();it1!=t1pre.end();++it1)
+    {
+        for(it2=t2pre.begin();it2!=t2pre.end();++it2)
+        {
+            if(it1->idx == it2->idx)
+                secidx.push_back(it1->idx);
+        }
+    }
+}
+
 /*int my_atoi(string str)
  * function: 将字符串转换为整型数据
  * in:string str, 由数字组成的字符串
@@ -452,9 +467,12 @@ void Petri::readNUPN(char *filename) {
         index_t index = getPosition(arc[i].source_id,issourcePlace);
         if(index != INDEX_ERROR)
         {
+            arc[i].isp2t = issourcePlace;
+            arc[i].source_idx = index;
             if(issourcePlace){
                 //该弧的前继节点是库所
                 index_t tidx = getTPosition(arc[i].target_id);
+                arc[i].target_idx = tidx;
                 if(tidx != INDEX_ERROR)
                 {
                     SArc place_post,tranx_pre;
@@ -468,6 +486,7 @@ void Petri::readNUPN(char *filename) {
             else {
                 //该弧的前继节点是变迁
                 index_t pidx = getPPosition(arc[i].target_id);
+                arc[i].target_idx = pidx;
                 if(pidx != INDEX_ERROR){
                     SArc tranx_post, place_pre;
                     tranx_post.weight = place_pre.weight =arc[i].weight;
@@ -596,9 +615,12 @@ void Petri::readPNML(char *filename) {
         int index = getPosition(arc[i].source_id,issourcePlace);
         if(index != INDEX_ERROR)
         {
+            arc[i].isp2t = issourcePlace;
+            arc[i].source_idx = index;
             if(issourcePlace){
                 //该弧的前继节点是库所
                 int tidx = getTPosition(arc[i].target_id);
+                arc[i].target_idx = tidx;
                 if(tidx!=INDEX_ERROR)
                 {
                     SArc place_post,tranx_pre;
@@ -612,6 +634,7 @@ void Petri::readPNML(char *filename) {
             else {
                 //该弧的前继节点是变迁
                 int pidx = getPPosition(arc[i].target_id);
+                arc[i].target_idx = pidx;
                 if(pidx!=INDEX_ERROR){
                     SArc tranx_post, place_pre;
                     tranx_post.weight = place_pre.weight =arc[i].weight;
@@ -690,6 +713,75 @@ void Petri::judgeSAFE() {
         verdict = verdict->NextSiblingElement();
     }
 }
+
+void Petri::getwrup() {
+    for(int i=0;i<arccount;++i)
+    {
+        if(!arc[i].isp2t)   //如果该弧是一个变迁到库所
+        {
+            Place *pp = &place[arc[i].target_idx];
+
+            bool flag = true;
+            vector<SArc>::iterator ppre=pp->consumer.begin();
+            for(ppre;ppre!=pp->consumer.end();++ppre)
+            {
+                if(ppre->idx == arc[i].source_idx)
+                {
+                    if(ppre->weight>=arc[i].weight)
+                    {
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+
+            if(flag)
+            {
+                vector<SArc>::iterator it=pp->consumer.begin();
+                for(it;it!=pp->consumer.end();++it)
+                {
+                    transition[it->idx].wrup.insert(arc[i].source_idx);
+                }
+            }
+        }
+    }
+}
+
+void Petri::checkarc() {
+    for(int i=0;i<arccount;i++)
+    {
+        if(arc[i].isp2t)  //place->transition
+        {
+            if(place[arc[i].source_idx].id != arc[i].source_id)
+            {
+                cerr<<"Error! Arc Check Failed @"<<arc[i].source_id<<endl;
+                exit(-1);
+            }
+
+            if(transition[arc[i].target_idx].id != arc[i].target_id)
+            {
+                cerr<<"Error! Arc Check Failed @"<<arc[i].target_id<<endl;
+                exit(-1);
+            }
+        }
+        else
+        {
+            if(transition[arc[i].source_idx].id != arc[i].source_id)
+            {
+                cerr<<"Error! Arc Check Failed @"<<arc[i].source_id<<endl;
+                exit(-1);
+            }
+
+            if(place[arc[i].target_idx].id != arc[i].target_id)
+            {
+                cerr<<"Error! Arc Check Failed @"<<arc[i].target_id<<endl;
+                exit(-1);
+            }
+        }
+    }
+    cout<<"Arc Check Passed! ^_^"<<endl;
+}
+
 /*void printPlace();
  * function:按以下格式打印出所有的库所：
  * Total places：
@@ -737,6 +829,22 @@ void Petri::printPlace() {
         outplace<<endl;
     }
 
+}
+
+void Petri::printWrup() {
+    ofstream outwrup("wrup.txt", ios::out);
+
+    for(int i=0;i<transitioncount;i++)
+    {
+        outwrup<<endl;
+        outwrup<<transition[i].id<<endl;
+        set<int>::iterator it;
+        for(it=transition[i].wrup.begin();it!=transition[i].wrup.end();++it)
+        {
+            outwrup<<*it<<" ";
+        }
+        outwrup<<endl;
+    }
 }
 
 /*void printTransition()
@@ -818,5 +926,108 @@ void Petri::printUnit() {
         outUnit<<"Mark_Length: "<<unittable[i].mark_length<<endl;
         outUnit<<"startpos: "<<unittable[i].startpos<<endl;
         outUnit<<endl;
+    }
+}
+
+/*判断两个变迁是否为accord with(两个变迁是否accord with each other是个静态性质)
+ * accord with：如果两个变迁在某一个状态同时使能，则其中任何一个变迁的发生并不会
+ * 剥夺另一个变迁的发生权，且无论谁先发生最后都到达同一个状态；
+ * 若t1,t2的前集没有交集，则t1,t2 accord with；
+ * 若t1,t2的前集有交集，且交集中的所有库所和t1,t2构成的都是一个自环结构
+ * */
+bool Petri::isaccdwith(const Transition &t1, const Transition &t2) {
+    bool accd = true;
+    vector<int> sec;
+    intersection(t1.producer,t2.producer,sec);
+    if(sec.size() == 0)   //t1和t2不相交
+        accd = true;
+    else {
+        vector<int>::iterator itsec;    //遍历交集库所，看是不是自环结构
+        for(itsec=sec.begin();itsec!=sec.end();++itsec)
+        {
+            vector<SArc>::const_iterator pre;
+            vector<SArc>::const_iterator post;
+            int preweight=0,postweight=0;
+
+            //检查t1
+            for(pre=t1.producer.begin();pre!=t1.producer.end();++pre)
+            {
+                if(pre->idx == *itsec)
+                {
+                    preweight = pre->weight;
+                    break;
+                }
+            }
+            for(post=t1.consumer.begin();post!=t1.consumer.end();++post)
+            {
+                if(post->idx == *itsec)
+                {
+                    postweight = post->weight;
+                    break;
+                }
+            }
+            if(preweight > postweight)
+            {
+                accd = false;
+                break;
+            }
+
+            //检查t2
+            preweight=0;
+            postweight=0;
+            for(pre=t2.producer.begin();pre!=t2.producer.end();++pre)
+            {
+                if(pre->idx == *itsec)
+                {
+                    preweight = pre->weight;
+                    break;
+                }
+            }
+            for(post=t2.consumer.begin();post!=t2.consumer.end();++post)
+            {
+                if(post->idx == *itsec)
+                {
+                    postweight = post->weight;
+                    break;
+                }
+            }
+            if(preweight > postweight)
+            {
+                accd = false;
+                break;
+            }
+        }
+    }
+    return accd;
+}
+
+/*计算每一个变迁和它非accord with的变迁*/
+void Petri::getaccd() {
+    for(int i=0;i<transitioncount-1;++i)
+    {
+        for(int j=i+1;j<transitioncount;++j)
+        {
+            if(!isaccdwith(transition[i],transition[j]))
+            {
+                transition[i].nonaccordwith.insert(j);
+                transition[j].nonaccordwith.insert(i);
+            }
+        }
+    }
+}
+
+void Petri::printAccord() {
+    ofstream outaccd("accd.txt", ios::out);
+
+    for(int i=0;i<transitioncount;i++)
+    {
+        outaccd<<endl;
+        outaccd<<transition[i].id<<endl;
+        set<int>::iterator it;
+        for(it=transition[i].nonaccordwith.begin();it!=transition[i].nonaccordwith.end();++it)
+        {
+            outaccd<<*it<<" ";
+        }
+        outaccd<<endl;
     }
 }

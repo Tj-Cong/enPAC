@@ -47,10 +47,14 @@ cmath
 -
 gperftools/tcmalloc.h
 -
+set
+-
 
 /home/hecong/文档/enPAC_2020_3.0/RG.h
 Petri_Net.h
 /home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
+Data_Structures.h
+/home/hecong/文档/enPAC_2020_3.0/Data_Structures.h
 bitset
 -
 malloc.h
@@ -65,6 +69,8 @@ TBA.h
 /home/hecong/文档/enPAC_2020_3.0/Syntax_Tree.h
 Data_Structures.h
 /home/hecong/文档/enPAC_2020_3.0/Data_Structures.h
+Petri_Net.h
+/home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
 
 /home/hecong/文档/enPAC_2020_3.0/TBA.h
 TGBA.h
@@ -87,6 +93,8 @@ xml2ltl.h
 /home/hecong/文档/enPAC_2020_3.0/xml2ltl.h
 SBA.h
 /home/hecong/文档/enPAC_2020_3.0/SBA.h
+Petri_Net.h
+/home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
 iostream
 -
 sys/time.h
@@ -94,12 +102,6 @@ sys/time.h
 sys/mman.h
 -
 unistd.h
--
-
-/home/hecong/文档/enPAC_2020_3.0/product.cpp
-product.h
-/home/hecong/文档/enPAC_2020_3.0/product.h
-fstream
 -
 
 /home/hecong/文档/enPAC_2020_3.0/product.h
@@ -120,6 +122,8 @@ cstdlib
 unistd.h
 -
 signal.h
+-
+fstream
 -
 RG.h
 /home/hecong/文档/enPAC_2020_3.0/RG.h

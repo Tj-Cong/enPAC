@@ -3,5 +3,6 @@
   <component name="Encoding">
     <file url="file://$PROJECT_DIR$/Lexer.h" charset="GBK" />
     <file url="file://$PROJECT_DIR$/SBA.cpp" charset="GBK" />
+    <file url="file://$PROJECT_DIR$/SBA.h" charset="GBK" />
   </component>
 </project>

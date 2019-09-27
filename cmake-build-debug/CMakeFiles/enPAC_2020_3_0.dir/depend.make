@@ -13,6 +13,8 @@ CMakeFiles/enPAC_2020_3_0.dir/Petri_Net.cpp.o: ../Petri_Net.h
 CMakeFiles/enPAC_2020_3_0.dir/Petri_Net.cpp.o: ../tinystr.h
 CMakeFiles/enPAC_2020_3_0.dir/Petri_Net.cpp.o: ../tinyxml.h
 
+CMakeFiles/enPAC_2020_3_0.dir/RG.cpp.o: ../Data_Structures.h
+CMakeFiles/enPAC_2020_3_0.dir/RG.cpp.o: ../Lexer.h
 CMakeFiles/enPAC_2020_3_0.dir/RG.cpp.o: ../Petri_Net.h
 CMakeFiles/enPAC_2020_3_0.dir/RG.cpp.o: ../RG.cpp
 CMakeFiles/enPAC_2020_3_0.dir/RG.cpp.o: ../RG.h
@@ -21,29 +23,41 @@ CMakeFiles/enPAC_2020_3_0.dir/RG.cpp.o: ../tinyxml.h
 
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../Data_Structures.h
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../Lexer.h
+CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../Petri_Net.h
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../SBA.cpp
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../SBA.h
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../Syntax_Tree.h
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../TBA.h
 CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../TGBA.h
+CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../tinystr.h
+CMakeFiles/enPAC_2020_3_0.dir/SBA.cpp.o: ../tinyxml.h
 
 CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../Data_Structures.h
 CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../Lexer.h
+CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../Petri_Net.h
 CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../Syntax_Tree.cpp
 CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../Syntax_Tree.h
+CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../tinystr.h
+CMakeFiles/enPAC_2020_3_0.dir/Syntax_Tree.cpp.o: ../tinyxml.h
 
 CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../Data_Structures.h
 CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../Lexer.h
+CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../Petri_Net.h
 CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../Syntax_Tree.h
 CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../TBA.cpp
 CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../TBA.h
 CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../TGBA.h
+CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../tinystr.h
+CMakeFiles/enPAC_2020_3_0.dir/TBA.cpp.o: ../tinyxml.h
 
 CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../Data_Structures.h
 CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../Lexer.h
+CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../Petri_Net.h
 CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../Syntax_Tree.h
 CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../TGBA.cpp
 CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../TGBA.h
+CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../tinystr.h
+CMakeFiles/enPAC_2020_3_0.dir/TGBA.cpp.o: ../tinyxml.h
 
 CMakeFiles/enPAC_2020_3_0.dir/main.cpp.o: ../Data_Structures.h
 CMakeFiles/enPAC_2020_3_0.dir/main.cpp.o: ../Lexer.h

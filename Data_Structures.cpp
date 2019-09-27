@@ -5,6 +5,13 @@
 LTLNode_t fireability[16];
 LTLNode_t cardinality[16];
 
+Syntax_Tree_Node::~Syntax_Tree_Node() {
+
+    if(!cfnormal)
+        delete cfnormal;
+    if(!props)
+        delete props;
+}
 /***********************list_stark***************************/
 list_stack::list_stack()
 {
@@ -64,6 +71,15 @@ int list_stack::topprilevel()
 bool list_stack::isEmpty()
 {
 	return (top == NULL) ? true : false;
+}
+list_stack::~list_stack() {
+    LSNode *p,*q;
+    p = top;
+    while (p){
+        q=p->next;
+        delete p;
+        p=q;
+    }
 }
 
 /**********************formula_stack************************/

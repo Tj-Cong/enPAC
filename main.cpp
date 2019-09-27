@@ -1,6 +1,8 @@
 #include "product.h"
 #include "xml2ltl.h"
 #include "SBA.h"
+#include "Petri_Net.h"
+
 #include <iostream>
 #include <sys/time.h>
 #include <sys/mman.h>
@@ -14,6 +16,9 @@ NUM_t MARKLEN;
 bool NUPN = false;
 bool SAFE = false;
 
+bool STUBBORN = false;
+Petri *petri = NULL;
+
 double get_time() {
     struct timeval t;
     gettimeofday(&t, NULL);
@@ -21,7 +26,7 @@ double get_time() {
 }
 
 
-int main() {
+int main1() {
 
 //    string category = argv[1];
 //    if(category!="LTLFireability" && category!="LTLCardinality")
@@ -73,6 +78,7 @@ int main() {
 
     ptnet->printTransition();
     setGlobalValue(ptnet);
+    petri = ptnet;
     BitRG *bitgraph;
     RG *graph;
     string S, propertyid; //propertyid stores names of LTL formulae
@@ -393,5 +399,114 @@ int main0()
     delete ptnet;
     malloc_stats();
     //DestroyGlobalMemPool();
+    return 0;
+}
+
+int main()
+{
+    //parse xml files
+    char Ffile[50] = "LTLFireability.xml";
+    char Cfile[50] = "LTLCardinality.xml";
+    convertf(Ffile);
+    convertc(Cfile);
+    int timeleft = 60;
+
+    Petri *ptnet = new Petri;
+    ptnet->judgeSAFE();
+    char filename[]="model.pnml";
+    ptnet->getSize(filename);
+    if(ptnet->NUPN)
+    {
+        ptnet->readNUPN(filename);
+    }
+    else{
+        ptnet->readPNML(filename);
+    }
+
+    ptnet->checkarc();
+    ptnet->printGraph();
+    ptnet->printPlace();
+    ptnet->printTransition();
+    ptnet->getwrup();
+    ptnet->printWrup();
+    ptnet->getaccd();
+    ptnet->printAccord();
+
+    setGlobalValue(ptnet);
+    petri = ptnet;
+
+    ifstream infile("a.txt",ios::in);
+    if(!infile) {
+        cerr<<"Cannot Open File!"<<endl;
+        exit(-1);
+    }
+    char *form = new char[20000];
+
+    string S,propertyid;
+    getline(infile, propertyid, ':');
+    getline(infile, S);
+
+    int len = S.length();
+    if (len >= 20000) {
+        cerr << "Form is too long to compute!"<<endl;
+    }
+
+    strcpy(form, S.c_str());
+
+    Lexer *lex = new Lexer(form, S.length());
+
+    Syntax_Tree *ST;
+    ST = new Syntax_Tree;
+    formula_stack Ustack;
+    ST->reverse_polish(*lex);
+    ST->build_tree();
+    ST->print_syntax_tree(ST->root->left,1);
+    ST->getSingleVTS(ST->root->left);
+
+    double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
+    if(factor>0.618)
+        STUBBORN = false;
+
+    BitRG *bitgraph;
+    RG *graph;
+    if (NUPN || SAFE) {
+        bitgraph = new BitRG(ptnet);
+        bitgraph->visibleset = ST->visibles;
+    } else {
+        graph = new RG(ptnet);
+        graph->visibleset = ST->visibles;
+    }
+
+    TGBA *Tgba;
+    Tgba = new TGBA;
+    Tgba->CreatTGBA(Ustack, ST->root->left);
+    delete ST;
+    TBA *tba;
+    tba = new TBA;
+    tba->CreatTBA(*Tgba, Ustack);
+    delete Tgba;
+
+    SBA *sba;
+    sba = new SBA;
+    sba->CreatSBA(*tba);
+    sba->Simplify();
+    sba->Compress();
+    delete tba;
+    //cout << "begin:ON-THE-FLY" << endl;
+    if (NUPN || SAFE) {
+        Product_Automata<BitRGNode, BitRG> *product;
+        product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
+        product->ModelChecker(propertyid, timeleft);
+        int ret = product->getresult();
+
+        delete product;
+    } else {
+        Product_Automata<RGNode, RG> *product;
+        product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+        product->ModelChecker(propertyid, timeleft);
+        int ret = product->getresult();
+
+        delete product;
+    }
     return 0;
 }

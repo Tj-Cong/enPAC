@@ -1,7 +1,11 @@
 #pragma once
 /*�﷨������*/
 #include"Data_Structures.h"
+#include "Petri_Net.h"
 using namespace std;
+
+
+extern Petri *petri;
 
 /********************Global Function**********************/
 bool isoperand(int typenum);
@@ -16,7 +20,13 @@ void constatestack(state_stack &s1, state_stack s2);
 void disAPdisj(AP_disj prop1, AP_disj prop2, AP_disj *prop3);
 void conAPdisj(AP_disj prop1, AP_disj prop2, AP_disj *prop3);
 void conAPstack(AP_stack prop1, AP_stack prop2, AP_stack *prop3);
-/***************Syntan_Tree's definition** ****************/
+
+bool judgeC(string s);
+void getFV(string apstr, set<int> &vs);
+void getCV(string apstr, set<int> &vs);
+
+/***************Syntan_Tree's definition******************/
+
 
 class Syntax_Tree
 {
@@ -24,6 +34,7 @@ public:
 	ST_Node *root;
 	list_stack Operator;            //������ջ
 	list_stack Operand;            //������ջ
+    set<int> visibles;
 public:
 	Syntax_Tree();
 	void reverse_polish(Lexer lex);
@@ -37,6 +48,11 @@ public:
 	bool isTreeEqu(ST_Node *T1, ST_Node *T2);
 	void computeCurAP(ST_Node *T);
 	void DelSynTree(ST_Node *T);
+
+	void getAPVisible(ST_Node *node);
+	void directemporal(ST_Node *T,bool &exchanged);
+	//void getVisibleTrans(ST_Node *node);
+	void getSingleVTS(ST_Node *node);
 	~Syntax_Tree();
 };
 

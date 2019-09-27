@@ -21,17 +21,25 @@ enum character_type {
 	AP,                             //ԭ�����⣬���������ʽ
 };
 enum privilege { unary=1, R_and_U=2, And=3, Or=4, Impli=5, Equ=6, root=7 };
+
+//struct DoubleSet
+//{
+//    vector<set<int>> myelems;
+//};
+
 typedef struct Syntax_Tree_Node
 {
 	string character;         //�ýڵ��������߼��������ԭ������
 	string formula;            //�ýڵ����Ĺ�ʽ
 	character_type ctype;         //�ڵ�����
-	state_stack *cfnormal;
-	AP_disj *props;
+	state_stack *cfnormal = NULL;
+	AP_disj *props = NULL;
+    //DoubleSet *VTS = NULL;
 	bool isGetCF=false;
-	Syntax_Tree_Node *left;
-	Syntax_Tree_Node *right;
-	Syntax_Tree_Node *parent;
+	Syntax_Tree_Node *left = NULL;
+	Syntax_Tree_Node *right = NULL;
+	Syntax_Tree_Node *parent = NULL;
+	~Syntax_Tree_Node();
 }ST_Node, *STNode;
 
 /*********************�沨��ʽ�õ��Ķ�ջ�ṹ************************/
@@ -39,7 +47,7 @@ typedef struct stack_unit
 {
 	word w;
 	privilege prilevel;
-	stack_unit *next;
+	stack_unit *next = NULL;
 }LSNode;
 
 class list_stack           //ջ���ݽṹ
@@ -55,6 +63,7 @@ public:
 	bool istoplpar();
 	bool isEmpty();
 	int topprilevel();
+	~list_stack();
 };
 class formula_stack
 {
@@ -134,6 +143,21 @@ typedef struct CF_Tree_Node  //CF�﷨���ڵ�
 	ST_Node *relevant = NULL;
 }CFTreeNode, *PCFTreeNode;
 
+
+template <class T>
+class CStack
+{
+private:
+    vector<T> myDate;
+public:
+    T top() const;
+    void push(const T &item);
+    T pop();
+    int size() const;
+    bool empty() const;
+    bool isinstack(const T& item) const;
+    void clear();
+};
 /*****************Data Structures for print out*******************/
 typedef struct LTLNode
 {
@@ -145,3 +169,45 @@ typedef struct LTLNode
 /*********************Global variables**************************/
 extern LTLNode_t fireability[16];
 extern LTLNode_t cardinality[16];
+
+template <class T>
+T CStack<T>::top() const {
+    return myDate.back();
+}
+
+template <class T>
+void CStack<T>::push(const T &item) {
+    myDate.push_back(item);
+}
+
+template <class T>
+T CStack<T>::pop() {
+    T item = myDate.back();
+    myDate.pop_back();
+    return item;
+}
+
+template <class T>
+int CStack<T>::size() const {
+    return myDate.size();
+}
+
+template <class T>
+bool CStack<T>::empty() const {
+    return myDate.empty();
+}
+
+template <class T>
+void CStack<T>::clear() {
+    myDate.clear();
+}
+
+template<class T>
+bool CStack<T>::isinstack(const T &item) const {
+    for(int i=0;i<myDate.size();++i)
+    {
+        if(myDate[i] == item)
+            return true;
+    }
+    return false;
+}

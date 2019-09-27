@@ -24,6 +24,8 @@ using namespace std;
 #define $root 15
 #define MAXFORMLEN 20000
 
+extern bool STUBBORN;
+
 typedef struct Lexer_word
 {
 	string character;

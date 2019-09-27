@@ -13,6 +13,7 @@
 #include "tinyxml.h"
 #include <cmath>
 #include <gperftools/tcmalloc.h>
+#include <set>
 
 using namespace std;
 
@@ -30,9 +31,12 @@ extern NUM_t placecount;   //Petri网库所个数
 extern bool NUPN;          //当前Petri网是否有NUPN信息
 extern bool SAFE;          //当前Petri网是否为安全网
 
+struct Small_Arc;
+struct Transition;
 /****************Global Functions**************/
 unsigned int BKDRHash(string str);
 unsigned int stringToNum(const string& str);
+void intersection(const vector<Small_Arc> &t1pre,const vector<Small_Arc> &t2pre,vector<int> &secidx);
 int my_atoi(string str);
 /**********************************************/
 
@@ -53,6 +57,14 @@ typedef struct Small_Arc
 {
     weight_t weight;  //该弧上的权重
     index_t idx;
+
+    bool operator==(const Small_Arc &b)
+    {
+        if(this->weight == b.weight && this->idx==b.idx)
+            return true;
+        else
+            return false;
+    }
 } SArc;
 
 typedef struct Place
@@ -70,13 +82,18 @@ typedef struct Transition
     string id = "";
     vector<SArc> producer;
     vector<SArc> consumer;
+    set<int> wrup;
+    set<int> nonaccordwith;
 } *Transition_P;
 
 typedef struct Arc
 {
     string id = "";
+    bool isp2t;
     string source_id;
     string target_id;
+    int source_idx;
+    int target_idx;
     index_t weight=1;
 } *Arc_P;
 
@@ -118,7 +135,13 @@ public:
     void readPNML(char *filename);                  //第二次解析PNML
     void computeUnitMarkLen();                      //计算每一个unit的marking长度
     void judgeSAFE();
+    void getwrup();
+    bool isaccdwith(const Transition &t1,const Transition &t2);
+    void getaccd();
+    void checkarc();
     void printPlace();
+    void printWrup();
+    void printAccord();
     void printTransition();
     void printGraph();
     void printUnit();
