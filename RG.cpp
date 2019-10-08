@@ -1086,11 +1086,11 @@ void RG::Tarjan(int tidx) {
             if(!DFN[i])  //transition[i]还未被访问过
             {
                 Tarjan(i);
-                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+                Low[tidx] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
             }
             else if(visited[i])  //如果u还在栈内
             {
-                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+                Low[tidx] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
             }
         }
     }
@@ -1454,6 +1454,7 @@ void RG::genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red) {
 
     //进行第二步
     memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    reachset = visibleset;
     getReachable(visibleset);
 
     //得到Tu后检查是否包含一个使能的非可见变迁
@@ -1536,6 +1537,7 @@ void RG::re_expand(RGNode *curnode, const vector<int> &oldstbset, vector<int> &n
 
     //进行第二步
     memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    reachset = visibleset;
     getReachable(visibleset);
 
     set<int>::iterator rit;
@@ -1695,11 +1697,11 @@ void BitRG::Tarjan(int tidx) {
             if(!DFN[i])  //transition[i]还未被访问过
             {
                 Tarjan(i);
-                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+                Low[tidx] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
             }
             else if(visited[i])
             {
-                Low[i] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
+                Low[tidx] = Low[tidx]<Low[i]?Low[tidx]:Low[i];
             }
         }
     }
@@ -1838,6 +1840,7 @@ void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset,bool &red) {
 
     //进行第二步
     memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    reachset = visibleset;
     getReachable(visibleset);
 
     //得到Tu后检查是否包含一个使能的非可见变迁
@@ -2345,6 +2348,7 @@ void BitRG::re_expand(BitRGNode *curnode, const vector<int> &oldstbset, vector<i
     getEn_visible();
     //进行第二步
     memset(visited,0,sizeof(int)*ptnet->transitioncount);
+    reachset = visibleset;
     getReachable(visibleset);
 
     set<int>::iterator rit;

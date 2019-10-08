@@ -16,7 +16,7 @@ NUM_t MARKLEN;
 bool NUPN = false;
 bool SAFE = false;
 
-bool STUBBORN = false;
+bool STUBBORN = true;
 Petri *petri = NULL;
 
 double get_time() {
@@ -25,8 +25,21 @@ double get_time() {
     return t.tv_sec + t.tv_usec / 1000000.0;
 }
 
+void getinvisible(int transcount,const set<int> &vis, vector<int> &invis)
+{
+    set<int>::iterator it;
+    for(int i=0;i<transcount;++i)
+    {
+        it = find(vis.begin(),vis.end(),i);
+        if(it == vis.end())
+        {
+            //没有找到
+            invis.push_back(i);
+        }
+    }
+}
 
-int main1() {
+int main() {
 
 //    string category = argv[1];
 //    if(category!="LTLFireability" && category!="LTLCardinality")
@@ -76,9 +89,18 @@ int main1() {
         ptnet->readPNML(filename);
     }
 
-    ptnet->printTransition();
+    ptnet->checkarc();
+//    ptnet->printGraph();
+//    ptnet->printPlace();
+//    ptnet->printTransition();
+    ptnet->getwrup();       //计算wrupset
+//    ptnet->printWrup();
+    ptnet->getaccd();       //计算non-accord with变迁
+//    ptnet->printAccord();
+
     setGlobalValue(ptnet);
     petri = ptnet;
+
     BitRG *bitgraph;
     RG *graph;
     string S, propertyid; //propertyid stores names of LTL formulae
@@ -95,12 +117,7 @@ int main1() {
 
     //if(category == "LTLCardinality") {
         while (getline(read, propertyid, ':')) {
-
-            if (NUPN || SAFE) {
-                bitgraph = new BitRG(ptnet);
-            } else {
-                graph = new RG(ptnet);
-            }
+            STUBBORN = false;
 
             timeleft = totalruntime / formula_num;
             int timetemp = timeleft;
@@ -128,6 +145,9 @@ int main1() {
             formula_stack Ustack;
             ST->reverse_polish(*lex);
             ST->build_tree();
+
+            ST->getSingleVTS(ST->root->left);
+
             /*cout << "The syntax tree of unsimplified formula£º" << endl;
             ST.print_syntax_tree(ST.root, 0);*/
             //LTL formula rewrite
@@ -152,6 +172,25 @@ int main1() {
             }
             cout << endl;*/
             //¹¹ÔìTGBA
+
+            double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
+            if(factor>0.618)
+                STUBBORN = false;
+
+            if (NUPN || SAFE) {
+                bitgraph = new BitRG(ptnet);
+                if(STUBBORN) {
+                    bitgraph->visibleset = ST->visibles;
+                    getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
+                }
+            } else {
+                graph = new RG(ptnet);
+                if(STUBBORN) {
+                    graph->visibleset = ST->visibles;
+                    getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
+                }
+            }
+
             TGBA *Tgba;
             Tgba = new TGBA;
             Tgba->CreatTGBA(Ustack, ST->root->left);
@@ -177,19 +216,33 @@ int main1() {
             //cout << "begin:ON-THE-FLY" << endl;
             if (NUPN || SAFE) {
                 Product_Automata<BitRGNode, BitRG> *product;
-                product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
-                product->ModelChecker(propertyid, timeleft);
-                int ret = product->getresult();
+                try {
+                    product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
+                    product->ModelChecker(propertyid, timeleft);
+                }
 
+                catch(bad_alloc &memExp)
+                {
+                    cout<<"CANNOT COMPUTE"<<endl;
+                }
+                cout<<" "<<bitgraph->nodecount<<endl;
+                int ret = product->getresult();
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
                 //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
                 delete product;
             } else {
                 Product_Automata<RGNode, RG> *product;
-                product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
-                product->ModelChecker(propertyid, timeleft);
-                int ret = product->getresult();
+                try {
+                    product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+                    product->ModelChecker(propertyid, timeleft);
+                }
+                catch(bad_alloc &memExp)
+                {
+                    cout<<"CANNOT COMPUTE"<<endl;
+                }
 
+                cout<<" "<<graph->nodecount<<endl;
+                int ret = product->getresult();
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
                 //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
                 delete product;
@@ -222,11 +275,7 @@ int main1() {
 
         while (getline(readF, propertyid, ':')) {
 
-            if (NUPN || SAFE) {
-                bitgraph = new BitRG(ptnet);
-            } else {
-                graph = new RG(ptnet);
-            }
+            STUBBORN = false;
 
             timeleft = totalruntime / formula_num;
             int timetemp;
@@ -254,29 +303,32 @@ int main1() {
             formula_stack Ustack;
             ST->reverse_polish(*lex);
             ST->build_tree();
-            /*cout << "The syntax tree of unsimplified formula£º" << endl;
-            ST.print_syntax_tree(ST.root, 0);*/
-            //LTL formula rewrite
+
+            ST->getSingleVTS(ST->root->left);
+
             ST->simplify_LTL(ST->root->left);
-            /*cout << endl;
-            cout << "The syntax tree of simplified formula£º" << endl;
-            ST.print_syntax_tree(ST.root, 0);*/
-            //syntax tree convert
+
             ST->negconvert(ST->root->left, Ustack);
             ST->computeCurAP(ST->root->left);
-            /*cout << endl;
-            cout << "The converted formula£º" << endl;
-            cout << ST.root->left->formula << endl;
-            cout << endl;*/
-            //Êä³öU×ÓÊ½
-            /*cout << "The subformulas of LTL whose main operator is \'U\'£º" << endl;
-            vector<STNode>::iterator Uiter;
-            for (Uiter = Ustack.loc.begin(); Uiter != Ustack.loc.end(); Uiter++)
-            {
-                cout << (*Uiter)->formula << endl;
+
+            double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
+            if(factor>0.618)
+                STUBBORN = false;
+
+            if (NUPN || SAFE) {
+                bitgraph = new BitRG(ptnet);
+                if(STUBBORN) {
+                    bitgraph->visibleset = ST->visibles;
+                    getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
+                }
+            } else {
+                graph = new RG(ptnet);
+                if(STUBBORN) {
+                    graph->visibleset = ST->visibles;
+                    getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
+                }
             }
-            cout << endl;*/
-            //¹¹ÔìTGBA
+
             TGBA *Tgba;
             Tgba = new TGBA;
             Tgba->CreatTGBA(Ustack, ST->root->left);
@@ -302,17 +354,31 @@ int main1() {
             //cout << "begin:ON-THE-FLY" << endl;
 
             if (NUPN || SAFE) {
-                Product_Automata<BitRGNode, BitRG> *product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph,
-                                                                                                     sba);
-                product->ModelChecker(propertyid, timeleft);
+                Product_Automata<BitRGNode, BitRG> *product;
+                try {
+                    product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
+                    product->ModelChecker(propertyid, timeleft);
+                }
+                catch(const bad_alloc &memExp)
+                {
+                    cout<<"CANNOT COMPUTE"<<endl;
+                }
+                cout<<" "<<bitgraph->nodecount<<endl;
                 int ret = product->getresult();
-
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
                 //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
                 delete product;
             } else {
-                Product_Automata<RGNode, RG> *product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
-                product->ModelChecker(propertyid, timeleft);
+                Product_Automata<RGNode, RG> *product;
+                try {
+                    product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+                    product->ModelChecker(propertyid, timeleft);
+                }
+                catch(const bad_alloc &memExp)
+                {
+                    cout<<"CANNOT COMPUTE"<<endl;
+                }
+                cout<<" "<<graph->nodecount<<endl;
                 int ret = product->getresult();
 
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
@@ -402,7 +468,7 @@ int main0()
     return 0;
 }
 
-int main()
+int main1()
 {
     //parse xml files
     char Ffile[50] = "LTLFireability.xml";
@@ -472,11 +538,17 @@ int main()
     if (NUPN || SAFE) {
         bitgraph = new BitRG(ptnet);
         bitgraph->visibleset = ST->visibles;
+        getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
     } else {
         graph = new RG(ptnet);
         graph->visibleset = ST->visibles;
+        getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
     }
 
+    ST->simplify_LTL(ST->root->left);
+    ST->negconvert(ST->root->left, Ustack);
+    ST->computeCurAP(ST->root->left);
+    delete lex;
     TGBA *Tgba;
     Tgba = new TGBA;
     Tgba->CreatTGBA(Ustack, ST->root->left);

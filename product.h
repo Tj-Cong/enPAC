@@ -273,21 +273,23 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid, int &timelef
         {
             re="TRUE";
 
-            cout << "FORMULA " + propertyid + " " + re +
-                    " TECHNIQUES SEQUENTIAL EXPLICIT TOPOLOGICAL ABSTRACTIONS LTLNFBA" << endl;
+            cout << "FORMULA " + propertyid + " " + re;
+            if(STUBBORN)
+                cout<<" STUBBORN_SET"<<endl;
             ret = 1;
         }
         else
         {
             re="FALSE";
-            cout << "FORMULA " + propertyid + " " + re +
-                    " TECHNIQUES SEQUENTIAL EXPLICIT TOPOLOGICAL ABSTRACTIONS LTLNFBA" << endl;
+            cout << "FORMULA " + propertyid + " " + re;
+            if(STUBBORN)
+                cout<<" STUBBORN_SET";
             ret = 0;
         }
     }
     else
     {
-        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE"<<endl;
+        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE";
         ret = -1;
     }
     alarm(0);

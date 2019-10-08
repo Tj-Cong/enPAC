@@ -1,25 +1,353 @@
-Total transitions:6
+Total transitions:88
 
-id:t_0_0
-producer:(1,r_0_0) 
-consumer:(1,p_0_0) 
+id:SpeedLW_1
+producer:(1,stp4) (1,SpeedPossibleVal_1) 
+consumer:(1,SpeedPossibleVal_1) (1,Speed_Left_Wheel_1) 
 
-id:t_0_1
-producer:(1,p_0_0) (1,r_0_1) 
-consumer:(1,r_0_0) (1,p_0_1) 
+id:SpeedLW_2
+producer:(1,stp4) (1,SpeedPossibleVal_2) 
+consumer:(1,SpeedPossibleVal_2) (1,Speed_Left_Wheel_2) 
 
-id:t_0_2
-producer:(1,p_0_1) 
-consumer:(1,r_0_1) 
+id:SpeedLW_3
+producer:(1,stp4) (1,SpeedPossibleVal_3) 
+consumer:(1,SpeedPossibleVal_3) (1,Speed_Left_Wheel_3) 
 
-id:t_1_0
-producer:(1,p_1_0) 
-consumer:(1,r_0_0) (1,r_1_0) 
+id:SpeedLW_4
+producer:(1,stp4) (1,SpeedPossibleVal_4) 
+consumer:(1,SpeedPossibleVal_4) (1,Speed_Left_Wheel_4) 
 
-id:t_1_1
-producer:(1,r_0_0) (1,r_1_0) (1,p_1_1) 
-consumer:(1,r_0_1) (1,p_1_0) (1,r_1_1) 
+id:SpeedLW_5
+producer:(1,stp4) (1,SpeedPossibleVal_5) 
+consumer:(1,SpeedPossibleVal_5) (1,Speed_Left_Wheel_5) 
 
-id:t_1_2
-producer:(1,r_0_1) (1,r_1_1) 
-consumer:(1,p_1_1) 
+id:SpeedLW_6
+producer:(1,stp4) (1,SpeedPossibleVal_6) 
+consumer:(1,SpeedPossibleVal_6) (1,Speed_Left_Wheel_6) 
+
+id:SpeedLW_7
+producer:(1,stp4) (1,SpeedPossibleVal_7) 
+consumer:(1,SpeedPossibleVal_7) (1,Speed_Left_Wheel_7) 
+
+id:SpeedLW_8
+producer:(1,stp4) (1,SpeedPossibleVal_8) 
+consumer:(1,SpeedPossibleVal_8) (1,Speed_Left_Wheel_8) 
+
+id:SpeedLW_9
+producer:(1,stp4) (1,SpeedPossibleVal_9) 
+consumer:(1,SpeedPossibleVal_9) (1,Speed_Left_Wheel_9) 
+
+id:SpeedLW_10
+producer:(1,stp4) (1,SpeedPossibleVal_10) 
+consumer:(1,SpeedPossibleVal_10) (1,Speed_Left_Wheel_10) 
+
+id:SpeedRW_1
+producer:(1,SpeedPossibleVal_1) (1,stp5) 
+consumer:(1,SpeedPossibleVal_1) (1,Speed_Right_Wheel_1) 
+
+id:SpeedRW_2
+producer:(1,SpeedPossibleVal_2) (1,stp5) 
+consumer:(1,SpeedPossibleVal_2) (1,Speed_Right_Wheel_2) 
+
+id:SpeedRW_3
+producer:(1,SpeedPossibleVal_3) (1,stp5) 
+consumer:(1,SpeedPossibleVal_3) (1,Speed_Right_Wheel_3) 
+
+id:SpeedRW_4
+producer:(1,SpeedPossibleVal_4) (1,stp5) 
+consumer:(1,SpeedPossibleVal_4) (1,Speed_Right_Wheel_4) 
+
+id:SpeedRW_5
+producer:(1,SpeedPossibleVal_5) (1,stp5) 
+consumer:(1,SpeedPossibleVal_5) (1,Speed_Right_Wheel_5) 
+
+id:SpeedRW_6
+producer:(1,SpeedPossibleVal_6) (1,stp5) 
+consumer:(1,SpeedPossibleVal_6) (1,Speed_Right_Wheel_6) 
+
+id:SpeedRW_7
+producer:(1,SpeedPossibleVal_7) (1,stp5) 
+consumer:(1,SpeedPossibleVal_7) (1,Speed_Right_Wheel_7) 
+
+id:SpeedRW_8
+producer:(1,SpeedPossibleVal_8) (1,stp5) 
+consumer:(1,SpeedPossibleVal_8) (1,Speed_Right_Wheel_8) 
+
+id:SpeedRW_9
+producer:(1,SpeedPossibleVal_9) (1,stp5) 
+consumer:(1,SpeedPossibleVal_9) (1,Speed_Right_Wheel_9) 
+
+id:SpeedRW_10
+producer:(1,SpeedPossibleVal_10) (1,stp5) 
+consumer:(1,SpeedPossibleVal_10) (1,Speed_Right_Wheel_10) 
+
+id:getAlt_1
+producer:(1,stp3) (1,AltitudePossibleVal_1) 
+consumer:(1,AltitudePossibleVal_1) (1,TheAltitude_1) 
+
+id:getAlt_2
+producer:(1,stp3) (1,AltitudePossibleVal_2) 
+consumer:(1,AltitudePossibleVal_2) (1,TheAltitude_2) 
+
+id:getAlt_3
+producer:(1,stp3) (1,AltitudePossibleVal_3) 
+consumer:(1,AltitudePossibleVal_3) (1,TheAltitude_3) 
+
+id:getAlt_4
+producer:(1,stp3) (1,AltitudePossibleVal_4) 
+consumer:(1,AltitudePossibleVal_4) (1,TheAltitude_4) 
+
+id:getAlt_5
+producer:(1,stp3) (1,AltitudePossibleVal_5) 
+consumer:(1,AltitudePossibleVal_5) (1,TheAltitude_5) 
+
+id:getAlt_6
+producer:(1,stp3) (1,AltitudePossibleVal_6) 
+consumer:(1,AltitudePossibleVal_6) (1,TheAltitude_6) 
+
+id:getAlt_7
+producer:(1,stp3) (1,AltitudePossibleVal_7) 
+consumer:(1,AltitudePossibleVal_7) (1,TheAltitude_7) 
+
+id:getAlt_8
+producer:(1,stp3) (1,AltitudePossibleVal_8) 
+consumer:(1,AltitudePossibleVal_8) (1,TheAltitude_8) 
+
+id:getAlt_9
+producer:(1,stp3) (1,AltitudePossibleVal_9) 
+consumer:(1,AltitudePossibleVal_9) (1,TheAltitude_9) 
+
+id:getAlt_10
+producer:(1,stp3) (1,AltitudePossibleVal_10) 
+consumer:(1,AltitudePossibleVal_10) (1,TheAltitude_10) 
+
+id:getAlt_11
+producer:(1,stp3) (1,AltitudePossibleVal_11) 
+consumer:(1,AltitudePossibleVal_11) (1,TheAltitude_11) 
+
+id:getAlt_12
+producer:(1,stp3) (1,AltitudePossibleVal_12) 
+consumer:(1,AltitudePossibleVal_12) (1,TheAltitude_12) 
+
+id:getAlt_13
+producer:(1,stp3) (1,AltitudePossibleVal_13) 
+consumer:(1,AltitudePossibleVal_13) (1,TheAltitude_13) 
+
+id:getAlt_14
+producer:(1,stp3) (1,AltitudePossibleVal_14) 
+consumer:(1,AltitudePossibleVal_14) (1,TheAltitude_14) 
+
+id:getAlt_15
+producer:(1,stp3) (1,AltitudePossibleVal_15) 
+consumer:(1,AltitudePossibleVal_15) (1,TheAltitude_15) 
+
+id:getAlt_16
+producer:(1,stp3) (1,AltitudePossibleVal_16) 
+consumer:(1,AltitudePossibleVal_16) (1,TheAltitude_16) 
+
+id:getAlt_17
+producer:(1,stp3) (1,AltitudePossibleVal_17) 
+consumer:(1,AltitudePossibleVal_17) (1,TheAltitude_17) 
+
+id:getAlt_18
+producer:(1,stp3) (1,AltitudePossibleVal_18) 
+consumer:(1,AltitudePossibleVal_18) (1,TheAltitude_18) 
+
+id:getAlt_19
+producer:(1,stp3) (1,AltitudePossibleVal_19) 
+consumer:(1,AltitudePossibleVal_19) (1,TheAltitude_19) 
+
+id:getAlt_20
+producer:(1,stp3) (1,AltitudePossibleVal_20) 
+consumer:(1,AltitudePossibleVal_20) (1,TheAltitude_20) 
+
+id:SampleRW_on
+producer:(1,stp2) (1,WeightPossibleVal_on) 
+consumer:(1,WeightPossibleVal_on) (1,Weight_Right_Wheel_on) 
+
+id:SampleRW_off
+producer:(1,stp2) (1,WeightPossibleVal_off) 
+consumer:(1,WeightPossibleVal_off) (1,Weight_Right_Wheel_off) 
+
+id:SampleLW_on
+producer:(1,WeightPossibleVal_on) (1,stp1) 
+consumer:(1,WeightPossibleVal_on) (1,Weight_Left_Wheel_on) 
+
+id:SampleLW_off
+producer:(1,WeightPossibleVal_off) (1,stp1) 
+consumer:(1,WeightPossibleVal_off) (1,Weight_Left_Wheel_off) 
+
+id:t5_2_1
+producer:(1,Speed_Right_Wheel_1) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_F) 
+
+id:t5_2_2
+producer:(1,Speed_Right_Wheel_2) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_F) 
+
+id:t5_2_3
+producer:(1,Speed_Right_Wheel_3) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_F) 
+
+id:t5_2_4
+producer:(1,Speed_Right_Wheel_4) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_F) 
+
+id:t5_2_5
+producer:(1,Speed_Right_Wheel_5) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_F) 
+
+id:t5_2_10
+producer:(1,Speed_Right_Wheel_10) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_F) 
+
+id:t5_1_6
+producer:(1,Speed_Right_Wheel_6) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t5_1_7
+producer:(1,Speed_Right_Wheel_7) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t5_1_8
+producer:(1,Speed_Right_Wheel_8) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t5_1_9
+producer:(1,Speed_Right_Wheel_9) (1,P5) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t4_2_1
+producer:(1,Speed_Left_Wheel_1) (1,P4) 
+consumer:(1,P5) 
+
+id:t4_2_2
+producer:(1,Speed_Left_Wheel_2) (1,P4) 
+consumer:(1,P5) 
+
+id:t4_2_3
+producer:(1,Speed_Left_Wheel_3) (1,P4) 
+consumer:(1,P5) 
+
+id:t4_2_4
+producer:(1,Speed_Left_Wheel_4) (1,P4) 
+consumer:(1,P5) 
+
+id:t4_2_5
+producer:(1,Speed_Left_Wheel_5) (1,P4) 
+consumer:(1,P5) 
+
+id:t4_2_10
+producer:(1,Speed_Left_Wheel_10) (1,P4) 
+consumer:(1,P5) 
+
+id:t4_1_6
+producer:(1,Speed_Left_Wheel_6) (1,P4) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t4_1_7
+producer:(1,Speed_Left_Wheel_7) (1,P4) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t4_1_8
+producer:(1,Speed_Left_Wheel_8) (1,P4) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t4_1_9
+producer:(1,Speed_Left_Wheel_9) (1,P4) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_2_10
+producer:(1,TheAltitude_10) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_11
+producer:(1,TheAltitude_11) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_12
+producer:(1,TheAltitude_12) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_13
+producer:(1,TheAltitude_13) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_14
+producer:(1,TheAltitude_14) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_15
+producer:(1,TheAltitude_15) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_16
+producer:(1,TheAltitude_16) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_17
+producer:(1,TheAltitude_17) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_18
+producer:(1,TheAltitude_18) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_19
+producer:(1,TheAltitude_19) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_2_20
+producer:(1,TheAltitude_20) (1,P3) 
+consumer:(1,P4) 
+
+id:t3_1_1
+producer:(1,TheAltitude_1) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_2
+producer:(1,TheAltitude_2) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_3
+producer:(1,TheAltitude_3) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_4
+producer:(1,TheAltitude_4) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_5
+producer:(1,TheAltitude_5) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_6
+producer:(1,TheAltitude_6) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_7
+producer:(1,TheAltitude_7) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_8
+producer:(1,TheAltitude_8) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t3_1_9
+producer:(1,TheAltitude_9) (1,P3) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t2_2_off
+producer:(1,Weight_Right_Wheel_off) (1,P2) 
+consumer:(1,P3) 
+
+id:t2_1_on
+producer:(1,Weight_Right_Wheel_on) (1,P2) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
+
+id:t1_2_off
+producer:(1,Weight_Left_Wheel_off) (1,P1) 
+consumer:(1,P2) 
+
+id:t1_1_on
+producer:(1,Weight_Left_Wheel_on) (1,P1) 
+consumer:(1,P6) (1,Plane_On_Ground_Signal_no_T) 
