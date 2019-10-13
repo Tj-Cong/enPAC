@@ -2,7 +2,6 @@
 #include "xml2ltl.h"
 #include "SBA.h"
 #include "Petri_Net.h"
-
 #include <iostream>
 #include <sys/time.h>
 #include <sys/mman.h>
@@ -10,12 +9,6 @@
 #include <exception>
 
 using namespace std;
-
-namespace std{
-    typedef void (*new_handler)();
-    new_handler set_new_handler(new_handler p) throw();
-
-}
 
 void no_memory () {
     cout<<"Error!";
@@ -28,8 +21,9 @@ NUM_t placecount;
 NUM_t MARKLEN;
 bool NUPN = false;
 bool SAFE = false;
-
 bool STUBBORN = true;
+bool ready2exit = false;
+
 Petri *petri = NULL;
 
 double get_time() {
@@ -232,16 +226,8 @@ int main() {
             //cout << "begin:ON-THE-FLY" << endl;
             if (NUPN || SAFE) {
                 Product_Automata<BitRGNode, BitRG> *product;
-                try {
-                    product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
-                    product->ModelChecker(propertyid, timeleft);
-
-                }
-
-                catch(...)
-                {
-                    cout<<"CANNOT COMPUTE"<<endl;
-                }
+                product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
+                product->ModelChecker(propertyid);
                 cout<<" "<<bitgraph->nodecount<<endl;
                 int ret = product->getresult();
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
@@ -249,16 +235,8 @@ int main() {
                 delete product;
             } else {
                 Product_Automata<RGNode, RG> *product;
-                try {
-                    product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
-                    product->ModelChecker(propertyid, timeleft);
-
-                }
-                catch(...)
-                {
-                    cout<<"CANNOT COMPUTE"<<endl;
-                }
-
+                product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+                product->ModelChecker(propertyid);
                 cout<<" "<<graph->nodecount<<endl;
                 int ret = product->getresult();
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
@@ -373,14 +351,8 @@ int main() {
 
             if (NUPN || SAFE) {
                 Product_Automata<BitRGNode, BitRG> *product;
-                try {
-                    product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
-                    product->ModelChecker(propertyid, timeleft);
-                }
-                catch(...)
-                {
-                    cout<<"CANNOT COMPUTE"<<endl;
-                }
+                product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
+                product->ModelChecker(propertyid);
                 cout<<" "<<bitgraph->nodecount<<endl;
                 int ret = product->getresult();
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
@@ -388,14 +360,8 @@ int main() {
                 delete product;
             } else {
                 Product_Automata<RGNode, RG> *product;
-                try {
-                    product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
-                    product->ModelChecker(propertyid, timeleft);
-                }
-                catch(...)
-                {
-                    cout<<"CANNOT COMPUTE"<<endl;
-                }
+                product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
+                product->ModelChecker(propertyid);
                 cout<<" "<<graph->nodecount<<endl;
                 int ret = product->getresult();
 
@@ -590,14 +556,14 @@ int main0()
     if (NUPN || SAFE) {
         Product_Automata<BitRGNode, BitRG> *product;
         product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
-        product->ModelChecker(propertyid, timeleft);
+        product->ModelChecker(propertyid);
         int ret = product->getresult();
 
         delete product;
     } else {
         Product_Automata<RGNode, RG> *product;
         product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
-        product->ModelChecker(propertyid, timeleft);
+        product->ModelChecker(propertyid);
         int ret = product->getresult();
 
         delete product;

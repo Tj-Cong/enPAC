@@ -1440,7 +1440,7 @@ void RG::isFirable() {
     }
 }
 
-void RG::genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red) {
+void RG::genStbnSet(RGNode *curnode,vector<int> &stbset) {
     cur = curnode;
     initTGraph();
     isFirable();
@@ -1506,7 +1506,6 @@ void RG::genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red) {
     }
     if(contain)
     {
-        red = false;
         return;
     }
 
@@ -1523,7 +1522,6 @@ void RG::genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red) {
     }
     if(noeninvis)
     {
-        red = false;
         return;
     }
 
@@ -1538,7 +1536,6 @@ void RG::genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red) {
         if(fire[*ii])
             stbset.push_back(*ii);
     }
-    red = false;
     return;
 }
 
@@ -1829,7 +1826,7 @@ void BitRG::isFirable() {
     }
 }
 
-void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset,bool &red) {
+void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset) {
     cur = curnode;
     initTGraph();
     isFirable();
@@ -1894,7 +1891,6 @@ void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset,bool &red) {
     }
     if(contain)
     {
-        red = false;
         return;
     }
 
@@ -1909,7 +1905,6 @@ void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset,bool &red) {
         }
     }
     if(noeninvis) {
-        red = false;
         return;
     }
 
@@ -1924,7 +1919,6 @@ void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset,bool &red) {
         if(fire[*ii])
             stbset.push_back(*ii);
     }
-    red = false;
     return;
 }
 /*void RG::push(RGNode *mark)

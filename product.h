@@ -17,6 +17,7 @@
 #include <fstream>
 #include "RG.h"
 #include "SBA.h"
+#include <pthread.h>
 
 #define TIME_LEFT 112
 #define max_to_string 30
@@ -38,6 +39,7 @@ extern NUM_t placecount;
 extern bool NUPN;
 extern bool SAFE;
 extern bool STUBBORN;
+extern bool ready2exit;
 
 /*******************************************/
 
@@ -69,17 +71,6 @@ public:
     void pop(Product<rgnode> *n);
     void resetHash();
     ~hashtable();
-
-//    void *operator new(std::size_t ObjectSize)
-//    {
-//        return g_ptrMemPool->GetMemory(ObjectSize) ;
-//    }
-//
-//    void operator delete(void *ptrObject, std::size_t ObjectSize)
-//    {
-//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-//    }
-
 };
 
 template <class rgnode, class rg_T>
@@ -103,10 +94,10 @@ public:
     void getProduct();         //合成交自动机
     void getProduct_Bound();                    //限界策略
     void addinitial_status(rgnode *initnode);  //生成交自动机的初始状态
-    void ModelChecker(string propertyid, int &timeleft);  //最外层的函数
+    void ModelChecker(string propertyid);  //最外层的函数
     void simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid);          //CBANid: current biggest accepted node id
     void simplified_dfs_bound(Product<rgnode> *q, int recurdepth, int CBANid);          //限界搜索
-    void stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid,int CBRNid);
+    void stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid);
     bool isLabel(rgnode *state, int sj);  //判断能否合成交状态
     bool judgeF(string s);         //判断该公式是否为F类型的公式
     NUM_t sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
@@ -298,7 +289,7 @@ bool Product_Automata<rgnode,rg_T>::judgeF(string s) {
  * out: void
  * */
 template <class rgnode, class rg_T>
-void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid, int &timeleft) {
+void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid) {
     //预设超时机制
     signal(SIGALRM, sig_handler);
     alarm(each_ltl_time);
@@ -336,7 +327,6 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid, int &timelef
         ret = -1;
     }
     alarm(0);
-    //timeleft = alarm(0);//Cancel alarm
     return;
 }
 
@@ -405,7 +395,7 @@ void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
             init->hashnext = NULL;
 //        dfs1(init);
             if(STUBBORN)
-                stubborn_dfs(init,0,-1,-1);
+                stubborn_dfs(init,0,-1);
             else
                 simplified_dfs(init,0,-1);
             delete init;
@@ -480,6 +470,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int
                     if(existpos->id <= cban)
                     {
                         result = false;
+                        ready2exit = true;
                         delete qs;
                         return;
                     }
@@ -519,6 +510,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int
                     if(existpos->id <= cban)
                     {
                         result = false;
+                        ready2exit = true;
                         delete qs;
                         return;
                     }
@@ -544,7 +536,7 @@ template <class rgnode, class rg_T>
 void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid) {
 
 //    outcurdepth<<recurdepth<<endl;
-    if(!result || !timeflag){
+    if(ready2exit){
         return ;
     }
 
@@ -561,7 +553,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
     //遍历BA的后继结点
     while(pba != NULL) {
 
-        if(!result || !timeflag){
+        if(ready2exit){
             return ;
         }
 
@@ -572,7 +564,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
         int rg_i = 0;
         if(firecount == 0)
         {
-            if(!result || !timeflag){
+            if(ready2exit){
                 return ;
             }
 
@@ -590,6 +582,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
                     if(existpos->id <= cban)
                     {
                         result = false;
+                        ready2exit = true;
                         delete qs;
                         return;
                     }
@@ -603,7 +596,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
         }
         for(rg_i; rg_i<firecount; rg_i++)
         {
-            if(!result || !timeflag){
+            if(ready2exit){
                 return ;
             }
 
@@ -629,6 +622,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
                     if(existpos->id <= cban)
                     {
                         result = false;
+                        ready2exit = true;
                         delete qs;
                         return;
                     }
@@ -649,14 +643,13 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
 }
 
 template <class rgnode, class rg_T>
-void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid, int CBGNid) {
+void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid) {
 
-//    outcurdepth<<recurdepth<<endl;
-    if(!result || !timeflag){
+    if(ready2exit){
         return ;
     }
 
-    int cban, cbgn;
+    int cban;
 
     if((ba->svertics[q->BAname_id].isAccept == true) && (q->id > CBANid))
         cban = q->id;
@@ -670,7 +663,7 @@ void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurde
     //遍历BA的后继结点
     while(pba != NULL) {
 
-        if(!result || !timeflag){
+        if(ready2exit){
             return ;
         }
 
@@ -680,14 +673,11 @@ void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurde
 
         //计算顽固集合
         vector<int> stbset;
-        bool red;
-        rg->genStbnSet(q->RGname_ptr,stbset,red);
+        rg->genStbnSet(q->RGname_ptr,stbset);
 
         if(stbset.size() == 0)                //如果约减后的可达图终止，那么原可达图也会终止
         {
-            red = false;
-            cbgn = recurdepth;
-            if(!result || !timeflag){
+            if(ready2exit){
                 return ;
             }
 
@@ -705,29 +695,24 @@ void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurde
                     if(existpos->id <= cban)
                     {
                         result = false;
+                        ready2exit = true;
                         delete qs;
                         return;
                     }
                 }
                 if(h.search(qs) == NULL)
                 {
-                    stubborn_dfs(qs,recurdepth+1,cban,cbgn);
+                    stubborn_dfs(qs,recurdepth+1,cban);
                 }
                 delete qs;
             }
         }
         vector<int>::iterator rg_i = stbset.begin();
-        bool reexpand = false;
         for(rg_i; rg_i!=stbset.end(); ++rg_i)
         {
-            if(!result || !timeflag){
+            if(ready2exit){
                 return ;
             }
-
-            if(!red)
-                cbgn = recurdepth;
-            else
-                cbgn = CBGNid;
 
             bool exist;
             rgnode *rgseed = rg->RGcreatenode(q->RGname_ptr,*rg_i,exist);
@@ -745,57 +730,16 @@ void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurde
                     {
                         //如果找到了一个环
                         result = false;
+                        ready2exit = true;
                         delete qs;
                         return;
-                    }
-                    else if(existpos->id > cbgn)      //这是一个全是red的环
-                    {
-                        //re-expand
-                        reexpand = true;
-                        //cbgn = recurdepth;
                     }
                 }
                 if(h.search(qs) == NULL)
                 {
-                    stubborn_dfs(qs,recurdepth+1,cban,cbgn);
+                    stubborn_dfs(qs,recurdepth+1,cban);
                 }
                 delete qs;
-            }
-        }
-
-        if(reexpand && result)   //需要重新扩展，用algorithm2中的step2
-        {
-            vector<int> newstbset;
-            rg->re_expand(q->RGname_ptr,stbset,newstbset);
-            cbgn = recurdepth;
-            vector<int>::iterator it;
-            for(it=newstbset.begin();it!=newstbset.end();++it)
-            {
-                bool exist;
-                rgnode *rgseed = rg->RGcreatenode(q->RGname_ptr,*it,exist);
-                if(isLabel(rgseed, pba->adjvex))
-                {
-                    Product<rgnode> *qs = new Product<rgnode>;
-                    qs->id = recurdepth + 1;
-                    qs->BAname_id = pba->adjvex;
-                    qs->RGname_ptr = rgseed;
-
-                    Product<rgnode> *existpos = dfs_stack.search(qs);
-                    if(existpos != NULL)             //找到了环
-                    {
-                        if(existpos->id <= cban)
-                        {
-                            result = false;
-                            delete qs;
-                            return;
-                        }
-                    }
-                    if(h.search(qs) == NULL)
-                    {
-                        stubborn_dfs(qs,recurdepth+1,cban,cbgn);
-                    }
-                    delete qs;
-                }
             }
         }
         pba = pba->nextarc;

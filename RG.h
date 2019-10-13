@@ -188,7 +188,7 @@ public:
     void addRGNode(RGNode *mark);
     void enCoder(unsigned short *equmark,RGNode *curnode);
     void deCoder(unsigned short *equmark,RGNode *curnode);
-    void genStbnSet(RGNode *curnode,vector<int> &stbset,bool &red);
+    void genStbnSet(RGNode *curnode,vector<int> &stbset);
     void re_expand(RGNode *curnode,const vector<int> &oldstbset,vector<int> &newstbset);
     RGNode *RGinitialnode();
     RGNode *RGcreatenode(RGNode *curnode, int tranxnum, bool &exist);
@@ -257,7 +257,7 @@ public:
     void addRGNode(BitRGNode *mark);
     void enCoder(unsigned short *equmark,BitRGNode *curnode);
     void deCoder(unsigned short *equmark,BitRGNode *curnode);
-    void genStbnSet(BitRGNode *curnode,vector<int> &stbset,bool &red);
+    void genStbnSet(BitRGNode *curnode,vector<int> &stbset);
     void re_expand(BitRGNode *curnode,const vector<int> &oldstbset,vector<int> &newstbset);
     BitRGNode *RGinitialnode();
     BitRGNode *RGcreatenode(BitRGNode *curnode, int tranxnum, bool &exist);
