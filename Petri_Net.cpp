@@ -675,6 +675,15 @@ void Petri::judgeSAFE() {
     }
     char filename[] = "GenericPropertiesVerdict.xml";
 
+    for(int i=0;i<arccount;++i)
+    {
+        if(arc[i].weight>1)
+        {
+            SAFE = false;
+            return;
+        }
+    }
+
     ifstream infile(filename,ios::in);
     if (!infile) {
         SAFE = false;
@@ -810,6 +819,7 @@ void Petri::printPlace() {
     {
         Place p = place[i];
         outplace<<endl;
+        outplace<<i<<endl;
         outplace<<"id:"<<p.id<<endl;
         outplace<<"initialMarking:"<<p.initialMarking<<endl;
         outplace<<"myUnit:"<<p.myunit<<endl;
@@ -867,6 +877,7 @@ void Petri::printTransition() {
     {
         Transition t = transition[i];
         outTransition<<endl;
+        outTransition<<i<<endl;
         outTransition<<"id:"<<t.id<<endl;
 
         outTransition<<"producer:";

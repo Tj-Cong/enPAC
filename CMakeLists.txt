@@ -9,6 +9,10 @@ link_libraries(tcmalloc)
 
 include_directories(.)
 
+#if (CMAKE_BUILD_TYPE MATCHES Debug)
+#    add_definitions(-DDEBUG=1)
+#endif ()
+
 add_executable(enPAC_2020_3_0
         product.cpp product.h
         Data_Structures.cpp

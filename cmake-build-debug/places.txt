@@ -1,625 +1,226 @@
-Total places：89
-conflict times:149
+Total places：28
+conflict times:56
 
-id:stp4
+0
+id:p0
 initialMarking:1
-myUnit:32767
-myOffset:4
+myUnit:0
+myOffset:0
 producer:
-consumer:SpeedLW_1 SpeedLW_2 SpeedLW_3 SpeedLW_4 SpeedLW_5 SpeedLW_6 SpeedLW_7 SpeedLW_8 SpeedLW_9 SpeedLW_10 
+consumer:t0 
 
-id:SpeedPossibleVal_1
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_1 SpeedLW_1 
-consumer:SpeedRW_1 SpeedLW_1 
-
-id:SpeedPossibleVal_2
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_2 SpeedLW_2 
-consumer:SpeedRW_2 SpeedLW_2 
-
-id:SpeedPossibleVal_3
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_3 SpeedLW_3 
-consumer:SpeedRW_3 SpeedLW_3 
-
-id:SpeedPossibleVal_4
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_4 SpeedLW_4 
-consumer:SpeedRW_4 SpeedLW_4 
-
-id:SpeedPossibleVal_5
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_5 SpeedLW_5 
-consumer:SpeedRW_5 SpeedLW_5 
-
-id:SpeedPossibleVal_6
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_6 SpeedLW_6 
-consumer:SpeedRW_6 SpeedLW_6 
-
-id:SpeedPossibleVal_7
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_7 SpeedLW_7 
-consumer:SpeedRW_7 SpeedLW_7 
-
-id:SpeedPossibleVal_8
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_8 SpeedLW_8 
-consumer:SpeedRW_8 SpeedLW_8 
-
-id:SpeedPossibleVal_9
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_9 SpeedLW_9 
-consumer:SpeedRW_9 SpeedLW_9 
-
-id:SpeedPossibleVal_10
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SpeedRW_10 SpeedLW_10 
-consumer:SpeedRW_10 SpeedLW_10 
-
-id:Speed_Left_Wheel_1
+1
+id:p1
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_1 
-consumer:t4_2_1 
+myUnit:1
+myOffset:0
+producer:t33 
+consumer:t45 
 
-id:Speed_Left_Wheel_2
+2
+id:p2
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_2 
-consumer:t4_2_2 
+myUnit:1
+myOffset:1
+producer:t34 
+consumer:t46 
 
-id:Speed_Left_Wheel_3
+3
+id:p3
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_3 
-consumer:t4_2_3 
+myUnit:1
+myOffset:2
+producer:t35 
+consumer:t47 
 
-id:Speed_Left_Wheel_4
+4
+id:p4
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_4 
-consumer:t4_2_4 
+myUnit:1
+myOffset:3
+producer:t36 
+consumer:t48 
 
-id:Speed_Left_Wheel_5
+5
+id:p5
 initialMarking:0
-myUnit:32767
+myUnit:1
 myOffset:4
-producer:SpeedLW_5 
-consumer:t4_2_5 
+producer:t0 t45 t46 t47 t48 
+consumer:t33 t34 t35 t36 
 
-id:Speed_Left_Wheel_6
+6
+id:p6
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_6 
-consumer:t4_1_6 
+myUnit:2
+myOffset:0
+producer:t41 
+consumer:t37 
 
-id:Speed_Left_Wheel_7
+7
+id:p7
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_7 
-consumer:t4_1_7 
+myUnit:2
+myOffset:1
+producer:t42 
+consumer:t38 
 
-id:Speed_Left_Wheel_8
+8
+id:p8
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_8 
-consumer:t4_1_8 
+myUnit:2
+myOffset:2
+producer:t43 
+consumer:t39 
 
-id:Speed_Left_Wheel_9
+9
+id:p9
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedLW_9 
-consumer:t4_1_9 
+myUnit:2
+myOffset:3
+producer:t44 
+consumer:t40 
 
-id:Speed_Left_Wheel_10
+10
+id:p10
 initialMarking:0
-myUnit:32767
+myUnit:2
 myOffset:4
-producer:SpeedLW_10 
-consumer:t4_2_10 
+producer:t0 t37 t38 t39 t40 
+consumer:t41 t42 t43 t44 
 
-id:stp5
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:
-consumer:SpeedRW_1 SpeedRW_2 SpeedRW_3 SpeedRW_4 SpeedRW_5 SpeedRW_6 SpeedRW_7 SpeedRW_8 SpeedRW_9 SpeedRW_10 
-
-id:Speed_Right_Wheel_1
+11
+id:p11
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_1 
-consumer:t5_2_1 
+myUnit:3
+myOffset:0
+producer:t15 t17 
+consumer:t16 t17 
 
-id:Speed_Right_Wheel_2
+12
+id:p12
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_2 
-consumer:t5_2_2 
+myUnit:3
+myOffset:1
+producer:t37 
+consumer:t14 t15 
 
-id:Speed_Right_Wheel_3
+13
+id:p13
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_3 
-consumer:t5_2_3 
+myUnit:3
+myOffset:2
+producer:t18 t38 
+consumer:t13 t18 
 
-id:Speed_Right_Wheel_4
+14
+id:p14
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_4 
-consumer:t5_2_4 
+myUnit:3
+myOffset:3
+producer:t39 
+consumer:t11 t12 
 
-id:Speed_Right_Wheel_5
+15
+id:p15
 initialMarking:0
-myUnit:32767
+myUnit:3
 myOffset:4
-producer:SpeedRW_5 
-consumer:t5_2_5 
+producer:t0 t11 t12 t13 t14 t16 t21 t23 t25 t26 t27 t28 t33 t34 t35 t36 t40 
+consumer:t21 t23 t25 t26 t27 t28 t33 t34 t35 t36 t37 t38 t39 t40 
 
-id:Speed_Right_Wheel_6
+16
+id:p16
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_6 
-consumer:t5_1_6 
+myUnit:4
+myOffset:0
+producer:t9 t19 
+consumer:t10 t19 
 
-id:Speed_Right_Wheel_7
+17
+id:p17
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_7 
-consumer:t5_1_7 
+myUnit:4
+myOffset:1
+producer:t45 
+consumer:t8 t9 
 
-id:Speed_Right_Wheel_8
+18
+id:p18
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_8 
-consumer:t5_1_8 
+myUnit:4
+myOffset:2
+producer:t20 t46 
+consumer:t7 t20 
 
-id:Speed_Right_Wheel_9
+19
+id:p19
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SpeedRW_9 
-consumer:t5_1_9 
+myUnit:4
+myOffset:3
+producer:t47 
+consumer:t5 t6 
 
-id:Speed_Right_Wheel_10
+20
+id:p20
 initialMarking:0
-myUnit:32767
+myUnit:4
 myOffset:4
-producer:SpeedRW_10 
-consumer:t5_2_10 
+producer:t0 t5 t6 t7 t8 t10 t22 t24 t29 t30 t31 t32 t41 t42 t43 t44 t48 
+consumer:t22 t24 t29 t30 t31 t32 t41 t42 t43 t44 t45 t46 t47 t48 
 
-id:stp3
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:
-consumer:getAlt_1 getAlt_2 getAlt_3 getAlt_4 getAlt_5 getAlt_6 getAlt_7 getAlt_8 getAlt_9 getAlt_10 getAlt_11 getAlt_12 getAlt_13 getAlt_14 getAlt_15 getAlt_16 getAlt_17 getAlt_18 getAlt_19 getAlt_20 
-
-id:AltitudePossibleVal_1
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_1 
-consumer:getAlt_1 
-
-id:AltitudePossibleVal_2
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_2 
-consumer:getAlt_2 
-
-id:AltitudePossibleVal_3
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_3 
-consumer:getAlt_3 
-
-id:AltitudePossibleVal_4
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_4 
-consumer:getAlt_4 
-
-id:AltitudePossibleVal_5
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_5 
-consumer:getAlt_5 
-
-id:AltitudePossibleVal_6
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_6 
-consumer:getAlt_6 
-
-id:AltitudePossibleVal_7
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_7 
-consumer:getAlt_7 
-
-id:AltitudePossibleVal_8
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_8 
-consumer:getAlt_8 
-
-id:AltitudePossibleVal_9
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_9 
-consumer:getAlt_9 
-
-id:AltitudePossibleVal_10
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_10 
-consumer:getAlt_10 
-
-id:AltitudePossibleVal_11
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_11 
-consumer:getAlt_11 
-
-id:AltitudePossibleVal_12
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_12 
-consumer:getAlt_12 
-
-id:AltitudePossibleVal_13
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_13 
-consumer:getAlt_13 
-
-id:AltitudePossibleVal_14
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_14 
-consumer:getAlt_14 
-
-id:AltitudePossibleVal_15
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_15 
-consumer:getAlt_15 
-
-id:AltitudePossibleVal_16
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_16 
-consumer:getAlt_16 
-
-id:AltitudePossibleVal_17
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_17 
-consumer:getAlt_17 
-
-id:AltitudePossibleVal_18
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_18 
-consumer:getAlt_18 
-
-id:AltitudePossibleVal_19
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_19 
-consumer:getAlt_19 
-
-id:AltitudePossibleVal_20
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:getAlt_20 
-consumer:getAlt_20 
-
-id:TheAltitude_1
+21
+id:p21
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_1 
-consumer:t3_1_1 
+myUnit:5
+myOffset:0
+producer:t0 
+consumer:t21 t22 
 
-id:TheAltitude_2
+22
+id:p22
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_2 
-consumer:t3_1_2 
+myUnit:5
+myOffset:1
+producer:t23 t24 
+consumer:t51 
 
-id:TheAltitude_3
+23
+id:p23
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_3 
-consumer:t3_1_3 
+myUnit:5
+myOffset:2
+producer:t50 
+consumer:t23 t24 
 
-id:TheAltitude_4
+24
+id:p24
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_4 
-consumer:t3_1_4 
+myUnit:5
+myOffset:3
+producer:t21 t22 
+consumer:t50 
 
-id:TheAltitude_5
+25
+id:p25
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_5 
-consumer:t3_1_5 
+myUnit:6
+myOffset:0
+producer:t1 t4 
+consumer:t2 t3 t50 t51 
 
-id:TheAltitude_6
+26
+id:p26
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_6 
-consumer:t3_1_6 
+myUnit:6
+myOffset:1
+producer:t17 t18 t19 t20 
+consumer:t1 t4 t49 
 
-id:TheAltitude_7
+27
+id:p27
 initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_7 
-consumer:t3_1_7 
-
-id:TheAltitude_8
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_8 
-consumer:t3_1_8 
-
-id:TheAltitude_9
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_9 
-consumer:t3_1_9 
-
-id:TheAltitude_10
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_10 
-consumer:t3_2_10 
-
-id:TheAltitude_11
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_11 
-consumer:t3_2_11 
-
-id:TheAltitude_12
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_12 
-consumer:t3_2_12 
-
-id:TheAltitude_13
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_13 
-consumer:t3_2_13 
-
-id:TheAltitude_14
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_14 
-consumer:t3_2_14 
-
-id:TheAltitude_15
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_15 
-consumer:t3_2_15 
-
-id:TheAltitude_16
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_16 
-consumer:t3_2_16 
-
-id:TheAltitude_17
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_17 
-consumer:t3_2_17 
-
-id:TheAltitude_18
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_18 
-consumer:t3_2_18 
-
-id:TheAltitude_19
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_19 
-consumer:t3_2_19 
-
-id:TheAltitude_20
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:getAlt_20 
-consumer:t3_2_20 
-
-id:stp2
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:
-consumer:SampleRW_on SampleRW_off 
-
-id:WeightPossibleVal_on
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SampleLW_on SampleRW_on 
-consumer:SampleLW_on SampleRW_on 
-
-id:WeightPossibleVal_off
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:SampleLW_off SampleRW_off 
-consumer:SampleLW_off SampleRW_off 
-
-id:Weight_Right_Wheel_on
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SampleRW_on 
-consumer:t2_1_on 
-
-id:Weight_Right_Wheel_off
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SampleRW_off 
-consumer:t2_2_off 
-
-id:stp1
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:
-consumer:SampleLW_on SampleLW_off 
-
-id:Weight_Left_Wheel_on
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SampleLW_on 
-consumer:t1_1_on 
-
-id:Weight_Left_Wheel_off
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:SampleLW_off 
-consumer:t1_2_off 
-
-id:P5
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t4_2_1 t4_2_2 t4_2_3 t4_2_4 t4_2_5 t4_2_10 
-consumer:t5_1_6 t5_1_7 t5_1_8 t5_1_9 t5_2_1 t5_2_2 t5_2_3 t5_2_4 t5_2_5 t5_2_10 
-
-id:P6
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t5_1_6 t5_1_7 t5_1_8 t5_1_9 t5_2_1 t5_2_2 t5_2_3 t5_2_4 t5_2_5 t5_2_10 t1_1_on t2_1_on t3_1_1 t3_1_2 t3_1_3 t3_1_4 t3_1_5 t3_1_6 t3_1_7 t3_1_8 t3_1_9 t4_1_6 t4_1_7 t4_1_8 t4_1_9 
-consumer:
-
-id:Plane_On_Ground_Signal_no_T
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t5_1_6 t5_1_7 t5_1_8 t5_1_9 t1_1_on t2_1_on t3_1_1 t3_1_2 t3_1_3 t3_1_4 t3_1_5 t3_1_6 t3_1_7 t3_1_8 t3_1_9 t4_1_6 t4_1_7 t4_1_8 t4_1_9 
-consumer:
-
-id:Plane_On_Ground_Signal_no_F
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t5_2_1 t5_2_2 t5_2_3 t5_2_4 t5_2_5 t5_2_10 
-consumer:
-
-id:P4
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t3_2_10 t3_2_11 t3_2_12 t3_2_13 t3_2_14 t3_2_15 t3_2_16 t3_2_17 t3_2_18 t3_2_19 t3_2_20 
-consumer:t4_2_1 t4_2_2 t4_2_3 t4_2_4 t4_2_5 t4_2_10 t4_1_6 t4_1_7 t4_1_8 t4_1_9 
-
-id:P3
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t2_2_off 
-consumer:t3_1_1 t3_1_2 t3_1_3 t3_1_4 t3_1_5 t3_1_6 t3_1_7 t3_1_8 t3_1_9 t3_2_10 t3_2_11 t3_2_12 t3_2_13 t3_2_14 t3_2_15 t3_2_16 t3_2_17 t3_2_18 t3_2_19 t3_2_20 
-
-id:P2
-initialMarking:0
-myUnit:32767
-myOffset:4
-producer:t1_2_off 
-consumer:t2_1_on t2_2_off 
-
-id:P1
-initialMarking:1
-myUnit:32767
-myOffset:4
-producer:
-consumer:t1_1_on t1_2_off 
+myUnit:6
+myOffset:2
+producer:t0 t2 t3 t50 t51 
+consumer:t17 t18 t19 t20 

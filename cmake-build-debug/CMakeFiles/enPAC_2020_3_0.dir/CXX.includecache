@@ -30,6 +30,12 @@ string
 gperftools/tcmalloc.h
 -
 
+/home/hecong/文档/enPAC_2020_3.0/Petri_Net.cpp
+iostream
+-
+Petri_Net.h
+/home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
+
 /home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
 string
 -
@@ -102,6 +108,14 @@ sys/time.h
 sys/mman.h
 -
 unistd.h
+-
+exception
+-
+
+/home/hecong/文档/enPAC_2020_3.0/product.cpp
+product.h
+/home/hecong/文档/enPAC_2020_3.0/product.h
+fstream
 -
 
 /home/hecong/文档/enPAC_2020_3.0/product.h

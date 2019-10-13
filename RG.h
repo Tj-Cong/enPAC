@@ -87,6 +87,7 @@ public:
     //NUM_t tokensum();
     index_t Hash();
     bool isFirable(const Transition &t) const;
+    void printMarking(const int &len);
     ~RGNode();
 
 //    void *operator new(std::size_t ObjectSize)
@@ -111,6 +112,7 @@ public:
     //NUM_t tokensum();
     index_t Hash();
     bool isFirable(const Transition &t) const;
+    void printMarking(const int &len);
     ~BitRGNode();
 
 //    void *operator new(std::size_t ObjectSize)

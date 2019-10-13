@@ -7,8 +7,21 @@
 #include <sys/time.h>
 #include <sys/mman.h>
 #include <unistd.h>
+#include <exception>
 
 using namespace std;
+
+namespace std{
+    typedef void (*new_handler)();
+    new_handler set_new_handler(new_handler p) throw();
+
+}
+
+void no_memory () {
+    cout<<"Error!";
+    int a=0;
+    throw a;
+}
 
 NUM_t FIELDCOUNT;
 NUM_t placecount;
@@ -48,6 +61,7 @@ int main() {
 //        exit(0);
 //    }
 
+    std::set_new_handler(no_memory);
     cout << "=================================================" << endl;
     cout << "=====This is our tool-enPAC for the MCC'2019=====" << endl;
     cout << "=================================================" << endl;
@@ -78,25 +92,27 @@ int main() {
     double starttime, endtime;
     starttime = get_time();
     Petri *ptnet = new Petri;
-    ptnet->judgeSAFE();
     char filename[]="model.pnml";
     ptnet->getSize(filename);
-    if(ptnet->NUPN)
-    {
+    if(ptnet->NUPN) {
         ptnet->readNUPN(filename);
     }
-    else{
+    else {
         ptnet->readPNML(filename);
     }
 
+    ptnet->judgeSAFE();
     ptnet->checkarc();
-//    ptnet->printGraph();
-//    ptnet->printPlace();
-//    ptnet->printTransition();
     ptnet->getwrup();       //计算wrupset
-//    ptnet->printWrup();
     ptnet->getaccd();       //计算non-accord with变迁
-//    ptnet->printAccord();
+
+#ifdef DEBUG
+    ptnet->printGraph();
+    ptnet->printPlace();
+    ptnet->printTransition();
+    ptnet->printWrup();
+    ptnet->printAccord();
+#endif
 
     setGlobalValue(ptnet);
     petri = ptnet;
@@ -117,7 +133,7 @@ int main() {
 
     //if(category == "LTLCardinality") {
         while (getline(read, propertyid, ':')) {
-            STUBBORN = false;
+            STUBBORN = true;
 
             timeleft = totalruntime / formula_num;
             int timetemp = timeleft;
@@ -219,9 +235,10 @@ int main() {
                 try {
                     product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
                     product->ModelChecker(propertyid, timeleft);
+
                 }
 
-                catch(bad_alloc &memExp)
+                catch(...)
                 {
                     cout<<"CANNOT COMPUTE"<<endl;
                 }
@@ -235,8 +252,9 @@ int main() {
                 try {
                     product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
                     product->ModelChecker(propertyid, timeleft);
+
                 }
-                catch(bad_alloc &memExp)
+                catch(...)
                 {
                     cout<<"CANNOT COMPUTE"<<endl;
                 }
@@ -275,7 +293,7 @@ int main() {
 
         while (getline(readF, propertyid, ':')) {
 
-            STUBBORN = false;
+            STUBBORN = true;
 
             timeleft = totalruntime / formula_num;
             int timetemp;
@@ -359,7 +377,7 @@ int main() {
                     product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
                     product->ModelChecker(propertyid, timeleft);
                 }
-                catch(const bad_alloc &memExp)
+                catch(...)
                 {
                     cout<<"CANNOT COMPUTE"<<endl;
                 }
@@ -374,7 +392,7 @@ int main() {
                     product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
                     product->ModelChecker(propertyid, timeleft);
                 }
-                catch(const bad_alloc &memExp)
+                catch(...)
                 {
                     cout<<"CANNOT COMPUTE"<<endl;
                 }
@@ -405,7 +423,7 @@ int main() {
     return 0;
 }
 
-int main0()
+int main1()
 {
     //CreateGlobalMemPool();
     double starttime, endtime;
@@ -468,7 +486,7 @@ int main0()
     return 0;
 }
 
-int main1()
+int main0()
 {
     //parse xml files
     char Ffile[50] = "LTLFireability.xml";
@@ -490,14 +508,17 @@ int main1()
     }
 
     ptnet->checkarc();
+    ptnet->getwrup();
+    ptnet->getaccd();
+
+#ifdef DEBUG
+    cout<<"this is debug"<<endl;
     ptnet->printGraph();
     ptnet->printPlace();
     ptnet->printTransition();
-    ptnet->getwrup();
     ptnet->printWrup();
-    ptnet->getaccd();
     ptnet->printAccord();
-
+#endif
     setGlobalValue(ptnet);
     petri = ptnet;
 
@@ -556,6 +577,7 @@ int main1()
     TBA *tba;
     tba = new TBA;
     tba->CreatTBA(*Tgba, Ustack);
+    tba->PrintBuchi("BA.txt");
     delete Tgba;
 
     SBA *sba;
