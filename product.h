@@ -18,6 +18,7 @@
 #include "RG.h"
 #include "SBA.h"
 #include <pthread.h>
+#include <thread>
 
 #define TIME_LEFT 112
 #define max_to_string 30
@@ -25,6 +26,7 @@
 #define hash_table_num 16384    //2^14
 #define each_ltl_time 120
 
+#define PSTACKSIZE 1048576
 #define CUTOFF 6000000
 #define BOUND_INCREASE 3000000
 
@@ -41,8 +43,11 @@ extern bool SAFE;
 extern bool STUBBORN;
 extern bool ready2exit;
 
-/*******************************************/
+extern short int total_mem;
+extern short int total_swap;
+extern pid_t mypid;
 
+/********************Product***********************/
 template <class rgnode>
 class Product  //交自动机的一个状态
 {
@@ -55,6 +60,21 @@ public:
     Product();
     Product(Product *n);
 };
+template <class rgnode>
+Product<rgnode>::Product() {
+    RGname_ptr = NULL;
+    hashnext = NULL;
+}
+
+template <class rgnode>
+Product<rgnode>::Product(Product *n) {
+    id = n->id;               //交状态的大小标号
+    RGname_ptr = n->RGname_ptr;   //可达图状态所在位置，可以根据该指针索引到可达图状态
+    BAname_id = n->BAname_id;   //buchi自动机在自动机邻接表中的位置
+    hashnext = NULL;
+}
+
+/****************************HashTable**************************/
 
 template <class rgnode>
 class hashtable
@@ -72,60 +92,6 @@ public:
     void resetHash();
     ~hashtable();
 };
-
-template <class rgnode, class rg_T>
-class Product_Automata
-{
-private:
-    vector<Product<rgnode>> initial_status;
-    hashtable<rgnode> h;
-    hashtable<rgnode> dfs_stack;
-    Petri *ptnet;
-    rg_T *rg;
-    SBA *ba;
-    bool result;
-    int ret;
-    vector<int> negpath;
-    ofstream outcurdepth;
-    int bound;
-    int maxdepth;
-public:
-    Product_Automata(Petri *pt, rg_T* r, SBA *sba);
-    void getProduct();         //合成交自动机
-    void getProduct_Bound();                    //限界策略
-    void addinitial_status(rgnode *initnode);  //生成交自动机的初始状态
-    void ModelChecker(string propertyid);  //最外层的函数
-    void simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid);          //CBANid: current biggest accepted node id
-    void simplified_dfs_bound(Product<rgnode> *q, int recurdepth, int CBANid);          //限界搜索
-    void stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid);
-    bool isLabel(rgnode *state, int sj);  //判断能否合成交状态
-    bool judgeF(string s);         //判断该公式是否为F类型的公式
-    NUM_t sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
-    bool handleLTLF(string s, rgnode *state);
-    bool handleLTLC(string s, rgnode *state);
-    void handleLTLCstep(short int &front_sum, short int &latter_sum, string s, rgnode *state);
-    int getresult();
-    NUM_t getConflictTimes();
-    int getNodecount();
-    void printNegapth(ofstream &outpath);
-    ~Product_Automata();
-};
-
-template <class rgnode>
-Product<rgnode>::Product() {
-    RGname_ptr = NULL;
-    hashnext = NULL;
-}
-
-template <class rgnode>
-Product<rgnode>::Product(Product *n) {
-    id = n->id;               //交状态的大小标号
-    RGname_ptr = n->RGname_ptr;   //可达图状态所在位置，可以根据该指针索引到可达图状态
-    BAname_id = n->BAname_id;   //buchi自动机在自动机邻接表中的位置
-    hashnext = NULL;
-}
-
-/****************************HashTable**************************/
 template <class rgnode>
 hashtable<rgnode>::hashtable() {
     table = new Product<rgnode>* [hash_table_num];
@@ -223,12 +189,7 @@ void hashtable<rgnode>::resetHash()
     }
     nodecount = 0;
     hash_conflict_times = 0;
-
-
-
 }
-
-
 template <class rgnode>
 void hashtable<rgnode>::pop(Product<rgnode> *n) {
     int idex = hashfunction(n);
@@ -257,13 +218,125 @@ void hashtable<rgnode>::pop(Product<rgnode> *n) {
     }
     cout<<"Couldn't delete from hashtable!"<<endl;
 }
+
+
+/****************************PSTACK**************************/
+//template <class rgnode>
+//class PStack
+//{
+//private:
+//    Product<rgnode> **mydata;
+//    index_t *hashlink;
+//    NUM_t toppoint;
+//public:
+//    PStack();
+//    index_t hashfunction(Product<rgnode> *q);
+//    Product<rgnode> top() const;
+//    Product<rgnode> pop();
+//    void push(const Product<rgnode> &item);
+//    NUM_t size();
+//    bool empty();
+//    ~PStack();
+//};
+//template<class rgnode>
+//PStack<rgnode>::PStack() {
+//    mydata = new Product<rgnode>* [PSTACKSIZE];
+//    hashlink = new index_t[PSTACKSIZE];
+//    toppoint = 0;
+//}
+//
+//template<class rgnode>
+//PStack<rgnode>::~PStack() {
+//    for(int i=0;i<toppoint;++i)
+//    {
+//        delete mydata[i];
+//    }
+//    delete hashlink;
+//    delete [] mydata;
+//}
+//
+//template<class rgnode>
+//NUM_t PStack<rgnode>::size() {
+//    return toppoint;
+//}
+//
+//template<class rgnode>
+//bool PStack<rgnode>::empty() {
+//    if(toppoint == 0)
+//        return true;
+//    else
+//        return false;
+//}
+//
+//template<class rgnode>
+//index_t PStack<rgnode>::hashfunction(Product<rgnode> *q) {
+//    index_t RGhashvalue;
+//    index_t size = PSTACKSIZE-1;
+//    RGhashvalue = q->RGname_ptr->Hash();
+//    RGhashvalue = RGhashvalue & size;
+//
+//    index_t Prohashvalue = RGhashvalue + q->BAname_id;
+//    Prohashvalue = Prohashvalue & size;
+//    return Prohashvalue;
+//}
+//
+//
+//template<class rgnode>
+//void PStack<rgnode>::push(const Product<rgnode> &item) {
+//
+//}
 /************************Product_automata************************/
+template <class rgnode, class rg_T>
+class Product_Automata
+{
+private:
+    vector<Product<rgnode>> initial_status;
+    hashtable<rgnode> h;
+    hashtable<rgnode> dfs_stack;
+    Petri *ptnet;
+    rg_T *rg;
+    SBA *ba;
+    bool result;
+    int ret;
+    vector<int> negpath;
+    ofstream outcurdepth;
+
+    //限界
+    int bound;
+    int maxdepth;
+
+    //内存检测
+    bool memory_flag;
+    thread detect_mem_thread;
+public:
+    Product_Automata(Petri *pt, rg_T* r, SBA *sba);
+    void getProduct();         //合成交自动机
+    void getProduct_Bound();                    //限界策略
+    void addinitial_status(rgnode *initnode);  //生成交自动机的初始状态
+    void ModelChecker(string propertyid);  //最外层的函数
+    void simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid);          //CBANid: current biggest accepted node id
+    void simplified_dfs_bound(Product<rgnode> *q, int recurdepth, int CBANid);          //限界搜索
+    void stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid);
+    bool isLabel(rgnode *state, int sj);  //判断能否合成交状态
+    bool judgeF(string s);         //判断该公式是否为F类型的公式
+    NUM_t sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
+    bool handleLTLF(string s, rgnode *state);
+    bool handleLTLC(string s, rgnode *state);
+    void handleLTLCstep(short int &front_sum, short int &latter_sum, string s, rgnode *state);
+    int getresult();
+    NUM_t getConflictTimes();
+    int getNodecount();
+    void printNegapth(ofstream &outpath);
+    void detect_memory();
+    ~Product_Automata();
+};
 template <class rgnode, class rg_T>
 Product_Automata<rgnode,rg_T>::Product_Automata(Petri *pt, rg_T* r, SBA *sba) {
     ptnet = pt;
     rg = r;
     ba = sba;
     result = true;
+    memory_flag = true;
 
     outcurdepth.open("curdepth.txt",ios::out);
 }
@@ -301,7 +374,7 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid) {
 
     //打印结果
     string re;
-    if(timeflag)
+    if(timeflag && memory_flag)
     {
         if(result)
         {
@@ -369,6 +442,8 @@ void Product_Automata<rgnode,rg_T>::getProduct() {
  * */
 template <class rgnode, class rg_T>
 void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
+    detect_mem_thread = thread(&Product_Automata::detect_memory,this);
+
     //如果还未得到rg的初始状态，那么就生成他的初始状态
     if(rg->initnode == NULL){
         rg->RGinitialnode();
@@ -397,7 +472,7 @@ void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
             if(STUBBORN)
                 stubborn_dfs(init,0,-1);
             else
-                simplified_dfs(init,0,-1);
+                simplified_dfs_bound(init,0,-1);
             delete init;
             if(!result || !timeflag)  //如果已经出结果或超时，则退出
                 break;
@@ -414,8 +489,10 @@ void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
         dfs_stack.resetHash();
     }
 
-    if(bound>CUTOFF)cout<<"out of the bound"<<endl;
+    ready2exit = true;
 
+    if(bound>CUTOFF)cout<<"out of the bound"<<endl;
+    detect_mem_thread.join();
 }
 
 template <class rgnode, class rg_T>
@@ -424,7 +501,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int
     outcurdepth<<recurdepth<<endl;
     if(maxdepth < recurdepth)
         maxdepth = recurdepth;
-    if(!result || !timeflag || recurdepth>bound){
+    if( ready2exit || recurdepth>bound){
         return ;
     }
 
@@ -441,7 +518,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int
     //遍历BA的后继结点
     while(pba != NULL) {
 
-        if(!result || !timeflag || recurdepth>bound){
+        if(ready2exit || recurdepth>bound){
             return ;
         }
 
@@ -452,7 +529,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int
         int rg_i = 0;
         if(firecount == 0)
         {
-            if(!result || !timeflag || recurdepth>bound){
+            if(ready2exit || recurdepth>bound){
                 return ;
             }
 
@@ -484,7 +561,7 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int
         }
         for(rg_i; rg_i<firecount; rg_i++)
         {
-            if(!result || !timeflag || recurdepth>bound){
+            if( ready2exit || recurdepth>bound){
                 return ;
             }
 
@@ -645,12 +722,14 @@ void Product_Automata<rgnode,rg_T>::simplified_dfs(Product<rgnode> *q, int recur
 template <class rgnode, class rg_T>
 void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurdepth, int CBANid) {
 
-    if(ready2exit){
+    if(maxdepth < recurdepth)
+        maxdepth = recurdepth;
+
+    if(ready2exit || recurdepth>bound){
         return ;
     }
 
     int cban;
-
     if((ba->svertics[q->BAname_id].isAccept == true) && (q->id > CBANid))
         cban = q->id;
     else
@@ -667,17 +746,13 @@ void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurde
             return ;
         }
 
-        //index_t *isFirable;
-        //unsigned short firecount;
-        //rg->getFireableTranx(q->RGname_ptr,&isFirable,firecount);
-
         //计算顽固集合
         vector<int> stbset;
         rg->genStbnSet(q->RGname_ptr,stbset);
 
         if(stbset.size() == 0)                //如果约减后的可达图终止，那么原可达图也会终止
         {
-            if(ready2exit){
+            if(ready2exit || recurdepth>bound){
                 return ;
             }
 
@@ -710,7 +785,7 @@ void Product_Automata<rgnode,rg_T>::stubborn_dfs(Product<rgnode> *q, int recurde
         vector<int>::iterator rg_i = stbset.begin();
         for(rg_i; rg_i!=stbset.end(); ++rg_i)
         {
-            if(ready2exit){
+            if(ready2exit || recurdepth>bound){
                 return ;
             }
 
@@ -1118,6 +1193,52 @@ void Product_Automata<rgnode,rg_T>::printNegapth(ofstream &outpath) {
     vector<int>::reverse_iterator iter;
     for(iter=negpath.rbegin(); iter!=negpath.rend(); iter++){
         outpath<<(*iter)<<endl;
+    }
+}
+
+template <class rgnode,class rg_T>
+void Product_Automata<rgnode,rg_T>::detect_memory()
+{
+    for(;;)
+    {
+        int size=0;
+        char filename[64];
+        sprintf(filename,"/proc/%d/status",mypid);
+        FILE *pf = fopen(filename,"r");
+        if(pf == nullptr)
+        {
+            cout<<"未能检测到enPAC进程所占内存"<<endl;
+            pclose(pf);
+        } else{
+            char line[128];
+            while(fgets(line,128,pf) != nullptr)
+            {
+                if(strncmp(line,"VmRSS:",6) == 0)
+                {
+                    int len = strlen(line);
+                    const char *p=line;
+                    for(;std::isdigit(*p) == false;++p) {}
+                    line[len-3]=0;
+                    size = atoi(p);
+                    break;
+                }
+            }
+            fclose(pf);
+            size = size/1024;
+            if(100*size/total_mem > 70)
+            {
+                memory_flag = false;
+                ready2exit = true;
+                cout<<"detect memory over the size  given"<<endl;
+                break;
+            }
+
+        }
+        if(ready2exit)
+        {
+            break;
+        }
+        sleep(1);
     }
 }
 

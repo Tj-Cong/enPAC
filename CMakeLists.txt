@@ -3,6 +3,7 @@ project(enPAC_2020_3_0)
 
 set(CMAKE_CXX_STANDARD 14)
 set(LINK_DIR /usr/local/lib)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 link_directories(${LINK_DIR})
 link_libraries(tcmalloc)

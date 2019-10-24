@@ -89,16 +89,6 @@ public:
     bool isFirable(const Transition &t) const;
     void printMarking(const int &len);
     ~RGNode();
-
-//    void *operator new(std::size_t ObjectSize)
-//    {
-//        return g_ptrMemPool->GetMemory(ObjectSize) ;
-//    }
-//
-//    void operator delete(void *ptrObject, std::size_t ObjectSize)
-//    {
-//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-//    }
 };
 
 //用于SAFE和NUPN
@@ -114,18 +104,7 @@ public:
     bool isFirable(const Transition &t) const;
     void printMarking(const int &len);
     ~BitRGNode();
-
-//    void *operator new(std::size_t ObjectSize)
-//    {
-//        return g_ptrMemPool->GetMemory(ObjectSize) ;
-//    }
-//
-//    void operator delete(void *ptrObject, std::size_t ObjectSize)
-//    {
-//        g_ptrMemPool->FreeMemory(ptrObject, ObjectSize) ;
-//    }
 };
-
 
 class RG
 {

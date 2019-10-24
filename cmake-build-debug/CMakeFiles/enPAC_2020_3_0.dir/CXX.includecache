@@ -30,12 +30,6 @@ string
 gperftools/tcmalloc.h
 -
 
-/home/hecong/文档/enPAC_2020_3.0/Petri_Net.cpp
-iostream
--
-Petri_Net.h
-/home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
-
 /home/hecong/文档/enPAC_2020_3.0/Petri_Net.h
 string
 -
@@ -112,12 +106,6 @@ unistd.h
 exception
 -
 
-/home/hecong/文档/enPAC_2020_3.0/product.cpp
-product.h
-/home/hecong/文档/enPAC_2020_3.0/product.h
-fstream
--
-
 /home/hecong/文档/enPAC_2020_3.0/product.h
 cstdio
 -
@@ -143,6 +131,10 @@ RG.h
 /home/hecong/文档/enPAC_2020_3.0/RG.h
 SBA.h
 /home/hecong/文档/enPAC_2020_3.0/SBA.h
+pthread.h
+-
+thread
+-
 
 /home/hecong/文档/enPAC_2020_3.0/tinystr.h
 assert.h

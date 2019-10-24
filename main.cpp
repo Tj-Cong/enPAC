@@ -21,8 +21,13 @@ NUM_t placecount;
 NUM_t MARKLEN;
 bool NUPN = false;
 bool SAFE = false;
-bool STUBBORN = true;
+bool STUBBORN = false;
 bool ready2exit = false;
+
+//以MB为单位
+short int total_mem;
+short int total_swap;
+pid_t mypid;
 
 Petri *petri = NULL;
 
@@ -47,6 +52,23 @@ void getinvisible(int transcount,const set<int> &vis, vector<int> &invis)
 }
 
 int main() {
+
+    mypid = getpid();
+    //检测本机环境下的内存和swap分区
+    FILE *pf;
+    char sh_mem[20];
+    pf = popen("sh detect_total_mem.sh","r");
+    fread(sh_mem, sizeof(sh_mem),1,pf);
+    total_mem = atoi(sh_mem);
+    pclose(pf);
+
+    //检测swap分区大小
+    pf = popen("sh detect_swap.sh","r");
+    char sh_swap[20];
+    fread(sh_swap, sizeof(sh_swap),1,pf);
+    total_swap = atoi(sh_swap);
+    pclose(pf);
+    cout<<"total mem:"<<total_mem<<"\tswap:"<<total_swap<<endl;
 
 //    string category = argv[1];
 //    if(category!="LTLFireability" && category!="LTLCardinality")
@@ -96,11 +118,11 @@ int main() {
     }
 
     ptnet->judgeSAFE();
-    ptnet->checkarc();
-    ptnet->getwrup();       //计算wrupset
-    ptnet->getaccd();       //计算non-accord with变迁
+//    ptnet->getwrup();       //计算wrupset
+//    ptnet->getaccd();       //计算non-accord with变迁
 
 #ifdef DEBUG
+    ptnet->checkarc();
     ptnet->printGraph();
     ptnet->printPlace();
     ptnet->printTransition();
@@ -125,14 +147,13 @@ int main() {
         exit(-1);
     }
 
-    //if(category == "LTLCardinality") {
+//    if(category == "LTLCardinality") {
         while (getline(read, propertyid, ':')) {
-            STUBBORN = true;
+//            STUBBORN = false;
 
             timeleft = totalruntime / formula_num;
             int timetemp = timeleft;
 
-            //cout << propertyid << ':';
             getline(read, S);
 
             int len = S.length();
@@ -143,9 +164,6 @@ int main() {
             }
 
             strcpy(form, S.c_str());
-            //cout << form << endl;
-            //cout << endl;
-//        starttime = get_time();
 
             //lexer
             Lexer *lex = new Lexer(form, S.length());
@@ -156,73 +174,49 @@ int main() {
             ST->reverse_polish(*lex);
             ST->build_tree();
 
-            ST->getSingleVTS(ST->root->left);
+//            ST->getSingleVTS(ST->root->left);
 
-            /*cout << "The syntax tree of unsimplified formula£º" << endl;
-            ST.print_syntax_tree(ST.root, 0);*/
-            //LTL formula rewrite
             ST->simplify_LTL(ST->root->left);
-            /*cout << endl;
-            cout << "The syntax tree of simplified formula£º" << endl;
-            ST.print_syntax_tree(ST.root, 0);*/
-            //syntax tree convert
+
             ST->negconvert(ST->root->left, Ustack);
             ST->computeCurAP(ST->root->left);
             delete lex;
-            /*cout << endl;
-            cout << "The converted formula£º" << endl;
-            cout << ST.root->left->formula << endl;
-            cout << endl;*/
-            //Êä³öU×ÓÊ½
-            /*cout << "The subformulas of LTL whose main operator is \'U\'£º" << endl;
-            vector<STNode>::iterator Uiter;
-            for (Uiter = Ustack.loc.begin(); Uiter != Ustack.loc.end(); Uiter++)
-            {
-                cout << (*Uiter)->formula << endl;
-            }
-            cout << endl;*/
-            //¹¹ÔìTGBA
-
-            double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
-            if(factor>0.618)
-                STUBBORN = false;
+//            double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
+//            if(factor>0.618)
+//                STUBBORN = false;
 
             if (NUPN || SAFE) {
                 bitgraph = new BitRG(ptnet);
-                if(STUBBORN) {
-                    bitgraph->visibleset = ST->visibles;
-                    getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
-                }
+//                if(STUBBORN) {
+//                    bitgraph->visibleset = ST->visibles;
+//                    getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
+//                }
             } else {
                 graph = new RG(ptnet);
-                if(STUBBORN) {
-                    graph->visibleset = ST->visibles;
-                    getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
-                }
+//                if(STUBBORN) {
+//                    graph->visibleset = ST->visibles;
+//                    getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
+//                }
             }
 
             TGBA *Tgba;
             Tgba = new TGBA;
             Tgba->CreatTGBA(Ustack, ST->root->left);
-            //Tgba->SimplifyStates();
             delete ST;
-            //cout << endl;
-            //¹¹ÔìTBA
+
             TBA *tba;
             tba = new TBA;
             tba->CreatTBA(*Tgba, Ustack);
             delete Tgba;
             string filename = propertyid + ".txt";
-            //tba.PrintBuchi(filename);
-            /*cout << "Please check the file" + filename + ". In this file you can see the Buchi automata related to the LTL formula!";
-            cout << endl;*/
-            //¹¹ÔìSBA
+
             SBA *sba;
             sba = new SBA;
             sba->CreatSBA(*tba);
             sba->Simplify();
             sba->Compress();
             delete tba;
+            ready2exit = false;
             //cout << "begin:ON-THE-FLY" << endl;
             if (NUPN || SAFE) {
                 Product_Automata<BitRGNode, BitRG> *product;
@@ -271,7 +265,7 @@ int main() {
 
         while (getline(readF, propertyid, ':')) {
 
-            STUBBORN = true;
+//            STUBBORN = false;
 
             timeleft = totalruntime / formula_num;
             int timetemp;
@@ -300,29 +294,29 @@ int main() {
             ST->reverse_polish(*lex);
             ST->build_tree();
 
-            ST->getSingleVTS(ST->root->left);
+//            ST->getSingleVTS(ST->root->left);
 
             ST->simplify_LTL(ST->root->left);
 
             ST->negconvert(ST->root->left, Ustack);
             ST->computeCurAP(ST->root->left);
 
-            double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
-            if(factor>0.618)
-                STUBBORN = false;
+//            double factor = (double)ST->visibles.size()/(double)ptnet->transitioncount;
+//            if(factor>0.618)
+//                STUBBORN = false;
 
             if (NUPN || SAFE) {
                 bitgraph = new BitRG(ptnet);
-                if(STUBBORN) {
-                    bitgraph->visibleset = ST->visibles;
-                    getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
-                }
+//                if(STUBBORN) {
+//                    bitgraph->visibleset = ST->visibles;
+//                    getinvisible(ptnet->transitioncount,ST->visibles,bitgraph->invisibleset);
+//                }
             } else {
                 graph = new RG(ptnet);
-                if(STUBBORN) {
-                    graph->visibleset = ST->visibles;
-                    getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
-                }
+//                if(STUBBORN) {
+//                    graph->visibleset = ST->visibles;
+//                    getinvisible(ptnet->transitioncount,ST->visibles,graph->invisibleset);
+//                }
             }
 
             TGBA *Tgba;
@@ -348,7 +342,7 @@ int main() {
             sba->Compress();
             delete tba;
             //cout << "begin:ON-THE-FLY" << endl;
-
+            ready2exit = false;
             if (NUPN || SAFE) {
                 Product_Automata<BitRGNode, BitRG> *product;
                 product = new Product_Automata<BitRGNode, BitRG>(ptnet, bitgraph, sba);
