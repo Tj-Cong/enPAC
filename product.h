@@ -489,7 +489,8 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid) {
     signal(SIGALRM, sig_handler);
     alarm(each_ltl_time);
     timeflag = true;
-
+    memory_flag = true;
+    stack_flag = true;
     //核心部分
     result = true;
     getProduct();     //合成交自动机并进行搜索
@@ -651,8 +652,6 @@ void Product_Automata<rgnode,rg_T>::nonrec_dfs(Pstacknode<rgnode> *p0) {
             delete qs;
         }
     }
-//    cstack.clear();
-//    astack.clear();
 }
 
 /*void Product_Automata::getProduct()
