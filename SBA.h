@@ -38,6 +38,7 @@ public:
 	void CreatSBA(TBA &tba);
 	void Simplify();
 	void Compress();
+    void PrintSBA();
 private:
 	void AddArc(int pri, int suc);
 	void Delallarc(int vexloc);

@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define RGTABLE_SIZE 100000
+#define RGTABLE_SIZE 1048576
 
 
 extern NUM_t FIELDCOUNT;   //占用bitfield个数，仅仅用于NUPN和SAFE网
@@ -165,6 +165,7 @@ public:
 
     void isFirable();
     void addRGNode(RGNode *mark);
+    index_t getHashIndex(RGNode *mark);
     void enCoder(unsigned short *equmark,RGNode *curnode);
     void deCoder(unsigned short *equmark,RGNode *curnode);
     void genStbnSet(RGNode *curnode,vector<int> &stbset);
@@ -234,6 +235,7 @@ public:
     void getEn_visible();
     void isFirable();
     void addRGNode(BitRGNode *mark);
+    index_t getHashIndex(BitRGNode *mark);
     void enCoder(unsigned short *equmark,BitRGNode *curnode);
     void deCoder(unsigned short *equmark,BitRGNode *curnode);
     void genStbnSet(BitRGNode *curnode,vector<int> &stbset);

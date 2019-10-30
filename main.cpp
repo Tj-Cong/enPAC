@@ -10,6 +10,21 @@
 
 using namespace std;
 
+size_t  heap_malloc_total, heap_free_total,mmap_total, mmap_count;
+
+void print_info() {
+    struct mallinfo mi = mallinfo();
+    printf("count by itself:\n");
+    printf("\033[31m\theap_malloc_total=%lu heap_free_total=%lu heap_in_use=%lu\n\tmmap_total=%lu mmap_count=%lu\n",
+           heap_malloc_total*1024, heap_free_total*1024, heap_malloc_total*1024-heap_free_total*1024,
+           mmap_total*1024, mmap_count);
+    printf("count by mallinfo:\n");
+    printf("\theap_malloc_total=%lu heap_free_total=%lu heap_in_use=%lu\n\tmmap_total=%lu mmap_count=%lu\n\033[0m",
+           mi.arena, mi.fordblks, mi.uordblks,
+           mi.hblkhd, mi.hblks);
+//    malloc_stats();
+}
+
 void no_memory () {
     cout<<"Error!";
     int a=0;
@@ -227,6 +242,7 @@ int main() {
                 outresult << (ret == -1 ? '?' : (ret == 0 ? 'F' : 'T'));
                 //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
                 delete product;
+
             } else {
                 Product_Automata<RGNode, RG> *product;
                 product = new Product_Automata<RGNode, RG>(ptnet, graph, sba);
@@ -237,7 +253,7 @@ int main() {
                 //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
                 delete product;
             }
-
+            delete sba;
 
             formula_num--;
             totalruntime = totalruntime - (timetemp - timeleft);
@@ -250,6 +266,7 @@ int main() {
             }
 
             MallocExtension::instance()->ReleaseFreeMemory();
+
         }
     //}
     outresult<<endl;
@@ -363,7 +380,7 @@ int main() {
                 //cout<<"CONFLICT_TIMES:"<<product->getConflictTimes()<<endl;
                 delete product;
             }
-
+            delete sba;
             formula_num--;
             totalruntime = totalruntime - (timetemp - timeleft);
 

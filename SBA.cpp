@@ -273,3 +273,39 @@ void SBA::findnextoccupied(int start, int &next, int &vexn)
 	}
 	next = svex_num;
 }
+void SBA::PrintSBA() {
+    ofstream outsba("SBA.dot",ios::out);
+    if(!outsba) {
+        cerr<<"CANNOT OPEN SBA.txt!"<<endl;
+        exit(-1);
+    }
+    outsba<<"digraph SBA{"<<endl;
+    outsba<<'\t'<<"rankdir=LR"<<endl;
+    for(int i=0;i<svex_num;i++)
+    {
+        outsba<<"\t"<<i<<" ";
+        if(svertics[i].isAccept)
+        {
+            outsba<<"[shape=doublecircle,";
+        } else{
+            outsba<<"[shape=circle,";
+        }
+        if(svertics[i].isInitial)
+        {
+            outsba<<"style=filled,";
+        }
+        outsba<<"]";
+//        outsba<<"label=\""<<svertics[i].label<<"\"]";
+        outsba<<endl;
+    }
+    outsba<<endl;
+    for(int i=0;i<svex_num;i++) {
+        SArcNode *p=svertics[i].firstarc;
+        while(p!=NULL)
+        {
+            outsba<<"\t"<<i<<"->"<<p->adjvex<<endl;
+            p=p->nextarc;
+        }
+    }
+    outsba<<"}"<<endl;
+}

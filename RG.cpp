@@ -1172,6 +1172,14 @@ void RG::getReachable(const set<int> &source) {
     getReachable(nextsource);
 }
 
+index_t RG::getHashIndex(RGNode *mark) {
+    //计算哈希值
+    index_t hashvalue = mark->Hash();
+    index_t size = RGTABLE_SIZE-1;
+    hashvalue = hashvalue & size;
+    return hashvalue;
+}
+
 /*void RG::push(RGNode *mark)
  * function: 根据mark的哈希值将mark放进rgnode哈希表中
  * in: mark，待加入的状态节点
@@ -1179,8 +1187,7 @@ void RG::getReachable(const set<int> &source) {
  * */
 void RG::addRGNode(RGNode *mark) {
     //计算哈希值
-    index_t hashvalue = mark->Hash();
-    hashvalue = hashvalue % RGTABLE_SIZE;
+    index_t hashvalue = getHashIndex(mark);
 
     //计算哈希冲突次数
     if(rgnode[hashvalue]!=NULL)
@@ -1285,8 +1292,7 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
 
 
         //3.判断是否已存在该节点
-        index_t hashvalue = newnode->Hash();
-        hashvalue = hashvalue % RGTABLE_SIZE;
+        index_t hashvalue = getHashIndex(newnode);
         bool repeated;
     RGNode *p = rgnode[hashvalue];
 
@@ -1921,15 +1927,23 @@ void BitRG::genStbnSet(BitRGNode *curnode, vector<int> &stbset) {
     }
     return;
 }
-/*void RG::push(RGNode *mark)
+
+index_t BitRG::getHashIndex(BitRGNode *mark) {
+    //计算哈希值
+    index_t hashvalue = mark->Hash();
+    index_t size = RGTABLE_SIZE - 1;
+    hashvalue = hashvalue & size;
+    return hashvalue;
+}
+
+/*void BitRG::addRGNode(BitRGNode *mark)
  * function: 根据mark的哈希值将mark放进rgnode哈希表中
  * in: mark，待加入的状态节点
  * out:
  * */
 void BitRG::addRGNode(BitRGNode *mark) {
     //计算哈希值
-    index_t hashvalue = mark->Hash();
-    hashvalue = hashvalue % RGTABLE_SIZE;
+    index_t hashvalue = getHashIndex(mark);
 
     //计算哈希冲突次数
     if(rgnode[hashvalue]!=NULL)
@@ -2090,8 +2104,8 @@ BitRGNode *BitRG::RGcreatenode(BitRGNode *curnode, int tranxnum, bool &exist) {
         enCoder(newmark,newnode);
 
         //判断是否已经存在该节点
-        index_t hashvalue = newnode->Hash();
-        hashvalue = hashvalue % RGTABLE_SIZE;
+        index_t hashvalue = getHashIndex(newnode);
+
         bool repeated;
         BitRGNode *p = rgnode[hashvalue];
         while(p!=NULL)
@@ -2148,8 +2162,8 @@ BitRGNode *BitRG::RGcreatenode(BitRGNode *curnode, int tranxnum, bool &exist) {
             newnode->marking[unit].set(offset);
         }
 
-        index_t hashvalue = newnode->Hash();
-        hashvalue = hashvalue % RGTABLE_SIZE;
+        index_t hashvalue = getHashIndex(newnode);
+
         bool repeated;
         BitRGNode *p = rgnode[hashvalue];
         while(p!=NULL)
