@@ -8,6 +8,7 @@
 #include <gperftools/tcmalloc.h>
 
 using namespace std;
+#define QUEUESIZE 8192   //must be 2^n
 #define max_set_num 1000               //Old, New, Next�м���Ԫ��������
 #define max_incoming 1000
 #define max_nodes_num 1000
@@ -158,18 +159,6 @@ public:
     bool isinstack(const T& item) const;
     void clear();
 };
-/*****************Data Structures for print out*******************/
-typedef struct LTLNode
-{
-	string propertyid;
-	string formula_str;
-	int result = -1;
-}LTLNode_t;
-
-/*********************Global variables**************************/
-extern LTLNode_t fireability[16];
-extern LTLNode_t cardinality[16];
-
 template <class T>
 T CStack<T>::top() const {
     return myDate.back();
@@ -211,3 +200,70 @@ bool CStack<T>::isinstack(const T &item) const {
     }
     return false;
 }
+
+template <class T>
+class CQueue
+{
+private:
+    T myData[QUEUESIZE];
+    int front;
+    int rear;
+public:
+    CQueue();
+    int DeQueue(T &item);
+    int EnQueue(const T &item);
+    bool empty();
+    bool full();
+    void clear();
+};
+template <class T>
+CQueue<T>::CQueue() {
+    front = rear = 0;
+}
+template <class T>
+int CQueue<T>::DeQueue(T &item) {
+    if(empty())
+    {
+        return ERROR;
+    }
+    item = myData[front];
+    front = (front+1) & (QUEUESIZE-1);
+    return OK;
+}
+template <class T>
+int CQueue<T>::EnQueue(const T &item) {
+    if(full())
+        return ERROR;
+    myData[rear]=item;
+    rear = (rear+1) & (QUEUESIZE-1);
+    return OK;
+}
+template <class T>
+bool CQueue<T>::empty() {
+    if(front == rear)
+        return true;
+    else
+        return false;
+}
+template <class T>
+bool CQueue<T>::full() {
+    if((rear+1)&(QUEUESIZE-1) == front)
+        return true;
+    else
+        return false;
+}
+template <class T>
+void CQueue<T>::clear() {
+    front = rear = 0;
+}
+/*****************Data Structures for print out*******************/
+typedef struct LTLNode
+{
+	string propertyid;
+	string formula_str;
+	int result = -1;
+}LTLNode_t;
+
+/*********************Global variables**************************/
+extern LTLNode_t fireability[16];
+extern LTLNode_t cardinality[16];

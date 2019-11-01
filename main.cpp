@@ -7,11 +7,9 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <exception>
-
 using namespace std;
 
 size_t  heap_malloc_total, heap_free_total,mmap_total, mmap_count;
-
 void print_info() {
     struct mallinfo mi = mallinfo();
     printf("count by itself:\n");
@@ -23,12 +21,6 @@ void print_info() {
            mi.arena, mi.fordblks, mi.uordblks,
            mi.hblkhd, mi.hblks);
 //    malloc_stats();
-}
-
-void no_memory () {
-    cout<<"Error!";
-    int a=0;
-    throw a;
 }
 
 NUM_t FIELDCOUNT;
@@ -88,11 +80,10 @@ int main() {
 //    string category = argv[1];
 //    if(category!="LTLFireability" && category!="LTLCardinality")
 //    {
-//        cout<<"DO_NOT_COMPUTE"<<endl;
+//        cout<<"DO_NOT_COMPETE"<<endl;
 //        exit(0);
 //    }
 
-    std::set_new_handler(no_memory);
     cout << "=================================================" << endl;
     cout << "=====This is our tool-enPAC for the MCC'2019=====" << endl;
     cout << "=================================================" << endl;
@@ -278,8 +269,6 @@ int main() {
             exit(-1);
         }
 
-        //cout<<"timeleft:"<<timeleft*16<<endl;
-
         while (getline(readF, propertyid, ':')) {
 
 //            STUBBORN = false;
@@ -402,7 +391,6 @@ int main() {
 
 int main1()
 {
-    //CreateGlobalMemPool();
     double starttime, endtime;
     starttime = get_time();
 

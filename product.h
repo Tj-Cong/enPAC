@@ -20,11 +20,11 @@
 #include <pthread.h>
 #include <thread>
 
-#define hash_table_num 1048576    //2^20
+#define hash_table_num 1048576     //2^20
+#define PSTACKSIZE 33554432        //2^25
+#define HASHSIZE 1048576           //2^20
 #define each_ltl_time 120
 #define UNREACHABLE 0xffffffff
-#define PSTACKSIZE 1048576
-#define CUTOFF 16777184
 #define BOUND_INCREASE 1048574
 
 using namespace std;
@@ -44,7 +44,10 @@ extern short int total_mem;
 extern short int total_swap;
 extern pid_t mypid;
 
-
+template <class rgnode>
+class Product;
+template <class rgnode, class rg_T>
+class Product_Automata;
 /****************************PSTACK*******************************/
 template <class rgnode>
 class Pstacknode
@@ -83,10 +86,9 @@ Pstacknode<rgnode>::~Pstacknode() {
 template <class rgnode>
 class PStack
 {
-private:
+public:
     Pstacknode<rgnode> **mydata;
     index_t *hashlink;
-public:
     index_t toppoint;
 
     PStack();
@@ -104,17 +106,18 @@ template <class rgnode>
 PStack<rgnode>::PStack() {
     toppoint = 0;
     mydata = new Pstacknode<rgnode>* [PSTACKSIZE];
-    for(int i=0;i<PSTACKSIZE;++i)
-    {
-        mydata[i] = NULL;
-    }
-    hashlink = new index_t[PSTACKSIZE];
-    memset(hashlink,UNREACHABLE, sizeof(index_t)*PSTACKSIZE);
+    memset(mydata,NULL,sizeof(Pstacknode<rgnode>*)*PSTACKSIZE);
+//    for(int i=0;i<PSTACKSIZE;++i)
+//    {
+//        mydata[i] = NULL;
+//    }
+    hashlink = new index_t[HASHSIZE];
+    memset(hashlink,UNREACHABLE, sizeof(index_t)*HASHSIZE);
 }
 template <class rgnode>
 index_t PStack<rgnode>::hashfunction(Pstacknode<rgnode> *qnode) {
     index_t hashvalue = qnode->RGname_ptr->Hash();
-    index_t size = PSTACKSIZE-1;
+    index_t size = HASHSIZE-1;
     hashvalue = hashvalue & size;
     index_t Prohashvalue = (hashvalue+qnode->BAname_id)&size;
     return Prohashvalue;
@@ -172,18 +175,18 @@ NUM_t PStack<rgnode>::size() {
 template <class rgnode>
 void PStack<rgnode>::clear() {
     toppoint = 0;
-    for(int i=0;i<PSTACKSIZE;++i)
+    for(int i=0;i<toppoint;++i)
     {
         if(mydata[i]!=NULL) {
             delete mydata[i];
-            mydata[i] = NULL;
         }
     }
+    memset(mydata,NULL,sizeof(Pstacknode<rgnode>*)*PSTACKSIZE);
     memset(hashlink,UNREACHABLE,sizeof(index_t)*PSTACKSIZE);
 }
 template <class rgnode>
 PStack<rgnode>::~PStack() {
-    for(int i=0;i<PSTACKSIZE;++i)
+    for(int i=0;i<toppoint;++i)
     {
         if(mydata[i]!=NULL)
             delete mydata[i];
@@ -192,12 +195,13 @@ PStack<rgnode>::~PStack() {
     delete [] hashlink;
     MallocExtension::instance()->ReleaseFreeMemory();
 }
+
 /********************Product***********************/
 template <class rgnode>
 class Product  //交自动机的一个状态
 {
 public:
-    int id;               //交状态的大小标号
+    index_t id;           //交状态的大小标号
     rgnode *RGname_ptr;   //可达图状态所在位置，可以根据该指针索引到可达图状态
     int BAname_id;        //buchi自动机在自动机邻接表中的位置
     Product *hashnext;
@@ -411,6 +415,7 @@ private:
     hashtable<rgnode> h;
 //    hashtable<rgnode> dfs_stack;
     CStack<index_t> astack;
+    CStack<index_t> dstack;
     PStack<rgnode> cstack;
     Petri *ptnet;
     rg_T *rg;
@@ -433,7 +438,11 @@ public:
     void getProduct();         //合成交自动机
     Pstacknode<rgnode>* getNextChild(Pstacknode<rgnode>* q);
     void nonrec_dfs(Pstacknode<rgnode>* p0);
-//    void getProduct_Bound();                    //限界策略
+    void TCHECK(Pstacknode<rgnode>* p0);
+    void UPDATE(Pstacknode<rgnode>* p0);
+    int PUSH(Pstacknode<rgnode>* p0);
+    void POP();
+    void getProduct_Bound();                    //限界策略
     void addinitial_status(rgnode *initnode);  //生成交自动机的初始状态
     void ModelChecker(string propertyid);  //最外层的函数
 //    void simplified_dfs(Product<rgnode> *q, int recurdepth, int CBANid);          //CBANid: current biggest accepted node id
@@ -550,7 +559,7 @@ void Product_Automata<rgnode,rg_T>::getProduct() {
         init->BAname_id = initial_status[i].BAname_id;
         init->pba = ba->svertics[init->BAname_id].firstarc;
         rg->getFireableTranx(init->RGname_ptr, &(init->firable), init->firesize);
-        nonrec_dfs(init);
+        TCHECK(init);
         if(ready2exit)  //如果已经出结果或超时，则退出
         {
             break;
@@ -654,62 +663,144 @@ void Product_Automata<rgnode,rg_T>::nonrec_dfs(Pstacknode<rgnode> *p0) {
     }
 }
 
+template <class rgnode, class rg_T>
+void Product_Automata<rgnode,rg_T>::TCHECK(Pstacknode<rgnode> *p0) {
+    PUSH(p0);
+    while(!dstack.empty()&&!ready2exit)
+    {
+        Pstacknode<rgnode> *q = cstack.mydata[dstack.top()];
+        Pstacknode<rgnode> *qs = getNextChild(q);
+        if(qs==NULL)
+        {
+            if(q->firable!=NULL)
+            {
+                delete q->firable;
+                q->firable = NULL;
+            }
+            POP();
+            continue;
+        } else{
+            Pstacknode<rgnode> *existpos = cstack.search(qs);
+            if(existpos!=NULL)
+            {
+                UPDATE(existpos);
+                delete qs;
+                continue;
+            }
+            if(h.search(qs)==NULL)
+            {
+                PUSH(qs);
+                continue;
+            }
+            delete qs;
+        }
+    }
+}
+
+template <class rgnode, class rg_T>
+int Product_Automata<rgnode,rg_T>::PUSH(Pstacknode<rgnode> *p0) {
+    p0->id = cstack.toppoint;
+    dstack.push(cstack.toppoint);
+    if(ba->svertics[p0->BAname_id].isAccept)
+        astack.push(cstack.toppoint);
+    if(cstack.push(p0)==ERROR)
+    {
+        stack_flag = false;
+        return ERROR;
+    }
+    return OK;
+}
+
+template <class rgnode, class rg_T>
+void Product_Automata<rgnode,rg_T>::POP() {
+    index_t p = dstack.pop();
+    if(cstack.mydata[p]->id == p)
+    {
+        //强连通分量的根节点
+        while(cstack.toppoint>p)
+        {
+            Pstacknode<rgnode>* popitem = cstack.pop();
+            h.insert(popitem);
+            delete popitem;
+        }
+    }
+    if(!astack.empty() && astack.top()==p)
+        astack.pop();
+    if(!dstack.empty())
+        UPDATE(cstack.mydata[p]);
+}
+
+template <class rgnode, class rg_T>
+void Product_Automata<rgnode,rg_T>::UPDATE(Pstacknode<rgnode> *p0) {
+    if(p0 == NULL)
+        return;
+    index_t dtop = dstack.top();
+    if(p0->id<=cstack.mydata[dtop]->id)
+    {
+        if(!astack.empty() && p0->id <= astack.top())
+        {
+            result = false;
+            ready2exit = true;
+        }
+        cstack.mydata[dtop]->id = p0->id;
+    }
+}
 /*void Product_Automata::getProduct()
  * function: 合成交自动机并进行搜索
  * */
-//template <class rgnode, class rg_T>
-//void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
-//    detect_mem_thread = thread(&Product_Automata::detect_memory,this);
-//
-//    //如果还未得到rg的初始状态，那么就生成他的初始状态
-//    if(rg->initnode == NULL){
-//        rg->RGinitialnode();
-//    }
-//
-//    //生成交自动机的初始状态
-//    addinitial_status(rg->initnode);
-//
-//    //从初始状态开始搜索
-//
-//    bound = BOUND_INCREASE;
-//    //限界
-//    while(bound <= CUTOFF)
-//    {
-//        maxdepth = 0;
-//        int i = 0;
-//        int end = initial_status.size();
-//        for(i;i<end;i++)
-//        {
-//            Product<rgnode> *init = new Product<rgnode>;
-//            init->id= 0;
-//            init->RGname_ptr = initial_status[i].RGname_ptr;
-//            init->BAname_id = initial_status[i].BAname_id;
-//            init->hashnext = NULL;
-//            if(STUBBORN)
-//                stubborn_dfs(init,0,-1);
-//            else
-//                simplified_dfs_bound(init,0,-1);
-//            delete init;
-//            if(!result || !timeflag)  //如果已经出结果或超时，则退出
-//                break;
-//        }
-//        if(!result || !timeflag)  //如果已经出结果或超时，则退出
-//            break;
-//        if(maxdepth < bound)
-//        {
-//            result = true;
-//            break;
-//        }
-//        bound += BOUND_INCREASE;
-//        h.resetHash();
-//        dfs_stack.resetHash();
-//    }
-//
-//    ready2exit = true;
-//
-//    if(bound>CUTOFF)cout<<"out of the bound"<<endl;
-//    detect_mem_thread.join();
-//}
+template <class rgnode, class rg_T>
+void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
+    detect_mem_thread = thread(&Product_Automata::detect_memory,this);
+
+    //如果还未得到rg的初始状态，那么就生成他的初始状态
+    if(rg->initnode == NULL){
+        rg->RGinitialnode();
+    }
+
+    //生成交自动机的初始状态
+    addinitial_status(rg->initnode);
+
+    //从初始状态开始搜索
+
+    bound = BOUND_INCREASE;
+    //限界
+    while(bound <= CUTOFF)
+    {
+        maxdepth = 0;
+        int i = 0;
+        int end = initial_status.size();
+        for(i;i<end;i++)
+        {
+            Product<rgnode> *init = new Product<rgnode>;
+            init->id= 0;
+            init->RGname_ptr = initial_status[i].RGname_ptr;
+            init->BAname_id = initial_status[i].BAname_id;
+            init->hashnext = NULL;
+            if(STUBBORN)
+                stubborn_dfs(init,0,-1);
+            else
+                simplified_dfs_bound(init,0,-1);
+            delete init;
+            if(!result || !timeflag)  //如果已经出结果或超时，则退出
+                break;
+        }
+        if(!result || !timeflag)  //如果已经出结果或超时，则退出
+            break;
+        if(maxdepth < bound)
+        {
+            result = true;
+            break;
+        }
+        bound += BOUND_INCREASE;
+        h.resetHash();
+        dfs_stack.resetHash();
+    }
+
+    ready2exit = true;
+
+    if(bound>CUTOFF)cout<<"out of the bound"<<endl;
+    detect_mem_thread.join();
+}
 //
 //template <class rgnode, class rg_T>
 //void Product_Automata<rgnode,rg_T>::simplified_dfs_bound(Product<rgnode> *q, int recurdepth, int CBANid) {
