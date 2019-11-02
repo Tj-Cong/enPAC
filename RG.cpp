@@ -1206,7 +1206,7 @@ void RG::addRGNode(RGNode *mark) {
 
 }
 
-void RG::getFireableTranx(RGNode *curnode, index_t **isFirable, unsigned short &firecount) {
+void RG::getFireableTranx(RGNode *curnode, index_t **isFirable, NUM_t &firecount) {
     index_t *firearray = new index_t[ptnet->transitioncount];
     firecount = 0;
 
@@ -1267,6 +1267,7 @@ RGNode *RG::RGinitialnode() {
 }
 
 //当前状态cuenode发生transition[tranxnum]变前后所得到的状态，并把该状态返回
+//若有数据类型溢出，则返回NULL
 RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
 
     RGNode *newnode = new RGNode;
@@ -1287,7 +1288,12 @@ RGNode *RG::RGcreatenode(RGNode *curnode, int tranxnum, bool &exist) {
 
         //1.2 计算后继结点的token值；后继结点的token值=当前后继结点的token值+weight
         for(iterpost; iterpost!=postend; iterpost++){
-            newnode->marking[iterpost->idx] = newnode->marking[iterpost->idx] + iterpost->weight;
+            //判断数据类型溢出
+            unsigned short max = SHORTMAX;
+            if(max-newnode->marking[iterpost->idx] > iterpost->weight)
+                newnode->marking[iterpost->idx] = newnode->marking[iterpost->idx] + iterpost->weight;
+            else
+                return NULL;
         }
 
 
@@ -1326,7 +1332,7 @@ void RG::Generate(RGNode *node) {
     int i=0;
 
     index_t *isFirable;
-    unsigned short firecount = 0;
+    NUM_t firecount = 0;
 
     getFireableTranx(node,&isFirable,firecount);
 
@@ -1352,7 +1358,7 @@ void RG::printRGNode(RGNode *node) {
     outRG<<")[>";
 
     index_t *isFirable;
-    unsigned short firecount = 0;
+    NUM_t firecount = 0;
     getFireableTranx(node,&isFirable,firecount);
     int fireT;
     for(fireT=0; fireT<firecount; fireT++)
@@ -1960,7 +1966,7 @@ void BitRG::addRGNode(BitRGNode *mark) {
 #endif
 }
 
-void BitRG::getFireableTranx(BitRGNode *curnode, index_t **isFirable, unsigned short &firecount) {
+void BitRG::getFireableTranx(BitRGNode *curnode, index_t **isFirable, NUM_t &firecount) {
 
     unsigned short *mark = NULL;
     if(NUPN){
@@ -2203,7 +2209,7 @@ void BitRG::Generate(BitRGNode *node) {
     int i=0;
 
     index_t *isFirable;
-    unsigned short firecount = 0;
+    NUM_t firecount = 0;
 
     getFireableTranx(node,&isFirable,firecount);
 
@@ -2238,7 +2244,7 @@ void BitRG::printRGNode(BitRGNode *node) {
     }
 
     index_t *isFirable;
-    unsigned short firecount = 0;
+    NUM_t firecount = 0;
     getFireableTranx(node,&isFirable,firecount);
     int fireT;
     for(fireT=0; fireT<firecount; fireT++)

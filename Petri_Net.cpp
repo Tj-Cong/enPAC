@@ -554,6 +554,12 @@ void Petri::readPNML(char *filename) {
                     if(token)
                     {
                         string marking = token->GetText();
+                        unsigned int initm = stringToNum(marking);
+                        if(initm>65535)
+                        {
+                            cout<<"CANNOT_COMPUTE"<<endl;
+                            exit(0);
+                        }
                         p.initialMarking = stringToNum(marking);
                     }
                 }

@@ -221,6 +221,7 @@ int main() {
             sba->CreatSBA(*tba);
             sba->Simplify();
             sba->Compress();
+            sba->PrintSBA();
             delete tba;
             ready2exit = false;
             //cout << "begin:ON-THE-FLY" << endl;

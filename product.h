@@ -25,7 +25,8 @@
 #define HASHSIZE 1048576           //2^20
 #define each_ltl_time 120
 #define UNREACHABLE 0xffffffff
-#define BOUND_INCREASE 1048574
+#define BOUND_BASE  2097151
+#define CUTOFF 33554432
 
 using namespace std;
 
@@ -61,8 +62,8 @@ public:
     //non-recursion extra information
     SArcNode *pba;
     index_t *firable;
-    unsigned short firesize;
-    unsigned short fireptr;
+    NUM_t firesize;
+    NUM_t fireptr;
 
     Pstacknode();
     ~Pstacknode();
@@ -285,7 +286,6 @@ void hashtable<rgnode>::insert(Product<rgnode> *q)
     qs->hashnext = table[idex];
     table[idex] = qs;
     nodecount++;
-
 }
 
 template <class rgnode>
@@ -366,14 +366,15 @@ void hashtable<rgnode>::resetHash()
             }
         }
     }
-    delete [] table;
-    MallocExtension::instance()->ReleaseFreeMemory();
-    table = new Product<rgnode>* [hash_table_num];
-    i=0;
-    for(i;i<hash_table_num;i++)
-    {
-        table[i] = NULL;
-    }
+    memset(table,NULL,sizeof(Product<rgnode>*)*hash_table_num);
+//    delete [] table;
+//    MallocExtension::instance()->ReleaseFreeMemory();
+//    table = new Product<rgnode>* [hash_table_num];
+//    i=0;
+//    for(i;i<hash_table_num;i++)
+//    {
+//        table[i] = NULL;
+//    }
     nodecount = 0;
     hash_conflict_times = 0;
 }
@@ -427,11 +428,11 @@ private:
 
     //限界
     int bound;
-    int maxdepth;
-
+    bool reachbound;
     //内存检测
     bool memory_flag;
     bool stack_flag;
+    bool data_flag;
     thread detect_mem_thread;
 public:
     Product_Automata(Petri *pt, rg_T* r, SBA *sba);
@@ -439,6 +440,7 @@ public:
     Pstacknode<rgnode>* getNextChild(Pstacknode<rgnode>* q);
     void nonrec_dfs(Pstacknode<rgnode>* p0);
     void TCHECK(Pstacknode<rgnode>* p0);
+    void TCHECK_BOUND(Pstacknode<rgnode>* p0);
     void UPDATE(Pstacknode<rgnode>* p0);
     int PUSH(Pstacknode<rgnode>* p0);
     void POP();
@@ -469,6 +471,8 @@ Product_Automata<rgnode,rg_T>::Product_Automata(Petri *pt, rg_T* r, SBA *sba) {
     result = true;
     memory_flag = true;
     stack_flag = true;
+    reachbound = false;
+    data_flag = true;
     outcurdepth.open("curdepth.txt",ios::out);
 }
 
@@ -502,11 +506,11 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid) {
     stack_flag = true;
     //核心部分
     result = true;
-    getProduct();     //合成交自动机并进行搜索
+    getProduct_Bound();     //合成交自动机并进行搜索
 
     //打印结果
     string re;
-    if(timeflag && memory_flag && stack_flag)
+    if(timeflag && memory_flag && stack_flag && data_flag)
     {
         if(result)
         {
@@ -526,9 +530,24 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid) {
             ret = 0;
         }
     }
-    else
+    else if(!memory_flag)
     {
-        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE";
+        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE MEMORY_OVERFLOW";
+        ret = -1;
+    }
+    else if(!stack_flag)
+    {
+        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE STACK_OVERFLOW";
+        ret = -1;
+    }
+    else if(!stack_flag)
+    {
+        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE DATA_OVERFLOW";
+        ret = -1;
+    }
+    else if(!timeflag)
+    {
+        cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE TIME_RUNOUT";
         ret = -1;
     }
     alarm(0);
@@ -594,6 +613,11 @@ Pstacknode<rgnode>* Product_Automata<rgnode,rg_T>::getNextChild(Pstacknode<rgnod
         {
             bool exist;
             rgnode *rgseed = rg->RGcreatenode(q->RGname_ptr,q->firable[q->fireptr],exist);
+            if(rgseed == NULL)
+            {
+                data_flag = false;
+                return NULL;
+            }
             while(q->pba)
             {
                 if(isLabel(rgseed,q->pba->adjvex))
@@ -626,6 +650,8 @@ void Product_Automata<rgnode,rg_T>::nonrec_dfs(Pstacknode<rgnode> *p0) {
         Pstacknode<rgnode> *qs = getNextChild(q);
         if(qs == NULL)
         {
+            if(!data_flag)
+                return;
             Pstacknode<rgnode> *popitem = cstack.pop();
             h.insert(popitem);
             if(!astack.empty() && astack.top()==popitem->id)
@@ -672,6 +698,8 @@ void Product_Automata<rgnode,rg_T>::TCHECK(Pstacknode<rgnode> *p0) {
         Pstacknode<rgnode> *qs = getNextChild(q);
         if(qs==NULL)
         {
+            if(!data_flag)
+                return;
             if(q->firable!=NULL)
             {
                 delete q->firable;
@@ -689,6 +717,47 @@ void Product_Automata<rgnode,rg_T>::TCHECK(Pstacknode<rgnode> *p0) {
             }
             if(h.search(qs)==NULL)
             {
+                PUSH(qs);
+                continue;
+            }
+            delete qs;
+        }
+    }
+}
+
+template <class rgnode, class rg_T>
+void Product_Automata<rgnode,rg_T>::TCHECK_BOUND(Pstacknode<rgnode> *p0) {
+    PUSH(p0);
+    while(!dstack.empty()&&!ready2exit)
+    {
+        Pstacknode<rgnode> *q = cstack.mydata[dstack.top()];
+        Pstacknode<rgnode> *qs = getNextChild(q);
+        if(qs==NULL)
+        {
+            if(!data_flag)
+                return;
+            if(q->firable!=NULL)
+            {
+                delete q->firable;
+                q->firable = NULL;
+            }
+            POP();
+            continue;
+        } else{
+            Pstacknode<rgnode> *existpos = cstack.search(qs);
+            if(existpos!=NULL)
+            {
+                UPDATE(existpos);
+                delete qs;
+                continue;
+            }
+            if(h.search(qs)==NULL)
+            {
+                if(dstack.size()>=bound) {
+                    reachbound = true;
+                    continue;
+                }
+
                 PUSH(qs);
                 continue;
             }
@@ -762,43 +831,44 @@ void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
 
     //从初始状态开始搜索
 
-    bound = BOUND_INCREASE;
+    bound = BOUND_BASE;
     //限界
     while(bound <= CUTOFF)
     {
-        maxdepth = 0;
+        reachbound = false;
         int i = 0;
         int end = initial_status.size();
         for(i;i<end;i++)
         {
-            Product<rgnode> *init = new Product<rgnode>;
+            Pstacknode<rgnode> *init = new Pstacknode<rgnode>;
             init->id= 0;
             init->RGname_ptr = initial_status[i].RGname_ptr;
             init->BAname_id = initial_status[i].BAname_id;
-            init->hashnext = NULL;
-            if(STUBBORN)
-                stubborn_dfs(init,0,-1);
-            else
-                simplified_dfs_bound(init,0,-1);
-            delete init;
-            if(!result || !timeflag)  //如果已经出结果或超时，则退出
+            init->pba = ba->svertics[init->BAname_id].firstarc;
+            rg->getFireableTranx(init->RGname_ptr, &(init->firable), init->firesize);
+            TCHECK_BOUND(init);
+            if(ready2exit || !data_flag)  //如果已经出结果或超时，则退出
                 break;
         }
-        if(!result || !timeflag)  //如果已经出结果或超时，则退出
+        if(ready2exit || !data_flag)  //如果已经出结果或超时，则退出
             break;
-        if(maxdepth < bound)
+        if(!reachbound)
         {
             result = true;
             break;
         }
-        bound += BOUND_INCREASE;
+        bound = bound*2;
         h.resetHash();
-        dfs_stack.resetHash();
+        cstack.clear();
+        astack.clear();
+        dstack.clear();
+
     }
 
     ready2exit = true;
 
-    if(bound>CUTOFF)cout<<"out of the bound"<<endl;
+    if(bound>CUTOFF)
+        cout<<"out of the bound"<<endl;
     detect_mem_thread.join();
 }
 //
@@ -1226,7 +1296,7 @@ template <class rgnode, class rg_T>
 bool Product_Automata<rgnode,rg_T>::handleLTLF(string s, rgnode *state) {
 
     index_t *isFirable;
-    unsigned short firecount = 0;
+    NUM_t firecount = 0;
     rg->getFireableTranx(state,&isFirable,firecount);
 
 

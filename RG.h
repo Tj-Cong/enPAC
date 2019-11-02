@@ -14,7 +14,7 @@
 using namespace std;
 
 #define RGTABLE_SIZE 1048576
-
+#define SHORTMAX 0xffff
 
 extern NUM_t FIELDCOUNT;   //占用bitfield个数，仅仅用于NUPN和SAFE网
 extern NUM_t MARKLEN;      //Petri网
@@ -172,7 +172,7 @@ public:
     void re_expand(RGNode *curnode,const vector<int> &oldstbset,vector<int> &newstbset);
     RGNode *RGinitialnode();
     RGNode *RGcreatenode(RGNode *curnode, int tranxnum, bool &exist);
-    void getFireableTranx(RGNode *curnode, index_t **isFirable, unsigned short &firecount);
+    void getFireableTranx(RGNode *curnode, index_t **isFirable, NUM_t &firecount);
     void Generate(RGNode *node);
     void printRGNode(RGNode *node);
     ~RG();
@@ -242,7 +242,7 @@ public:
     void re_expand(BitRGNode *curnode,const vector<int> &oldstbset,vector<int> &newstbset);
     BitRGNode *RGinitialnode();
     BitRGNode *RGcreatenode(BitRGNode *curnode, int tranxnum, bool &exist);
-    void getFireableTranx(BitRGNode *curnode, index_t **isFirable, unsigned short &firecount);
+    void getFireableTranx(BitRGNode *curnode, index_t **isFirable, NUM_t &firecount);
     void Generate(BitRGNode *node);
     void printRGNode(BitRGNode *node);
     ~BitRG();
