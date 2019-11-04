@@ -455,7 +455,7 @@ public:
     NUM_t sumtoken(string s, rgnode *state);   //计算s中所有库所的token和
     bool handleLTLF(string s, rgnode *state);
     bool handleLTLC(string s, rgnode *state);
-    void handleLTLCstep(short int &front_sum, short int &latter_sum, string s, rgnode *state);
+    void handleLTLCstep(NUM_t &front_sum, NUM_t &latter_sum, string s, rgnode *state);
     int getresult();
     NUM_t getConflictTimes();
     int getNodecount();
@@ -540,7 +540,7 @@ void Product_Automata<rgnode,rg_T>::ModelChecker(string propertyid) {
         cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE STACK_OVERFLOW";
         ret = -1;
     }
-    else if(!stack_flag)
+    else if(!data_flag)
     {
         cout<<"FORMULA "+propertyid+" "+"CANNOT_COMPUTE DATA_OVERFLOW";
         ret = -1;
@@ -1382,7 +1382,7 @@ bool Product_Automata<rgnode,rg_T>::handleLTLF(string s, rgnode *state) {
  * */
 template <class rgnode,class rg_T>
 bool Product_Automata<rgnode,rg_T>::handleLTLC(string s, rgnode *state) {
-    short int front_sum, latter_sum;     //前半部分和 后半部分和
+    NUM_t front_sum, latter_sum;     //前半部分和 后半部分和
     if(s[0] == '!')
     {
         /*!(front <= latter)
@@ -1416,7 +1416,7 @@ bool Product_Automata<rgnode,rg_T>::handleLTLC(string s, rgnode *state) {
  * out: front_sum前半部分的和, latter_sum后半部分的和
  * */
 template <class rgnode,class rg_T>
-void Product_Automata<rgnode,rg_T>::handleLTLCstep(short int &front_sum, short int &latter_sum, string s, rgnode *state) {
+void Product_Automata<rgnode,rg_T>::handleLTLCstep(NUM_t &front_sum, NUM_t &latter_sum, string s, rgnode *state) {
     if(s[0] == 't')   //前半部分是token-count的形式
     {
         int pos = s.find_first_of("<=");           //定位到<=前
