@@ -203,7 +203,14 @@ void Petri::preNUPN(TiXmlElement *structure) {
         //get local places in this unit
         TiXmlElement *localplace = unit->FirstChildElement("places");
         //get local places string
-        string placestr = localplace->GetText();
+        const char *test = localplace->GetText();
+        if(test==NULL) {
+            unit = unit->NextSiblingElement();
+            unittable[ut_iter].size = 0;
+            ut_iter++;
+            continue;
+        }
+        string placestr = test;
         //put this string into an input stream
         stringstream ss(placestr);
 

@@ -14,6 +14,7 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <signal.h>
+#include <bitset>
 #include <fstream>
 #include "RG.h"
 #include "SBA.h"
@@ -27,6 +28,7 @@
 #define UNREACHABLE 0xffffffff
 #define BOUND_BASE  2097151
 #define CUTOFF 33554432
+#define BIT_ARRAY_NUM 33554432
 
 using namespace std;
 
@@ -258,6 +260,19 @@ hashtable<rgnode>::hashtable() {
 }
 
 template <class rgnode>
+class bithashtable{
+private:
+        bitset<BIT_ARRAY_NUM> bitarrayOne;
+        bitset<BIT_ARRAY_NUM> bitarrayTwo;
+public:
+    index_t bit_hashfuncOne(Pstacknode<rgnode> *q);
+    index_t bit_hashfuncTwo(Pstacknode<rgnode> *q);
+    bool bit_search(Pstacknode<rgnode> *q);
+    void bit_insert(Pstacknode<rgnode> *q);
+    void bit_reset();
+    };
+
+template <class rgnode>
 hashtable<rgnode>::~hashtable() {
     int i=0;
     for(i;i<hash_table_num;i++)
@@ -407,13 +422,98 @@ void hashtable<rgnode>::pop(Product<rgnode> *n) {
     cout<<"Couldn't delete from hashtable!"<<endl;
 }
 
+
+
+
+
+/*********************bithashtable*********************************/
+
+template <class rgnode>
+index_t bithashtable<rgnode>::bit_hashfuncOne(Pstacknode<rgnode> *q)
+{
+    index_t RGhashvalue;
+    index_t size = BIT_ARRAY_NUM-1;
+    RGhashvalue = q->RGname_ptr->Hash();
+    RGhashvalue = RGhashvalue & size;
+
+    index_t Prohashvalue = RGhashvalue + q->BAname_id;
+    Prohashvalue = Prohashvalue & size;
+    return Prohashvalue;
+
+}
+
+//BKDR hash
+template <class rgnode>
+index_t bithashtable<rgnode>::bit_hashfuncTwo(Pstacknode<rgnode> *q)
+{
+    index_t bitarray_size = BIT_ARRAY_NUM -1;
+    string str = to_string(q->RGname_ptr->Hash());
+    str += to_string(q->BAname_id);
+
+    //BKDR
+    unsigned int seed = 31;
+    unsigned int hash = 0;
+    int length = str.length();
+    int i = 0;
+    for(i; i<length; i++)
+    {
+        hash = hash*seed + str[i];
+    }
+    hash = hash * seed;
+    //保证最高位为0，这样在赋值给int型变量时，不用进行符号转换
+    //hash = hash & 0x7fffffff;
+
+    hash = hash & bitarray_size;
+    return hash;
+
+}
+
+template <class rgnode>
+bool bithashtable<rgnode>::bit_search(Pstacknode<rgnode> *q)
+{
+    index_t posOne = bit_hashfuncOne(q);
+    if(bitarrayOne[posOne] == 1){
+        index_t posTwo = bit_hashfuncTwo(q);
+        if(bitarrayTwo[posTwo] == 1){
+            return 1;
+        }
+    }
+    return 0;
+
+}
+
+
+template <class rgnode>
+void bithashtable<rgnode>::bit_insert(Pstacknode<rgnode> *q)
+{
+    index_t posOne = bit_hashfuncOne(q);
+    index_t posTwo = bit_hashfuncTwo(q);
+    bitarrayOne.set(posOne);
+    bitarrayTwo.set(posTwo);
+}
+
+template <class rgnode>
+void bithashtable<rgnode>::bit_reset()
+{
+    bitarrayOne.reset();
+    bitarrayTwo.reset();
+}
+
+
+
+
+
+
+
+
 /************************Product_automata************************/
 template <class rgnode, class rg_T>
 class Product_Automata
 {
 private:
     vector<Product<rgnode>> initial_status;
-    hashtable<rgnode> h;
+    //hashtable<rgnode> hashtb;
+    bithashtable<rgnode> hashtb;
 //    hashtable<rgnode> dfs_stack;
     CStack<index_t> astack;
     CStack<index_t> dstack;
@@ -653,7 +753,7 @@ void Product_Automata<rgnode,rg_T>::nonrec_dfs(Pstacknode<rgnode> *p0) {
             if(!data_flag)
                 return;
             Pstacknode<rgnode> *popitem = cstack.pop();
-            h.insert(popitem);
+            hashtb.bit_insert(popitem);
             if(!astack.empty() && astack.top()==popitem->id)
                 astack.pop();
             delete popitem;
@@ -672,7 +772,7 @@ void Product_Automata<rgnode,rg_T>::nonrec_dfs(Pstacknode<rgnode> *p0) {
                     break;
                 }
             }
-            else if(h.search(qs)==NULL)
+            else if(hashtb.bit_search(qs) == 0)
             {
                 qs->id = cstack.toppoint;
                 if(cstack.push(qs) == ERROR)
@@ -715,7 +815,7 @@ void Product_Automata<rgnode,rg_T>::TCHECK(Pstacknode<rgnode> *p0) {
                 delete qs;
                 continue;
             }
-            if(h.search(qs)==NULL)
+            if(hashtb.bit_search(qs) == 0)
             {
                 PUSH(qs);
                 continue;
@@ -751,7 +851,7 @@ void Product_Automata<rgnode,rg_T>::TCHECK_BOUND(Pstacknode<rgnode> *p0) {
                 delete qs;
                 continue;
             }
-            if(h.search(qs)==NULL)
+            if(hashtb.bit_search(qs) == 0)
             {
                 if(dstack.size()>=bound) {
                     reachbound = true;
@@ -789,7 +889,7 @@ void Product_Automata<rgnode,rg_T>::POP() {
         while(cstack.toppoint>p)
         {
             Pstacknode<rgnode>* popitem = cstack.pop();
-            h.insert(popitem);
+            hashtb.bit_insert(popitem);
             delete popitem;
         }
     }
@@ -858,7 +958,8 @@ void Product_Automata<rgnode,rg_T>::getProduct_Bound() {
             break;
         }
         bound = bound*2;
-        h.resetHash();
+
+        hashtb.bit_reset();
         cstack.clear();
         astack.clear();
         dstack.clear();
@@ -1541,13 +1642,15 @@ int Product_Automata<rgnode,rg_T>::getresult() {
 
 template <class rgnode,class rg_T>
 NUM_t Product_Automata<rgnode,rg_T>::getConflictTimes() {
-    return h.hash_conflict_times;
+    //return h.hash_conflict_times;
+    return 1;
 }
 
 
 template <class rgnode,class rg_T>
 int Product_Automata<rgnode,rg_T>::getNodecount() {
-    return (h.nodecount+initial_status.size());
+    //return (h.nodecount+initial_status.size());
+    return 1;
 }
 
 template <class rgnode,class rg_T>
